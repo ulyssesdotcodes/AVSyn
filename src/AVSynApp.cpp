@@ -4,6 +4,7 @@
 #include "cinder\params\Params.h"
 #include "boost\range\adaptor\map.hpp"
 #include "ShaderVisualization.h"
+#include "DotsVisualization.h"
 #include "Visualization.h"
 
 using namespace ci;
@@ -14,6 +15,7 @@ class AVSynApp : public App {
 public:
 	void setup() override;
 	void update() override;
+	void keyDown(KeyEvent event) override;
 	void drawRender();
 	void drawParams() ;
 
@@ -46,13 +48,18 @@ void AVSynApp::setup()
 
 	ShaderVisualization *simpleVis = new ShaderVisualization();
 	simpleVis->setup(mAudioSource, "simple.frag");
-	mVisualizations.insert(make_pair("simple", simpleVis));
-	mVisualizationOptions.push_back("simple");
+	mVisualizations.insert(make_pair("Simple", simpleVis));
+	mVisualizationOptions.push_back("Simple");
 
 	ShaderVisualization *circularVis = new ShaderVisualization();
 	circularVis->setup(mAudioSource, "circular_fft.frag");
-	mVisualizations.insert(make_pair("circular", circularVis));
-	mVisualizationOptions.push_back("circular");
+	mVisualizations.insert(make_pair("Circular", circularVis));
+	mVisualizationOptions.push_back("Circular");
+
+	auto *dotsVis = new DotsVisualization();
+	dotsVis->setup(mAudioSource);
+	mVisualizations.insert(make_pair("Dots", dotsVis));
+	mVisualizationOptions.push_back("Dots");
 
 
 	mParams->addParam("Visualizations", mVisualizationOptions, 
@@ -66,6 +73,12 @@ void AVSynApp::setup()
 		);
 
 	mVisualization = simpleVis;
+}
+
+void AVSynApp::keyDown(KeyEvent event) {
+	if (event.getChar() == 'q') {
+		quit();
+	}
 }
 
 void AVSynApp::update()

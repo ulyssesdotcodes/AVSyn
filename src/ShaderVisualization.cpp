@@ -19,13 +19,18 @@ void ShaderVisualization::update()
 
 }
 
+void ShaderVisualization::renderUniforms() {
+	mShader->uniform("resolution", vec3(app::getWindowWidth(), app::getWindowHeight(), 0.0f));
+	mShader->uniform("time", float(app::getElapsedSeconds()));
+	mShader->uniform("audioTexture", 0);
+}
+
 void ShaderVisualization::draw()
 {
 	gl::ScopedGlslProg glScp(mShader);
 	gl::ScopedTextureBind texscp(mTexture);
-	mShader->uniform("resolution", vec3(app::getWindowWidth(), app::getWindowHeight(), 0.0f));
-	mShader->uniform("time", float(app::getElapsedSeconds()));
-	mShader->uniform("audioTexture", 0);
+
+	renderUniforms();
 
 	gl::drawSolidRect(app::getWindowBounds());
 }

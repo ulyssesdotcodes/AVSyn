@@ -13,8 +13,11 @@ public:
 	void update();
 	void draw();
 
-private:
-	AudioSource mAudioSource;
+protected:
+	virtual void renderUniforms();
 	gl::GlslProgRef mShader;
+	AudioSource mAudioSource;
+
+private:
 	gl::TextureRef mTexture;
 };

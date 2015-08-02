@@ -5,5 +5,5 @@
 using namespace std;
 
 namespace audioUtils{
-	vector<float> eqs(vector<float> buffer);
+	vector<float> eqs(vector<float> buffer, int bins);
 }

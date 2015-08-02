@@ -12,6 +12,7 @@ public:
 	void setup();
 	std::vector<float> getMagSpectrum();
 	gl::TextureRef getMagSpectrumTexture();
+	float getVolume();
 
 private:
 	audio::InputDeviceNodeRef mInputNode;

@@ -43,3 +43,8 @@ gl::TextureRef AudioSource::getMagSpectrumTexture() {
 
 	return gl::Texture::create(Surface32f(spectrum, 1024, 1, 4, SurfaceChannelOrder::RGBA));
 }
+
+float AudioSource::getVolume() 
+{
+	return audio::linearToDecibel(mMonitor->getVolume()) / 100.0f;
+}
