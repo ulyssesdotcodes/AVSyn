@@ -27,7 +27,10 @@
     <ClInclude Include="..\include\Resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClCompile Include="ShaderVisualization.cpp">
+    <ClCompile Include="..\src\ShaderVisualization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\AudioSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,7 +38,10 @@
     <ClInclude Include="..\include\Resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderVisualization.h">
+    <ClInclude Include="..\src\ShaderVisualization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\AudioSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -113,11 +113,11 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>"..\..\Development\Cinder\include";..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>"..\..\Cinder\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>cinder-$(PlatformToolset)_d.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>"..\..\Development\Cinder\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>"..\..\Cinder\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -189,12 +189,14 @@
     <ResourceCompile Include="Resources.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\AudioSource.cpp" />
     <ClCompile Include="..\src\AVSynApp.cpp" />
-    <ClCompile Include="ShaderVisualization.cpp" />
+    <ClCompile Include="..\src\ShaderVisualization.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h" />
-    <ClInclude Include="ShaderVisualization.h" />
+    <ClInclude Include="..\src\AudioSource.h" />
+    <ClInclude Include="..\src\ShaderVisualization.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\assets\passthru.vert" />
