@@ -190,9 +190,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\AVSynApp.cpp" />
+    <ClCompile Include="ShaderVisualization.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h" />
+    <ClInclude Include="ShaderVisualization.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\assets\passthru.vert" />
