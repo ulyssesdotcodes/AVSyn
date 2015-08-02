@@ -1,16 +1,16 @@
 precision highp float;
 
-uniform vec3 iResolution;
-uniform sampler2D iChannel0; 
-uniform float iGlobalTime;
+uniform vec3 resolution;
+uniform sampler2D audioTexture; 
+uniform float time;
 
 in vec2 ciPosition;
 
 out vec4 fragColor;
 
 void main() {
-	vec2 uv = gl_FragCoord.xy / iResolution.xy;
-	float fft = texture2D(iChannel0, vec2(uv.x, 0.25)).r;
+	vec2 uv = gl_FragCoord.xy / resolution.xy;
+	float fft = texture2D(audioTexture, vec2(uv.x, 0.25)).r;
 	float visibility = ceil(fft - uv.y);
 	vec3 freq = vec3(visibility);
 

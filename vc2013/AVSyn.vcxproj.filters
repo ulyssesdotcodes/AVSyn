@@ -44,6 +44,9 @@
     <ClInclude Include="..\src\AudioSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Visualization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc">
@@ -55,6 +58,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\assets\simple.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\circular_fft.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

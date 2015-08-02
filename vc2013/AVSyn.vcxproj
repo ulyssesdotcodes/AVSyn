@@ -197,8 +197,10 @@
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\src\AudioSource.h" />
     <ClInclude Include="..\src\ShaderVisualization.h" />
+    <ClInclude Include="..\src\Visualization.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\assets\circular_fft.frag" />
     <None Include="..\assets\passthru.vert" />
     <None Include="..\assets\simple.frag" />
   </ItemGroup>

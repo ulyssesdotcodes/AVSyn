@@ -1,7 +1,10 @@
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
+#include "cinder\params\Params.h"
+#include "boost\range\adaptor\map.hpp"
 #include "ShaderVisualization.h"
+#include "Visualization.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -12,17 +15,58 @@ public:
 	void setup() override;
 	void mouseDown( MouseEvent event ) override;
 	void update() override;
-	void draw() override;
+	void drawRender();
+	void drawParams() ;
 
 private:
-	ShaderVisualization mVisualization;
+	Visualization *mVisualization;
 	AudioSource mAudioSource;
+
+	WindowRef mParamWindow;
+	params::InterfaceGlRef mParams;
+
+	map<string, Visualization*> mVisualizations;
+	vector<string> mVisualizationOptions;
+	int mCurrentVisOption;
 };
 
 void AVSynApp::setup()
 {
+	getWindow()->getSignalDraw().connect([=]() { drawRender(); });
+
+	vec2 paramsSize = vec2(255, 200);
+	mCurrentVisOption = 0;
+	auto format = Window::Format();
+	format.setSize(paramsSize + vec2(40, 40));
+	mParamWindow = createWindow(format);
+	mParamWindow->setPos(vec2(0, 0));
+	mParamWindow->getSignalDraw().connect([=]() { drawParams(); });
+	mParams = params::InterfaceGl::create(mParamWindow, "Options", paramsSize);
+
 	mAudioSource.setup();
-	mVisualization.setup(mAudioSource);
+
+	ShaderVisualization *simpleVis = new ShaderVisualization();
+	simpleVis->setup(mAudioSource, "simple.frag");
+	mVisualizations.insert(make_pair("simple", simpleVis));
+	mVisualizationOptions.push_back("simple");
+
+	ShaderVisualization *circularVis = new ShaderVisualization();
+	circularVis->setup(mAudioSource, "circular_fft.frag");
+	mVisualizations.insert(make_pair("circular", circularVis));
+	mVisualizationOptions.push_back("circular");
+
+
+	mParams->addParam("Visualizations", mVisualizationOptions, 
+		[=](int ind) {
+			mCurrentVisOption = ind;
+			mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
+		},
+		[=]() {
+			return mCurrentVisOption;
+		}
+		);
+
+	mVisualization = simpleVis;
 }
 
 void AVSynApp::mouseDown( MouseEvent event )
@@ -31,15 +75,20 @@ void AVSynApp::mouseDown( MouseEvent event )
 
 void AVSynApp::update()
 {
-	mVisualization.update();
+	mVisualization->update();
 }
 
-void AVSynApp::draw()
+void AVSynApp::drawRender()
 {
-	gl::clear( Color( 0, 0, 0 ) ); 
 	gl::setMatricesWindow(getWindowSize());
 
-	mVisualization.draw();
+	mVisualization->draw();
+}
+
+void AVSynApp::drawParams()
+{
+	gl::clear( Color( 0, 0, 0 ) ); 
+	mParams->draw();
 }
 
 CINDER_APP(AVSynApp, RendererGl(), [&](App::Settings *settings) {
