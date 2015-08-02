@@ -12,4 +12,5 @@ protected:
 private:
 	int mBinCount;
 	float mAccumulatedLoudness;
+	AudioSource mAudioSource;
 };

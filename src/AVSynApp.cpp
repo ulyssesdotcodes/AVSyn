@@ -3,6 +3,7 @@
 #include "cinder/gl/gl.h"
 #include "cinder\params\Params.h"
 #include "boost\range\adaptor\map.hpp"
+#include "AudioShaderVisualization.h"
 #include "ShaderVisualization.h"
 #include "DotsVisualization.h"
 #include "Visualization.h"
@@ -46,12 +47,12 @@ void AVSynApp::setup()
 
 	mAudioSource.setup();
 
-	ShaderVisualization *simpleVis = new ShaderVisualization();
+	AudioShaderVisualization *simpleVis = new AudioShaderVisualization();
 	simpleVis->setup(mAudioSource, "simple.frag");
 	mVisualizations.insert(make_pair("Simple", simpleVis));
 	mVisualizationOptions.push_back("Simple");
 
-	ShaderVisualization *circularVis = new ShaderVisualization();
+	AudioShaderVisualization *circularVis = new AudioShaderVisualization();
 	circularVis->setup(mAudioSource, "circular_fft.frag");
 	mVisualizations.insert(make_pair("Circular", circularVis));
 	mVisualizationOptions.push_back("Circular");

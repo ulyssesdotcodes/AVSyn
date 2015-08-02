@@ -4,10 +4,11 @@
 
 void DotsVisualization::setup(AudioSource audioSource)
 {
-	ShaderVisualization::setup(audioSource, "dots.frag");
+	ShaderVisualization::setup("dots.frag");
 
 	mBinCount = 4;
 	mAccumulatedLoudness = 0.0f;
+	mAudioSource = audioSource;
 }
 
 void DotsVisualization::renderUniforms()

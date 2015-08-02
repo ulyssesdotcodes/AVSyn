@@ -189,6 +189,7 @@
     <ResourceCompile Include="Resources.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\AudioShaderVisualization.cpp" />
     <ClCompile Include="..\src\AudioSource.cpp" />
     <ClCompile Include="..\src\AudioUtils.cpp" />
     <ClCompile Include="..\src\AVSynApp.cpp" />
@@ -197,6 +198,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h" />
+    <ClInclude Include="..\src\AudioShaderVisualization.h" />
     <ClInclude Include="..\src\AudioSource.h" />
     <ClInclude Include="..\src\AudioUtils.h" />
     <ClInclude Include="..\src\DotsVisualization.h" />

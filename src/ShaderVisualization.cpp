@@ -6,29 +6,23 @@ ShaderVisualization::ShaderVisualization()
 {
 }
 
-void ShaderVisualization::setup(AudioSource audioSource, const fs::path &fragmentShader ) 
+void ShaderVisualization::setup(const fs::path &fragmentShader ) 
 {
-	mAudioSource = audioSource;
-
 	mShader = gl::GlslProg::create(app::loadAsset("passthru.vert"), app::loadAsset(fragmentShader));
 }
 
 void ShaderVisualization::update()
 {
-	mTexture = mAudioSource.getMagSpectrumTexture();
-
 }
 
 void ShaderVisualization::renderUniforms() {
 	mShader->uniform("resolution", vec3(app::getWindowWidth(), app::getWindowHeight(), 0.0f));
 	mShader->uniform("time", float(app::getElapsedSeconds()));
-	mShader->uniform("audioTexture", 0);
 }
 
 void ShaderVisualization::draw()
 {
 	gl::ScopedGlslProg glScp(mShader);
-	gl::ScopedTextureBind texscp(mTexture);
 
 	renderUniforms();
 
