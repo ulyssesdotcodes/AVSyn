@@ -13,7 +13,6 @@ using namespace std;
 class AVSynApp : public App {
 public:
 	void setup() override;
-	void mouseDown( MouseEvent event ) override;
 	void update() override;
 	void drawRender();
 	void drawParams() ;
@@ -69,10 +68,6 @@ void AVSynApp::setup()
 	mVisualization = simpleVis;
 }
 
-void AVSynApp::mouseDown( MouseEvent event )
-{
-}
-
 void AVSynApp::update()
 {
 	mVisualization->update();
@@ -88,6 +83,7 @@ void AVSynApp::drawRender()
 void AVSynApp::drawParams()
 {
 	gl::clear( Color( 0, 0, 0 ) ); 
+
 	mParams->draw();
 }
 

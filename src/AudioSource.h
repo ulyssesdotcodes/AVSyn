@@ -16,4 +16,5 @@ public:
 private:
 	audio::InputDeviceNodeRef mInputNode;
 	audio::MonitorSpectralNodeRef mMonitor;
+
 };
