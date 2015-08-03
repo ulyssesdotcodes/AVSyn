@@ -28,3 +28,8 @@ void ShaderVisualization::draw()
 
 	gl::drawSolidRect(app::getWindowBounds());
 }
+
+bool ShaderVisualization::perspective()
+{
+	return false;
+}

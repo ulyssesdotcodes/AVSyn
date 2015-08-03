@@ -12,6 +12,7 @@ public:
 	void setup(const fs::path &fragmentShader);
 	virtual void update() override;
 	virtual void draw() override;
+	bool perspective() override;
 
 protected:
 	virtual void renderUniforms();

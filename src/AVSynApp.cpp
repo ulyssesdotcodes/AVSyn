@@ -45,10 +45,12 @@ void AVSynApp::setup()
 	getWindow()->getSignalDraw().connect([=]() { drawRender(); });
 
 	mCam = CameraPersp(getWindowWidth(), getWindowHeight(), 50);
-	mCam.setPerspective(60.0f, getWindowAspectRatio(), 5.0f, 3000.0f);
-	mEye = vec3(0.0f, 0.0f, 500.0f);
-	mCenter = vec3(0.0f);
-	mUp = vec3(0.0f, 1.0f, 0.0f);
+	//mCam = CameraPersp();
+	//mCam.setOrtho(0, getWindowWidth(), getWindowHeight(), 0, -1, 1);
+	mCam.setPerspective(60.0f, getWindowAspectRatio(), 1.0f, 3000.0f);
+	mEye = vec3(0.0, 0.0, 100.0f);
+	mCenter = vec3(0);
+	mCam.lookAt(mEye, mCenter);
 
 	vec2 paramsSize = vec2(255, 200);
 	mCurrentVisOption = 0;
@@ -57,7 +59,7 @@ void AVSynApp::setup()
 	mParamWindow = createWindow(format);
 	mParamWindow->setPos(vec2(0, 0));
 	mParamWindow->getSignalDraw().connect([=]() { drawParams(); });
-	mParams = params::InterfaceGl::create(mParamWindow, "Options", paramsSize);
+	mParams = params::InterfaceGl::create(getWindow(), "Options", paramsSize);
 
 	mParams->addParam("Rotation", &mSceneRotation);
 
@@ -106,17 +108,22 @@ void AVSynApp::keyDown(KeyEvent event) {
 void AVSynApp::update()
 {
 	mVisualization->update();
-
-	mCam.lookAt(mEye, mCenter, mUp);
 }
 
 void AVSynApp::drawRender()
 {
-	gl::enableDepthRead();
-	gl::enableDepthWrite();
+	gl::clear( Color( 0, 0, 0 ) ); 
+	if (mVisualization->perspective()) {
+		mCam.lookAt(mEye, mCenter);
 
-	gl::setMatrices(mCam);
-	gl::rotate(mSceneRotation);
+		gl::setMatrices(mCam);
+		gl::rotate(mSceneRotation);
+		gl::enableDepthRead();
+		gl::enableDepthWrite();
+	}
+	else {
+		gl::setMatricesWindow(getWindowSize());
+	}
 
 	mVisualization->draw();
 }
