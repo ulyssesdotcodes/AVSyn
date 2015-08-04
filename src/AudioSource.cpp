@@ -48,3 +48,25 @@ float AudioSource::getVolume()
 {
 	return audio::linearToDecibel(mMonitor->getVolume()) / 100.0f;
 }
+
+vector<float> AudioSource::getEqs(int binCount) {
+	vector<float> buffer = getMagSpectrum();
+	vector<float> bins(binCount);
+	int binSize = buffer.size() / binCount;
+
+	for (vector<float>::size_type i = 0; i < buffer.size(); i++) {
+		int bin = i / binSize;
+
+		// Just discard the last one if it fits perfectly.
+		if(bin < bins.size()) {
+			bins[bin] += audio::linearToDecibel(buffer[i]);
+		}
+	}
+
+	for (vector<float>::iterator it = bins.begin(); it != bins.end(); ++it) {
+		// 100.0f to account for linear to decibal
+		*it = *it / (binSize * 100.0f);
+	}
+
+	return bins;
+}

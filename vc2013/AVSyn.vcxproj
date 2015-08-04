@@ -191,7 +191,6 @@
   <ItemGroup>
     <ClCompile Include="..\src\AudioShaderVisualization.cpp" />
     <ClCompile Include="..\src\AudioSource.cpp" />
-    <ClCompile Include="..\src\AudioUtils.cpp" />
     <ClCompile Include="..\src\AVSynApp.cpp" />
     <ClCompile Include="..\src\DotsVisualization.cpp" />
     <ClCompile Include="..\src\EQPointCloud.cpp" />
@@ -201,7 +200,6 @@
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\src\AudioShaderVisualization.h" />
     <ClInclude Include="..\src\AudioSource.h" />
-    <ClInclude Include="..\src\AudioUtils.h" />
     <ClInclude Include="..\src\DotsVisualization.h" />
     <ClInclude Include="..\src\EQPointCloud.h" />
     <ClInclude Include="..\src\ShaderVisualization.h" />
@@ -209,7 +207,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\assets\circular_fft.frag" />
+    <None Include="..\assets\color.frag" />
     <None Include="..\assets\dots.frag" />
+    <None Include="..\assets\eq_pointcloud.vert" />
     <None Include="..\assets\passthru.vert" />
     <None Include="..\assets\simple.frag" />
   </ItemGroup>

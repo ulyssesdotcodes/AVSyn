@@ -33,9 +33,6 @@
     <ClCompile Include="..\src\AudioSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\AudioUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\DotsVisualization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,9 +54,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Visualization.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\AudioUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\DotsVisualization.h">
@@ -88,6 +82,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\assets\dots.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\eq_pointcloud.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\color.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

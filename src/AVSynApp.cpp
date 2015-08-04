@@ -92,6 +92,7 @@ void AVSynApp::setup()
 		[=](int ind) {
 			mCurrentVisOption = ind;
 			mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
+			mVisualization->switchCamera(mCam);
 		},
 		[=]() {
 			return mCurrentVisOption;
@@ -114,8 +115,6 @@ void AVSynApp::drawRender()
 {
 	gl::clear( Color( 0, 0, 0 ) ); 
 	if (mVisualization->perspective()) {
-		mCam.lookAt(mEye, mCenter);
-
 		gl::setMatrices(mCam);
 		gl::rotate(mSceneRotation);
 		gl::enableDepthRead();

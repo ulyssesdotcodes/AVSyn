@@ -6,13 +6,15 @@
 #include <vector>
 
 using namespace ci;
+using namespace std;
 
 class AudioSource {
 public:
 	void setup();
-	std::vector<float> getMagSpectrum();
+	vector<float> getMagSpectrum();
 	gl::TextureRef getMagSpectrumTexture();
 	float getVolume();
+	vector<float> getEqs(int binCount);
 
 private:
 	audio::InputDeviceNodeRef mInputNode;
