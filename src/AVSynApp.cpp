@@ -4,11 +4,12 @@
 #include "cinder\params\Params.h"
 #include "cinder\Camera.h"
 #include "boost\range\adaptor\map.hpp"
+#include "Visualization.h"
 #include "AudioShaderVisualization.h"
 #include "ShaderVisualization.h"
 #include "DotsVisualization.h"
 #include "EQPointCloud.h"
-#include "Visualization.h"
+#include "FlockingVisualization.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -85,8 +86,13 @@ void AVSynApp::setup()
 	mVisualizations.insert(make_pair("EQPointCloud", eqPointCloud));
 	mVisualizationOptions.push_back("EQPointCloud");
 
+	auto *flocking = new FlockingVisualization();
+	flocking->setup(mAudioSource);
+	mVisualizations.insert(make_pair("Flocking", flocking));
+	mVisualizationOptions.push_back("Flocking");
+
 	mCurrentVisOption = mVisualizations.size() - 1;
-	mVisualization = eqPointCloud;
+	mVisualization = flocking;
 
 	mParams->addParam("Visualizations", mVisualizationOptions, 
 		[=](int ind) {

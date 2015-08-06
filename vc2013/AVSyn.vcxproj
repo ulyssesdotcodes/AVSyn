@@ -194,6 +194,8 @@
     <ClCompile Include="..\src\AVSynApp.cpp" />
     <ClCompile Include="..\src\DotsVisualization.cpp" />
     <ClCompile Include="..\src\EQPointCloud.cpp" />
+    <ClCompile Include="..\src\FlockingVisualization.cpp" />
+    <ClCompile Include="..\src\PingPongFbo.cpp" />
     <ClCompile Include="..\src\ShaderVisualization.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +204,8 @@
     <ClInclude Include="..\src\AudioSource.h" />
     <ClInclude Include="..\src\DotsVisualization.h" />
     <ClInclude Include="..\src\EQPointCloud.h" />
+    <ClInclude Include="..\src\FlockingVisualization.h" />
+    <ClInclude Include="..\src\PingPongFBO.h" />
     <ClInclude Include="..\src\ShaderVisualization.h" />
     <ClInclude Include="..\src\Visualization.h" />
   </ItemGroup>
@@ -210,8 +214,12 @@
     <None Include="..\assets\color.frag" />
     <None Include="..\assets\dots.frag" />
     <None Include="..\assets\eq_pointcloud.vert" />
+    <None Include="..\assets\flocking.vert" />
+    <None Include="..\assets\flocking_update.frag" />
     <None Include="..\assets\passthru.vert" />
+    <None Include="..\assets\point_circle.frag" />
     <None Include="..\assets\simple.frag" />
+    <None Include="..\assets\velocity.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

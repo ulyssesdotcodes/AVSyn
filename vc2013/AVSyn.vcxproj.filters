@@ -42,6 +42,12 @@
     <ClCompile Include="..\src\EQPointCloud.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\PingPongFbo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\FlockingVisualization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -63,6 +69,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\EQPointCloud.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\FlockingVisualization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\PingPongFBO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -88,6 +100,18 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\assets\color.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\velocity.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\flocking_update.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\point_circle.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\flocking.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
