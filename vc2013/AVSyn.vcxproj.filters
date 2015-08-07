@@ -114,5 +114,8 @@
     <None Include="..\assets\flocking.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\assets\flocking_update.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

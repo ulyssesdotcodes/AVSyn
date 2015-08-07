@@ -216,6 +216,7 @@
     <None Include="..\assets\eq_pointcloud.vert" />
     <None Include="..\assets\flocking.vert" />
     <None Include="..\assets\flocking_update.frag" />
+    <None Include="..\assets\flocking_update.vert" />
     <None Include="..\assets\passthru.vert" />
     <None Include="..\assets\point_circle.frag" />
     <None Include="..\assets\simple.frag" />

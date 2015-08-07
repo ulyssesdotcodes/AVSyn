@@ -36,7 +36,7 @@ PingPongFBO::PingPongFBO(vector<Surface32f>& surfaces) : mCurrentFbo(0)
 	for (int i = 0; i < mAttachments.size(); ++i) {
 		gl::drawBuffer(GL_COLOR_ATTACHMENT0 + i);
 		gl::ScopedTextureBind tex(mTextures[i]);
-		gl::draw(tex, getBounds(), Rectf(getBounds()));
+		gl::draw(mTextures[i], Rectf(getBounds()));
 	}
 
 	mFbos[!mCurrentFbo] = mFbos[mCurrentFbo];
@@ -54,7 +54,7 @@ void PingPongFBO::bindUpdate()
 	glDrawBuffers(mAttachments.size(), &mAttachments[0]);
 
 	for (int i = 0; i < mAttachments.size(); ++i) {
-		mFbos[!mCurrentFbo]->bindTexture(i, i);
+		mFbos[!mCurrentFbo]->bindTexture(i, GL_COLOR_ATTACHMENT0 + i);
 	}
 }
 

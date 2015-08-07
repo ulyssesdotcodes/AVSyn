@@ -17,7 +17,7 @@ vec3 hsv2rgb(vec3 c) {
 void main() {
 	vec4 pos = texture2D(uPositionTexture, texCoord);
 	//color = vec3(1.0, 1.0, 1.0);
-	vec4 mvPosition = vec4(pos.xyz, 1.0);
+	vec4 mvPosition = vec4(vec3(texCoord, 0.0), 1.0);
 	//position = mvPosition;
 	//pointSize = 500.0 / length(mvPosition.xyz);
 	vColor = vec3(1.0);
