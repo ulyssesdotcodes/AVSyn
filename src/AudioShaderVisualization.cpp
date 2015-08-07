@@ -3,7 +3,7 @@
 #include "cinder\gl\gl.h"
 #include "cinder\app\App.h"
 
-void AudioShaderVisualization::setup(AudioSource audioSource, const fs::path &fragmentShader)
+void AudioShaderVisualization::setup(AudioSource* audioSource, const fs::path &fragmentShader)
 {
 	ShaderVisualization::setup(fragmentShader);
 	mAudioSource = audioSource;
@@ -11,7 +11,7 @@ void AudioShaderVisualization::setup(AudioSource audioSource, const fs::path &fr
 
 void AudioShaderVisualization::update()
 {
-	mTexture = mAudioSource.getMagSpectrumTexture();
+	mTexture = mAudioSource->getMagSpectrumTexture();
 }
 
 void AudioShaderVisualization::renderUniforms()

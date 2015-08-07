@@ -48,6 +48,9 @@
     <ClCompile Include="..\src\FlockingVisualization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\DeltaSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -75,6 +78,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\PingPongFBO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DeltaSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -105,9 +111,6 @@
     <None Include="..\assets\velocity.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\assets\flocking_update.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\assets\point_circle.frag">
       <Filter>Shaders</Filter>
     </None>
@@ -115,6 +118,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\assets\flocking_update.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\old_flocking_update.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

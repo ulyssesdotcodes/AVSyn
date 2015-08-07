@@ -4,7 +4,7 @@
 
 class DotsVisualization : public ShaderVisualization {
 public:
-	void setup(AudioSource audioSource);
+	void setup(AudioSource* audioSource);
 
 protected:
 	virtual void renderUniforms() override;
@@ -12,5 +12,5 @@ protected:
 private:
 	int mBinCount;
 	float mAccumulatedLoudness;
-	AudioSource mAudioSource;
+	AudioSource* mAudioSource;
 };

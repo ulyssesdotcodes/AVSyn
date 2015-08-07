@@ -4,12 +4,15 @@
 #include "cinder\params\Params.h"
 #include "cinder\Camera.h"
 #include "boost\range\adaptor\map.hpp"
+
 #include "Visualization.h"
 #include "AudioShaderVisualization.h"
 #include "ShaderVisualization.h"
 #include "DotsVisualization.h"
 #include "EQPointCloud.h"
 #include "FlockingVisualization.h"
+
+#include "DeltaSource.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -34,7 +37,8 @@ private:
 	vec3 mUp;
 
 	Visualization *mVisualization;
-	AudioSource mAudioSource;
+	AudioSource* mAudioSource;
+	DeltaSource* mDeltaSource;
 
 	map<string, Visualization*> mVisualizations;
 	vector<string> mVisualizationOptions;
@@ -57,14 +61,16 @@ void AVSynApp::setup()
 	mCurrentVisOption = 0;
 	auto format = Window::Format();
 	format.setSize(paramsSize + vec2(40, 40));
-	mParamWindow = createWindow(format);
-	mParamWindow->setPos(vec2(0, 0));
-	mParamWindow->getSignalDraw().connect([=]() { drawParams(); });
-	mParams = params::InterfaceGl::create(getWindow(), "Options", paramsSize);
+	//mParamWindow = createWindow(format);
+	//mParamWindow->setPos(vec2(0, 0));
+	//mParamWindow->getSignalDraw().connect([=]() { drawParams(); });
+	//mParams = params::InterfaceGl::create(getWindow(), "Options", paramsSize);
 
-	mParams->addParam("Rotation", &mSceneRotation);
+	//mParams->addParam("Rotation", &mSceneRotation);
 
-	mAudioSource.setup();
+	mAudioSource = new AudioSource();
+	mDeltaSource = new DeltaSource();
+	mAudioSource->setup();
 
 	AudioShaderVisualization *simpleVis = new AudioShaderVisualization();
 	simpleVis->setup(mAudioSource, "simple.frag");
@@ -87,23 +93,23 @@ void AVSynApp::setup()
 	mVisualizationOptions.push_back("EQPointCloud");
 
 	auto *flocking = new FlockingVisualization();
-	flocking->setup(mAudioSource);
+	flocking->setup(mAudioSource, mDeltaSource);
 	mVisualizations.insert(make_pair("Flocking", flocking));
 	mVisualizationOptions.push_back("Flocking");
 
 	mCurrentVisOption = mVisualizations.size() - 1;
 	mVisualization = flocking;
 
-	mParams->addParam("Visualizations", mVisualizationOptions, 
-		[=](int ind) {
-			mCurrentVisOption = ind;
-			mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
-			mVisualization->switchCamera(mCam);
-		},
-		[=]() {
-			return mCurrentVisOption;
-		}
-		);
+	//mParams->addParam("Visualizations", mVisualizationOptions, 
+	//	[=](int ind) {
+	//		mCurrentVisOption = ind;
+	//		mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
+	//		mVisualization->switchCamera(mCam);
+	//	},
+	//	[=]() {
+	//		return mCurrentVisOption;
+	//	}
+	//	);
 }
 
 void AVSynApp::keyDown(KeyEvent event) {
@@ -114,6 +120,7 @@ void AVSynApp::keyDown(KeyEvent event) {
 
 void AVSynApp::update()
 {
+	mDeltaSource->update();
 	mVisualization->update();
 }
 

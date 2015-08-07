@@ -1,5 +1,4 @@
-in float iPointSize;
-in float iHue;
+in float hue;
 
 out vec4 fragColor;
 

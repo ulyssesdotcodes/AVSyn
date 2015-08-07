@@ -12,7 +12,7 @@ struct EQ {
 class EQPointCloud : public Visualization {
 
 public:
-	virtual void setup(AudioSource audioSource);
+	virtual void setup(AudioSource* audioSource);
 	virtual void update();
 	virtual void draw();
 	virtual void switchCamera(CameraPersp cam);
@@ -24,7 +24,7 @@ private:
 	gl::VboRef		mParticleBuffer[1];
 	gl::BatchRef mBatch;
 
-	AudioSource mAudioSource;
+	AudioSource* mAudioSource;
 
 	vector<EQ> mEqs;
 	vec3 mEqVolumes;

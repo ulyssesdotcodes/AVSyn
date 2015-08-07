@@ -192,6 +192,7 @@
     <ClCompile Include="..\src\AudioShaderVisualization.cpp" />
     <ClCompile Include="..\src\AudioSource.cpp" />
     <ClCompile Include="..\src\AVSynApp.cpp" />
+    <ClCompile Include="..\src\DeltaSource.cpp" />
     <ClCompile Include="..\src\DotsVisualization.cpp" />
     <ClCompile Include="..\src\EQPointCloud.cpp" />
     <ClCompile Include="..\src\FlockingVisualization.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\src\AudioShaderVisualization.h" />
     <ClInclude Include="..\src\AudioSource.h" />
+    <ClInclude Include="..\src\DeltaSource.h" />
     <ClInclude Include="..\src\DotsVisualization.h" />
     <ClInclude Include="..\src\EQPointCloud.h" />
     <ClInclude Include="..\src\FlockingVisualization.h" />
@@ -215,7 +217,7 @@
     <None Include="..\assets\dots.frag" />
     <None Include="..\assets\eq_pointcloud.vert" />
     <None Include="..\assets\flocking.vert" />
-    <None Include="..\assets\flocking_update.frag" />
+    <None Include="..\assets\old_flocking_update.frag" />
     <None Include="..\assets\flocking_update.vert" />
     <None Include="..\assets\passthru.vert" />
     <None Include="..\assets\point_circle.frag" />

@@ -1,12 +1,12 @@
-uniform mat4 ciModelViewProjection;
-uniform sampler2D uPositionTexture;
+#version 330 core
 
-in vec4 ciPosition;
-in vec2 texCoord;
+uniform mat4 ciModelViewProjection;
+
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 velocity;
 
 //out float pointSize;
-out vec3 vColor;
-//out vec4 position;
+out float hue;
 
 vec3 hsv2rgb(vec3 c) {
   vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
@@ -15,13 +15,11 @@ vec3 hsv2rgb(vec3 c) {
 }
 
 void main() {
-	vec4 pos = texture2D(uPositionTexture, texCoord);
 	//color = vec3(1.0, 1.0, 1.0);
-	vec4 mvPosition = vec4(vec3(texCoord, 0.0), 1.0);
+	vec4 mvPosition = vec4(position, 1.0);
 	//position = mvPosition;
 	//pointSize = 500.0 / length(mvPosition.xyz);
-	vColor = vec3(1.0);
-	//pointSize = 1.0;
-	gl_PointSize = 1.0;
+	//vColor = vec3(1.0);
+	hue = position.x;
 	gl_Position = ciModelViewProjection * mvPosition;
 }

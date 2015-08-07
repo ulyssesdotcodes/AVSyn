@@ -11,7 +11,7 @@ using namespace ci;
 const int NUM_PARTICLES = 3000000;
 const int SIZE = 100;
 
-void EQPointCloud::setup(AudioSource audioSource)
+void EQPointCloud::setup(AudioSource* audioSource)
 {
 	mAudioSource = audioSource;
 
@@ -65,7 +65,7 @@ void EQPointCloud::update()
 
 	mParticleBuffer[0]->copyData(mParticles.size() * sizeof(vec3), mParticles.data());
 
-	auto eqVolumes = mAudioSource.getEqs(3);
+	auto eqVolumes = mAudioSource->getEqs(3);
 	mEqVolumes = vec3(eqVolumes.at(0), eqVolumes.at(1), eqVolumes.at(2));
 }
 

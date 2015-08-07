@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void DotsVisualization::setup(AudioSource audioSource)
+void DotsVisualization::setup(AudioSource* audioSource)
 {
 	ShaderVisualization::setup("dots.frag");
 
@@ -17,9 +17,9 @@ void DotsVisualization::renderUniforms()
 {
 	ShaderVisualization::renderUniforms();
 
-	mAccumulatedLoudness += mAudioSource.getVolume();
+	mAccumulatedLoudness += mAudioSource->getVolume();
 
-	vector<float> eqs = mAudioSource.getEqs(mBinCount);
+	vector<float> eqs = mAudioSource->getEqs(mBinCount);
 
 	mShader->uniform("eqs", &eqs[0], mBinCount);
 	mShader->uniform("accumulatedLoudness", mAccumulatedLoudness);

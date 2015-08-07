@@ -7,11 +7,13 @@ uniform float beat;
 uniform float accumulatedLoudness;
 uniform float roamingDistance;
 uniform float speed;
-uniform vec3 eqs;
+uniform float eqs[3];
 uniform vec2 resolution;
 
 uniform sampler2D uPositionTexture;
 uniform sampler2D uVelocityTexture;
+
+#version 330 core
 
 const float PI = 3.141592654;
 const float PI_2 = PI * 2.0;
@@ -24,8 +26,8 @@ float alignmentThresh = 0.65;
 const float UPPER_BOUNDS = 400.0;
 const float LOWER_BOUNDS = -UPPER_BOUNDS;
 
-out vec4 oPosition;
-out vec4 oVelocity;
+out vec4 tf_position;
+out vec4 tf_velocity;
 
 //vec3 calculatePosition(vec3 position, vec3 velocity) {
 //  float delt;

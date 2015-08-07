@@ -1,7 +1,8 @@
+#include "FlockingVisualization.h"
+
 #include "cinder\app\App.h"
 #include "cinder\Rand.h"
 #include "cinder\Camera.h"
-#include "FlockingVisualization.h"
 
 using namespace ci;
 
@@ -11,19 +12,29 @@ const int NUM_PARTICLES = BUFFER_WIDTH * BUFFER_WIDTH;
 
 FlockingVisualization::FlockingVisualization()
 {
+	mSeparationDistance = 8.0;
+	mAlignmentDistance = 8.0;
+	mCohesionDistance = 8.0;
+
+	mRoamingDistance = 64.0f;
+
+	mAccumulatedLoudness = 0.0f;
+
+	mSpeed = 2.0f;
 }
 
-void FlockingVisualization::setup(AudioSource audioSource)
+void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSource)
 {
 	mAudioSource = audioSource;
+	mDeltaSource = deltaSource;
 
 	mStep = true;
 	mIteratonIndex = 0;
 
 
 	vector<string> feedbackVaryings({
-		"oPosition",
-		"oVelocity"
+		"tf_position",
+		"tf_velocity"
 	});
 	gl::GlslProg::Format updateFormat;
 	updateFormat.vertex(app::loadAsset("flocking_update.vert"))
@@ -34,12 +45,12 @@ void FlockingVisualization::setup(AudioSource audioSource)
 
 	gl::GlslProg::Format renderFormat;
 	renderFormat.vertex(app::loadAsset("flocking.vert"))
-		.fragment(app::loadAsset("color.frag"))
-		.attribLocation("texCoord", 0);
+		.fragment(app::loadAsset("point_circle.frag"));
+
 	mRenderShader = gl::GlslProg::create(renderFormat);
 
 	array<vec4, NUM_PARTICLES> positions;
-	array<vec3, NUM_PARTICLES> velocities;
+	array<vec4, NUM_PARTICLES> velocities;
 
 
 	for (int i = 0; i < NUM_PARTICLES; ++i) {
@@ -47,7 +58,7 @@ void FlockingVisualization::setup(AudioSource audioSource)
 			SIZE * (Rand::randFloat() - 0.5f),
 			SIZE * (Rand::randFloat() - 0.5f), 1.0);
 
-		velocities[i] = Rand::randVec3() * vec3(0.1);
+		velocities[i] = vec4(Rand::randVec3(), 1.0);
 	}
 
 	for (int i = 0; i < 2; ++i) {
@@ -61,10 +72,10 @@ void FlockingVisualization::setup(AudioSource audioSource)
 				gl::enableVertexAttribArray(0);
 			}
 
-			mVelocities[i] = gl::Vbo::create(GL_ARRAY_BUFFER, velocities.size() * sizeof(vec3), velocities.data(), GL_STATIC_DRAW);
+			mVelocities[i] = gl::Vbo::create(GL_ARRAY_BUFFER, velocities.size() * sizeof(vec4), velocities.data(), GL_STATIC_DRAW);
 			{
 				gl::ScopedBuffer scopeBuffer(mVelocities[i]);
-				gl::vertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)0);
+				gl::vertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)0);
 				gl::enableVertexAttribArray(1);
 			}
 		}
@@ -72,6 +83,8 @@ void FlockingVisualization::setup(AudioSource audioSource)
 
 	mPositionBufTex[0] = gl::BufferTexture::create(mPositions[0], GL_RGBA32F);
 	mPositionBufTex[1] = gl::BufferTexture::create(mPositions[1], GL_RGBA32F);
+	mVelocityBufTex[0] = gl::BufferTexture::create(mVelocities[0], GL_RGBA32F);
+	mVelocityBufTex[1] = gl::BufferTexture::create(mVelocities[1], GL_RGBA32F);
 }
 
 void FlockingVisualization::switchCamera(CameraPersp cam) 
@@ -130,21 +143,40 @@ void FlockingVisualization::switchCamera(CameraPersp cam)
 
 void FlockingVisualization::update()
 {
-		gl::ScopedGlslProg glsl(mUpdateShader);
-		gl::ScopedState scopeState(GL_RASTERIZER_DISCARD, true);
+	float loudness = audio::linearToDecibel(mAudioSource->getVolume()) * 0.01f;
+	mAccumulatedLoudness += loudness;
 
-		gl::ScopedVao scopedVao(mVaos[mIteratonIndex & 1]);
-		gl::ScopedTextureBind scopeTex(mPositionBufTex[mIteratonIndex & 1]->getTarget(), mPositionBufTex[mIteratonIndex & 1]->getId());
+	mUpdateShader->uniform("delta", mDeltaSource->delta());
+	mUpdateShader->uniform("separationDistance", mSeparationDistance);
+	mUpdateShader->uniform("alignmentDistance", mSeparationDistance);
+	mUpdateShader->uniform("cohesionDistance", mSeparationDistance);
+	mUpdateShader->uniform("loudness", loudness);
+	mUpdateShader->uniform("accumulatedLoudness", mAccumulatedLoudness);
+	mUpdateShader->uniform("beat", 1.0f);
+	mUpdateShader->uniform("roamingDistance", mRoamingDistance);
+	mUpdateShader->uniform("speed", mSpeed);
+	mUpdateShader->uniform("eqs", &(mAudioSource->getEqs(3))[0], 3);
 
-		mIteratonIndex++;
 
-		gl::bindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mPositions[mIteratonIndex & 1]);
-		gl::bindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, mVelocities[mIteratonIndex & 1]);
+	gl::ScopedVao scopedVao(mVaos[mIteratonIndex & 1]);
+	gl::ScopedTextureBind scopeTexPos(mPositionBufTex[mIteratonIndex & 1]->getTarget(), mPositionBufTex[mIteratonIndex & 1]->getId(), 0);
+	gl::ScopedTextureBind scopeTexVel(mVelocityBufTex[mIteratonIndex & 1]->getTarget(), mVelocityBufTex[mIteratonIndex & 1]->getId(), 1);
 
-		gl::beginTransformFeedback(GL_POINTS);
-		gl::drawArrays(GL_POINTS, 0, NUM_PARTICLES);
+	mUpdateShader->uniform("tex_position", 0);
+	mUpdateShader->uniform("tex_velocity", 1);
 
-		gl::endTransformFeedback();
+	gl::ScopedGlslProg glsl(mUpdateShader);
+	gl::ScopedState scopeState(GL_RASTERIZER_DISCARD, true);
+
+	mIteratonIndex++;
+
+	gl::bindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mPositions[mIteratonIndex & 1]);
+	gl::bindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, mVelocities[mIteratonIndex & 1]);
+
+	gl::beginTransformFeedback(GL_POINTS);
+	gl::drawArrays(GL_POINTS, 0, NUM_PARTICLES);
+
+	gl::endTransformFeedback();
 
 
 		//CameraPersp cam((int)mParticlesFbo.getBounds().getWidth(), (int)mParticlesFbo.getBounds().getHeight(), 60);
@@ -172,6 +204,7 @@ void FlockingVisualization::update()
 
 void FlockingVisualization::draw()
 {
+	gl::clear(Color(0, 0, 0));
 	gl::ScopedVao scopedVao(mVaos[mIteratonIndex & 1]);
 	gl::ScopedGlslProg glsl(mRenderShader);
 	gl::setDefaultShaderVars();
