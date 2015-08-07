@@ -1,8 +1,8 @@
 uniform mat4 ciModelViewProjection;
-uniform sampler2D iPositionTexture;
+uniform sampler2D uPositionTexture;
 
 in vec4 ciPosition;
-in vec2 reference;
+in vec2 texCoord;
 
 //out float pointSize;
 out vec3 vColor;
@@ -15,7 +15,7 @@ vec3 hsv2rgb(vec3 c) {
 }
 
 void main() {
-	vec4 pos = texture2D(iPositionTexture, reference);
+	vec4 pos = texture2D(uPositionTexture, texCoord);
 	//color = vec3(1.0, 1.0, 1.0);
 	vec4 mvPosition = vec4(pos.xyz, 1.0);
 	//position = mvPosition;

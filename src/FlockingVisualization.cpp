@@ -27,7 +27,6 @@ void FlockingVisualization::setup(AudioSource audioSource)
 
 	mParticlesBatch = gl::Batch::create(geom::Rect(mParticlesFbo.getBounds()), mUpdateShader);
 	mRenderBatch = gl::Batch::create(mVboMesh, mRenderShader);
-
 }
 
 void FlockingVisualization::switchCamera(CameraPersp cam) 
@@ -66,7 +65,7 @@ void FlockingVisualization::setupVbo()
 	vector<vec2> texCoords(NUM_PARTICLES);
 	vector<_Uint32t> indices(NUM_PARTICLES);
 	geom::BufferLayout layout;
-	glPointSize(1.0f);
+	layout.append(geom::TEX_COORD_0, 2, 0, 0);
 
 	for (int x = 0; x < BUFFER_WIDTH; ++x) {
 		for (int y = 0; y < BUFFER_WIDTH; ++y) {
@@ -76,15 +75,14 @@ void FlockingVisualization::setupVbo()
 	}
 
 	gl::VboRef indicesVbo = gl::Vbo::create(GL_ARRAY_BUFFER, indices.size(), indices.data());
-	gl::VboRef vbo = gl::Vbo::create(GL_ARRAY_BUFFER, texCoords.size() * sizeof(vec2), texCoords.data());
-	mVboMesh = gl::VboMesh::create(NUM_PARTICLES, GL_POINTS, { {layout, vbo} }, NUM_PARTICLES, GL_UNSIGNED_SHORT, indicesVbo);
-
+	auto texCoordsVbo = gl::Vbo::create(GL_ARRAY_BUFFER, texCoords.size() * sizeof(vec2), texCoords.data());
+	mVboMesh = gl::VboMesh::create(texCoords.size(), GL_POINTS, { {layout, texCoordsVbo} });
 }
 
 
 void FlockingVisualization::update()
 {
-	if (mStep) {
+	if (true) {
 		CameraPersp cam((int)mParticlesFbo.getBounds().getWidth(), (int)mParticlesFbo.getBounds().getHeight(), 60);
 		cam.setPerspective(60, 1.0f, BUFFER_WIDTH, BUFFER_WIDTH);
 
@@ -100,7 +98,6 @@ void FlockingVisualization::update()
 		glBindFragDataLocation(mUpdateShader->getHandle(), 0, "oPosition");
 		glBindFragDataLocation(mUpdateShader->getHandle(), 1, "oVelocity");
 
-
 		mUpdateShader->uniform("positions", 0);
 		mUpdateShader->uniform("velocities", 1);
 
@@ -113,7 +110,7 @@ void FlockingVisualization::update()
 void FlockingVisualization::draw()
 {
 	gl::ScopedTextureBind tex(mParticlesFbo.texture(0), 0);
-	mRenderShader->uniform("uPositionTexture", 0);
+	mRenderShader->uniform("iPositionTexture", 0);
 
 	mRenderBatch->draw();
 }

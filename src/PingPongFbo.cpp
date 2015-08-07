@@ -17,9 +17,6 @@ PingPongFBO::PingPongFBO(vector<Surface32f>& surfaces) : mCurrentFbo(0)
 		gl::Texture::Format texFmt;
 		texFmt.internalFormat(GL_RGBA32F_ARB);
 		gl::TextureRef tex = gl::Texture::create(s, texFmt);
-		tex->setWrap(GL_REPEAT, GL_REPEAT);
-		tex->setMinFilter(GL_NEAREST);
-		tex->setMagFilter(GL_NEAREST);
 		mTextures.push_back(tex);
 		format.attachment(GL_COLOR_ATTACHMENT0 + i, tex);
 
@@ -31,20 +28,18 @@ PingPongFBO::PingPongFBO(vector<Surface32f>& surfaces) : mCurrentFbo(0)
 
 	gl::ScopedFramebuffer sfb(mFbos[mCurrentFbo]);
 	gl::setMatricesWindow(getSize(), false);
-	gl::pushViewport(getBounds().getSize());
+	gl::ScopedViewport viewportScope(ivec2(0), getSize());
+	gl::ScopedMatrices matScope();
+	gl::setMatricesWindow(getSize());
 	gl::clear();
 
 	for (int i = 0; i < mAttachments.size(); ++i) {
-		glDrawBuffer(GL_COLOR_ATTACHMENT0 + i);
-
-		mTextures[i]->bind();
-		gl::draw(mTextures[i], getBounds(), Rectf(getBounds()));
-		mTextures[i]->unbind();
+		gl::drawBuffer(GL_COLOR_ATTACHMENT0 + i);
+		gl::ScopedTextureBind tex(mTextures[i]);
+		gl::draw(tex, getBounds(), Rectf(getBounds()));
 	}
 
 	mFbos[!mCurrentFbo] = mFbos[mCurrentFbo];
-
-	gl::popViewport();
 }
 
 void PingPongFBO::addTexture(const Surface32f &surface) {
