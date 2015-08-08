@@ -1,7 +1,8 @@
 #version 330 core
 
-layout (location = 0) in vec4 iPosition;	// POSITION_INDEX
-layout (location = 1) in vec4 iVelocity;			// VELOCITY_INDEX
+layout (location = 0) in vec3 iPosition;	// POSITION_INDEX
+layout (location = 1) in vec3 iVelocity;			// VELOCITY_INDEX
+layout (location = 2) in vec3 iColor;
 
 uniform samplerBuffer tex_position;
 uniform samplerBuffer tex_velocity;
@@ -19,8 +20,9 @@ uniform float roamingDistance;
 uniform float speed;
 uniform float eqs[3];
 
-out vec4 tf_position;
-out vec4 tf_velocity;
+out vec3 tf_position;
+out vec3 tf_velocity;
+out vec3 tf_color;
 
 const float PI = 3.141592654;
 const float PI_2 = PI * 2.0;
@@ -33,7 +35,23 @@ float alignmentThresh = 0.65;
 const float UPPER_BOUNDS = 400.0;
 const float LOWER_BOUNDS = -UPPER_BOUNDS;
 
-vec3 calculatePosition(vec4 position, vec3 velocity) {
+vec3 hsv2rgb(vec3 c) {
+  vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+  vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+  return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
+vec3 rgb2hsv(vec3 c) {
+  vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+  vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+  vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+
+  float d = q.x - min(q.w, q.y);
+  float e = 1.0e-10;
+  return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+}
+
+vec3 calculatePosition(vec3 position, vec3 velocity) {
   float delt;
   if(delta > 1.0) {
     delt = 1.0;
@@ -44,11 +62,15 @@ vec3 calculatePosition(vec4 position, vec3 velocity) {
   return position.xyz + velocity * delt * 12.0;
 }
 
-vec4 calculateVelocity(vec4 position, vec3 velocity) {
+vec4 calculateVelocity(vec3 position, vec3 velocity, float hue) {
   float delt = min(1.0, delta);
-  float cd = cohesionDistance * (0.6 + 0.2 * sin(accumulatedLoudness * 0.25) + eqs[2]);
-  float sd = separationDistance * (0.4 + cos(accumulatedLoudness * 0.25) + eqs[1]);
-  float ad = alignmentDistance * (0.6 + eqs[0]);
+  //float cd = cohesionDistance * (0.6 + 0.2 * sin(accumulatedLoudness * 0.25) + eqs[2]);
+  //float sd = separationDistance * (0.4 + cos(accumulatedLoudness * 0.25) + eqs[1]);
+  //float ad = alignmentDistance * (0.6 + eqs[0]);
+
+  float cd = cohesionDistance;
+  float sd = separationDistance;
+  float ad = alignmentDistance;
 
   float zoneRadius = sd + ad + cd;
   separationThresh = sd / zoneRadius;
@@ -85,7 +107,7 @@ vec4 calculateVelocity(vec4 position, vec3 velocity) {
     velocity = reflect(velocity, norm);
   }
 
-  //velocity -= normalize(dir) * delt * 2.0;
+  velocity -= normalize(dir) * delt * 2.0;
 
   float separationCount, alignmentCount, cohesionCount;
 
@@ -104,7 +126,8 @@ vec4 calculateVelocity(vec4 position, vec3 velocity) {
 	  }
       distSquared = dist * dist;
 
-      float f = loudness * 0.25;
+      //float f = loudness * 0.25;
+	  float f = 0.25;
 
       if(dist > 0.0 && distSquared < zoneRadiusSquared) {
         percent = distSquared / zoneRadiusSquared;
@@ -153,10 +176,10 @@ vec4 calculateVelocity(vec4 position, vec3 velocity) {
 
 
   if(zoneCount == 0.0) {
-    selfHueVelocity = position.w;
+    selfHueVelocity = hue;
   }
   else {
-    selfHueVelocity =  mix(position.w, selfHueVelocity, delt * 10.0);
+    selfHueVelocity =  mix(hue, selfHueVelocity, delt * 10.0);
   }
 
   if(length(velocity) > speed) {
@@ -167,8 +190,10 @@ vec4 calculateVelocity(vec4 position, vec3 velocity) {
 }
 
 void main() {
-	vec4 velocity = calculateVelocity(iPosition, iVelocity.xyz);
+	vec3 color = rgb2hsv(iColor);
+	vec4 velocity = calculateVelocity(iPosition, iVelocity.xyz, color.x);
 	vec3 position = calculatePosition(iPosition, iVelocity.xyz);
-	tf_position = vec4(position, velocity.w);
-	tf_velocity = velocity;
+	tf_position = position;
+	tf_velocity = velocity.xyz;
+	tf_color = hsv2rgb(vec3(velocity.w, 1.0, 1.0));
 }

@@ -61,12 +61,12 @@ void AVSynApp::setup()
 	mCurrentVisOption = 0;
 	auto format = Window::Format();
 	format.setSize(paramsSize + vec2(40, 40));
-	//mParamWindow = createWindow(format);
-	//mParamWindow->setPos(vec2(0, 0));
-	//mParamWindow->getSignalDraw().connect([=]() { drawParams(); });
-	//mParams = params::InterfaceGl::create(getWindow(), "Options", paramsSize);
+	mParamWindow = createWindow(format);
+	mParamWindow->setPos(vec2(0, 0));
+	mParamWindow->getSignalDraw().connect([=]() { drawParams(); });
+	mParams = params::InterfaceGl::create(getWindow(), "Options", paramsSize);
 
-	//mParams->addParam("Rotation", &mSceneRotation);
+	mParams->addParam("Rotation", &mSceneRotation);
 
 	mAudioSource = new AudioSource();
 	mDeltaSource = new DeltaSource();
@@ -100,16 +100,16 @@ void AVSynApp::setup()
 	mCurrentVisOption = mVisualizations.size() - 1;
 	mVisualization = flocking;
 
-	//mParams->addParam("Visualizations", mVisualizationOptions, 
-	//	[=](int ind) {
-	//		mCurrentVisOption = ind;
-	//		mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
-	//		mVisualization->switchCamera(mCam);
-	//	},
-	//	[=]() {
-	//		return mCurrentVisOption;
-	//	}
-	//	);
+	mParams->addParam("Visualizations", mVisualizationOptions, 
+		[=](int ind) {
+			mCurrentVisOption = ind;
+			mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
+			mVisualization->switchCamera(mCam);
+		},
+		[=]() {
+			return mCurrentVisOption;
+		}
+		);
 }
 
 void AVSynApp::keyDown(KeyEvent event) {
@@ -148,6 +148,6 @@ void AVSynApp::drawParams()
 }
 
 CINDER_APP(AVSynApp, RendererGl(), [&](App::Settings *settings) {
-//settings->setFullScreen(true, FullScreenOptions());
+	settings->setFullScreen(true, FullScreenOptions());
 	settings->setFrameRate(60.0f);
 })

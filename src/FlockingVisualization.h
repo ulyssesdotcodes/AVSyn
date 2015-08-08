@@ -30,7 +30,7 @@ private:
 	PingPongFBO mParticlesFbo;
 
 	array<gl::VaoRef, 2> mVaos;
-	array<gl::VboRef, 2> mPositions, mVelocities;
+	array<gl::VboRef, 2> mPositions, mVelocities, mColors;
 	array<gl::BufferTextureRef, 2> mPositionBufTex;
 	array<gl::BufferTextureRef, 2> mVelocityBufTex;
 	//gl::VboMeshRef mVboMesh;

@@ -12,15 +12,15 @@ const int NUM_PARTICLES = BUFFER_WIDTH * BUFFER_WIDTH;
 
 FlockingVisualization::FlockingVisualization()
 {
-	mSeparationDistance = 8.0;
-	mAlignmentDistance = 8.0;
-	mCohesionDistance = 8.0;
+	mSeparationDistance = 6.0;
+	mAlignmentDistance = 12.0;
+	mCohesionDistance = 6.0;
 
-	mRoamingDistance = 64.0f;
+	mRoamingDistance = 40.0f;
 
 	mAccumulatedLoudness = 0.0f;
 
-	mSpeed = 2.0f;
+	mSpeed = 8.0f;
 }
 
 void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSource)
@@ -34,7 +34,8 @@ void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSo
 
 	vector<string> feedbackVaryings({
 		"tf_position",
-		"tf_velocity"
+		"tf_velocity",
+		"tf_color"
 	});
 	gl::GlslProg::Format updateFormat;
 	updateFormat.vertex(app::loadAsset("flocking_update.vert"))
@@ -49,42 +50,53 @@ void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSo
 
 	mRenderShader = gl::GlslProg::create(renderFormat);
 
-	array<vec4, NUM_PARTICLES> positions;
-	array<vec4, NUM_PARTICLES> velocities;
+	array<vec3, NUM_PARTICLES> positions;
+	array<vec3, NUM_PARTICLES> velocities;
+	array<vec3, NUM_PARTICLES> colors;
 
 
 	for (int i = 0; i < NUM_PARTICLES; ++i) {
-		positions[i] = vec4(SIZE * (Rand::randFloat() - 0.5f),
+		positions[i] = vec3(SIZE * (Rand::randFloat() - 0.5f),
 			SIZE * (Rand::randFloat() - 0.5f),
-			SIZE * (Rand::randFloat() - 0.5f), 1.0);
+			SIZE * (Rand::randFloat() - 0.5f));
 
-		velocities[i] = vec4(Rand::randVec3(), 1.0);
+		velocities[i] = Rand::randVec3();
+		colors[i] = vec3(0, 0, 0);
 	}
+
+	//TODO: Add color bound attrib?
 
 	for (int i = 0; i < 2; ++i) {
 		mVaos[i] = gl::Vao::create();
 		gl::ScopedVao scopeVao(mVaos[i]);
 		{
-			mPositions[i] = gl::Vbo::create(GL_ARRAY_BUFFER, positions.size() * sizeof(vec4), positions.data(), GL_STATIC_DRAW);
+			mPositions[i] = gl::Vbo::create(GL_ARRAY_BUFFER, positions.size() * sizeof(vec3), positions.data(), GL_STATIC_DRAW);
 			{
 				gl::ScopedBuffer scopeBuffer(mPositions[i]);
-				gl::vertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)0);
+				gl::vertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)0);
 				gl::enableVertexAttribArray(0);
 			}
 
-			mVelocities[i] = gl::Vbo::create(GL_ARRAY_BUFFER, velocities.size() * sizeof(vec4), velocities.data(), GL_STATIC_DRAW);
+			mVelocities[i] = gl::Vbo::create(GL_ARRAY_BUFFER, velocities.size() * sizeof(vec3), velocities.data(), GL_STATIC_DRAW);
 			{
 				gl::ScopedBuffer scopeBuffer(mVelocities[i]);
-				gl::vertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)0);
+				gl::vertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)0);
 				gl::enableVertexAttribArray(1);
+			}
+
+			mColors[i] = gl::Vbo::create(GL_ARRAY_BUFFER, colors.size() * sizeof(vec3), colors.data(), GL_STATIC_DRAW);
+			{
+				gl::ScopedBuffer scopeBuffer(mColors[i]);
+				gl::vertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)0);
+				gl::enableVertexAttribArray(2);
 			}
 		}
 	}
 
-	mPositionBufTex[0] = gl::BufferTexture::create(mPositions[0], GL_RGBA32F);
-	mPositionBufTex[1] = gl::BufferTexture::create(mPositions[1], GL_RGBA32F);
-	mVelocityBufTex[0] = gl::BufferTexture::create(mVelocities[0], GL_RGBA32F);
-	mVelocityBufTex[1] = gl::BufferTexture::create(mVelocities[1], GL_RGBA32F);
+	mPositionBufTex[0] = gl::BufferTexture::create(mPositions[0], GL_RGB32F);
+	mPositionBufTex[1] = gl::BufferTexture::create(mPositions[1], GL_RGB32F);
+	mVelocityBufTex[0] = gl::BufferTexture::create(mVelocities[0], GL_RGB32F);
+	mVelocityBufTex[1] = gl::BufferTexture::create(mVelocities[1], GL_RGB32F);
 }
 
 void FlockingVisualization::switchCamera(CameraPersp cam) 
@@ -172,6 +184,7 @@ void FlockingVisualization::update()
 
 	gl::bindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, mPositions[mIteratonIndex & 1]);
 	gl::bindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, mVelocities[mIteratonIndex & 1]);
+	gl::bindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 2, mColors[mIteratonIndex & 1]);
 
 	gl::beginTransformFeedback(GL_POINTS);
 	gl::drawArrays(GL_POINTS, 0, NUM_PARTICLES);
@@ -204,20 +217,15 @@ void FlockingVisualization::update()
 
 void FlockingVisualization::draw()
 {
-	gl::clear(Color(0, 0, 0));
-	gl::ScopedVao scopedVao(mVaos[mIteratonIndex & 1]);
+	gl::ScopedTextureBind scopeTexPos(mPositionBufTex[mIteratonIndex & 1]->getTarget(), mPositionBufTex[mIteratonIndex & 1]->getId(), 0);
+	mRenderShader->uniform("tex_position", 0);
+
 	gl::ScopedGlslProg glsl(mRenderShader);
-	gl::setDefaultShaderVars();
+	gl::ScopedVao scopedVao(mVaos[mIteratonIndex & 1]);
+	gl::context()->setDefaultShaderVars();
 
-	gl::pointSize(4.0f);
+	gl::ScopedState pointSize(GL_PROGRAM_POINT_SIZE, true);
 	gl::drawArrays(GL_POINTS, 0, NUM_PARTICLES);
-	//gl::ScopedTextureBind tex(mParticlesFbo.texture(0), 0);
-	//mRenderShader->uniform("uPositionTexture", 0);
-
-	//gl::ScopedGlslProg render(mRenderShader);
-	//gl::ScopedVao vao(mVao);
-	//gl::context()->setDefaultShaderVars();
-	//gl::drawArrays(GL_POINTS, 0, NUM_PARTICLES);
 }
 
 bool FlockingVisualization::perspective()
