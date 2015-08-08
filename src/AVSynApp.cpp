@@ -39,6 +39,7 @@ private:
 	Visualization *mVisualization;
 	AudioSource* mAudioSource;
 	DeltaSource* mDeltaSource;
+	BeatDetector* mBeatDetector;
 
 	map<string, Visualization*> mVisualizations;
 	vector<string> mVisualizationOptions;
@@ -70,6 +71,7 @@ void AVSynApp::setup()
 
 	mAudioSource = new AudioSource();
 	mDeltaSource = new DeltaSource();
+	mBeatDetector = new BeatDetector(mAudioSource);
 	mAudioSource->setup();
 
 	AudioShaderVisualization *simpleVis = new AudioShaderVisualization();
@@ -83,7 +85,7 @@ void AVSynApp::setup()
 	mVisualizationOptions.push_back("Circular");
 
 	auto *dotsVis = new DotsVisualization();
-	dotsVis->setup(mAudioSource);
+	dotsVis->setup(mAudioSource, mBeatDetector);
 	mVisualizations.insert(make_pair("Dots", dotsVis));
 	mVisualizationOptions.push_back("Dots");
 
@@ -93,7 +95,7 @@ void AVSynApp::setup()
 	mVisualizationOptions.push_back("EQPointCloud");
 
 	auto *flocking = new FlockingVisualization();
-	flocking->setup(mAudioSource, mDeltaSource);
+	flocking->setup(mAudioSource, mDeltaSource, mBeatDetector);
 	mVisualizations.insert(make_pair("Flocking", flocking));
 	mVisualizationOptions.push_back("Flocking");
 

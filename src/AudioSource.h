@@ -11,6 +11,7 @@ using namespace std;
 class AudioSource {
 public:
 	void setup();
+	void update();
 	vector<float> getMagSpectrum();
 	gl::TextureRef getMagSpectrumTexture();
 	float getVolume();
@@ -20,4 +21,7 @@ private:
 	audio::InputDeviceNodeRef mInputNode;
 	audio::MonitorSpectralNodeRef mMonitor;
 
+	vector<float>  mSpectrum;
+
+	int mLastUpdateFrame;
 };

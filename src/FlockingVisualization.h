@@ -4,12 +4,12 @@
 #include "Visualization.h"
 #include "AudioSource.h"
 #include "DeltaSource.h"
-#include "PingPongFBO.h"
+#include "BeatDetector.h"
 
 class FlockingVisualization : public Visualization {
 public:
 	FlockingVisualization();
-	void setup(AudioSource* audioSource, DeltaSource* deltaSource);
+	void setup(AudioSource* audioSource, DeltaSource* deltaSource, BeatDetector* beatDetector);
 	virtual void update() override;
 	virtual void draw() override;
 	virtual bool perspective() override;
@@ -20,6 +20,7 @@ public:
 private:
 	AudioSource* mAudioSource;
 	DeltaSource* mDeltaSource;
+	BeatDetector* mBeatDetector;
 
 	uint32_t mIteratonIndex;
 	bool mStep;
@@ -27,15 +28,10 @@ private:
 	gl::GlslProgRef mUpdateShader;
 	gl::GlslProgRef mRenderShader;
 
-	PingPongFBO mParticlesFbo;
-
 	array<gl::VaoRef, 2> mVaos;
 	array<gl::VboRef, 2> mPositions, mVelocities, mColors;
 	array<gl::BufferTextureRef, 2> mPositionBufTex;
 	array<gl::BufferTextureRef, 2> mVelocityBufTex;
-	//gl::VboMeshRef mVboMesh;
-	//gl::BatchRef mParticlesBatch;
-	//gl::BatchRef mRenderBatch;
 
 	float mSeparationDistance;
 	float mAlignmentDistance;

@@ -64,13 +64,13 @@ vec3 calculatePosition(vec3 position, vec3 velocity) {
 
 vec4 calculateVelocity(vec3 position, vec3 velocity, float hue) {
   float delt = min(1.0, delta);
-  //float cd = cohesionDistance * (0.6 + 0.2 * sin(accumulatedLoudness * 0.25) + eqs[2]);
-  //float sd = separationDistance * (0.4 + cos(accumulatedLoudness * 0.25) + eqs[1]);
-  //float ad = alignmentDistance * (0.6 + eqs[0]);
+  float cd = cohesionDistance * (0.6 + 0.2 * sin(accumulatedLoudness * 0.05) + eqs[2]);
+  float sd = separationDistance * (0.4 + cos(accumulatedLoudness * 0.05) + beat * loudness + eqs[1]);
+  float ad = alignmentDistance * (0.6 + eqs[0]);
 
-  float cd = cohesionDistance;
-  float sd = separationDistance;
-  float ad = alignmentDistance;
+  //float cd = cohesionDistance;
+  //float sd = separationDistance;
+  //float ad = alignmentDistance;
 
   float zoneRadius = sd + ad + cd;
   separationThresh = sd / zoneRadius;
@@ -186,7 +186,7 @@ vec4 calculateVelocity(vec3 position, vec3 velocity, float hue) {
     velocity = normalize(velocity) * speed;
   }
 
-  return vec4(velocity, selfHueVelocity);
+  return vec4(velocity * (0.99 + beat*beat*0.5), selfHueVelocity);
 }
 
 void main() {

@@ -4,27 +4,37 @@
 
 using namespace std;
 
-void DotsVisualization::setup(AudioSource* audioSource)
+const float DAMPING = 0.1;
+
+void DotsVisualization::setup(AudioSource* audioSource, BeatDetector* beatDetector)
 {
 	ShaderVisualization::setup("dots.frag");
 
-	mBinCount = 4;
 	mAccumulatedLoudness = 0.0f;
 	mAudioSource = audioSource;
+	mBeatDetector = beatDetector;
 }
 
 void DotsVisualization::renderUniforms()
 {
 	ShaderVisualization::renderUniforms();
 
-	mAccumulatedLoudness += mAudioSource->getVolume();
+	mAudioSource->update();
+	mBeatDetector->update(1.5);
+	mAccumulatedLoudness += mBeatDetector->getBeat() + mAudioSource->getVolume();
 
-	vector<float> eqs = mAudioSource->getEqs(mBinCount);
+	vector<float> eqs = mAudioSource->getEqs(BIN_COUNT);
 
-	mShader->uniform("eqs", &eqs[0], mBinCount);
+	for (int i = 0; i < BIN_COUNT; ++i) {
+		if (eqs[i] > mEqs[i]) {
+			mEqs[i] = eqs[i];
+		}
+		else {
+			mEqs[i] -= (mEqs[i] - eqs[i]) * DAMPING;
+		}
+	}
+
+
+	mShader->uniform("eqs", &mEqs[0], BIN_COUNT);
 	mShader->uniform("accumulatedLoudness", mAccumulatedLoudness);
 }
-
-
-
-

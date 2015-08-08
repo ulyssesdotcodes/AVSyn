@@ -42,13 +42,13 @@
     <ClCompile Include="..\src\EQPointCloud.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\PingPongFbo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\FlockingVisualization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\DeltaSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\BeatDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,10 +77,10 @@
     <ClInclude Include="..\src\FlockingVisualization.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\PingPongFBO.h">
+    <ClInclude Include="..\src\DeltaSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\DeltaSource.h">
+    <ClInclude Include="..\src\BeatDetector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

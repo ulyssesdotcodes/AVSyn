@@ -11,6 +11,7 @@ void AudioShaderVisualization::setup(AudioSource* audioSource, const fs::path &f
 
 void AudioShaderVisualization::update()
 {
+	mAudioSource->update();
 	mTexture = mAudioSource->getMagSpectrumTexture();
 }
 

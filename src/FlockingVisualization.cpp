@@ -7,7 +7,7 @@
 using namespace ci;
 
 const int SIZE = 50;
-const int BUFFER_WIDTH = 64;
+const int BUFFER_WIDTH = 128;
 const int NUM_PARTICLES = BUFFER_WIDTH * BUFFER_WIDTH;
 
 FlockingVisualization::FlockingVisualization()
@@ -20,13 +20,14 @@ FlockingVisualization::FlockingVisualization()
 
 	mAccumulatedLoudness = 0.0f;
 
-	mSpeed = 8.0f;
+	mSpeed = 3.0f;
 }
 
-void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSource)
+void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSource, BeatDetector* beatDetector)
 {
 	mAudioSource = audioSource;
 	mDeltaSource = deltaSource;
+	mBeatDetector = beatDetector;
 
 	mStep = true;
 	mIteratonIndex = 0;
@@ -63,8 +64,6 @@ void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSo
 		velocities[i] = Rand::randVec3();
 		colors[i] = vec3(0, 0, 0);
 	}
-
-	//TODO: Add color bound attrib?
 
 	for (int i = 0; i < 2; ++i) {
 		mVaos[i] = gl::Vao::create();
@@ -104,57 +103,11 @@ void FlockingVisualization::switchCamera(CameraPersp cam)
 	cam.lookAt(vec3(0.0, 100.0, 400.0), vec3(0.0));
 }
 
-//void FlockingVisualization::setupPingPongFbo() {
-//	vector<Surface32f> surfaces;
-//	surfaces.push_back(Surface32f(BUFFER_WIDTH, BUFFER_WIDTH, true));
-//	Surface32f::Iter pixelIter = surfaces[0].getIter();
-//
-//	// Initial positions
-//	while (pixelIter.line()) {
-//		surfaces[0].setPixel(pixelIter.getPos(),
-//			ColorAf(SIZE * (Rand::randFloat() - 0.5f),
-//				SIZE * (Rand::randFloat() - 0.5f),
-//				SIZE * (Rand::randFloat() - 0.5f),
-//				1.0));
-//	}
-//
-//	surfaces.push_back(Surface32f(BUFFER_WIDTH, BUFFER_WIDTH, true));
-//
-//	// Initial velocities
-//	while (pixelIter.line()) {
-//		surfaces[0].setPixel(pixelIter.getPos(),
-//			ColorAf(0.0f, 0.0f, 0.0f, 1.0));
-//	}
-//
-//	mParticlesFbo = PingPongFBO(surfaces);
-//}
-//
-//
-//void FlockingVisualization::setupVbo() 
-//{
-//	vector<vec2> texCoords(NUM_PARTICLES);
-//	vector<_Uint32t> indices(NUM_PARTICLES);
-//	gl::VboMesh::Layout layout = gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(geom::Attrib::TEX_COORD_0, 2);
-//
-//	for (int x = 0; x < BUFFER_WIDTH; ++x) {
-//		for (int y = 0; y < BUFFER_WIDTH; ++y) {
-//			indices.push_back(x * BUFFER_WIDTH + y);
-//			texCoords.push_back(vec2(x / (float)BUFFER_WIDTH, y / (float)BUFFER_WIDTH));
-//			//texCoords.push_back(vec2(x, y));
-//		}
-//	}
-//
-//	auto texCoordsVbo = gl::Vbo::create(GL_ARRAY_BUFFER, texCoords.size() * sizeof(vec2), texCoords.data(), GL_STATIC_DRAW);
-//	mVao = gl::Vao::create();
-//	gl::ScopedVao vao(mVao);
-//	gl::ScopedBuffer buf(texCoordsVbo);
-//	gl::enableVertexAttribArray(0);
-//	gl::vertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), 0);
-//}
-
 
 void FlockingVisualization::update()
 {
+	mAudioSource->update();
+	mBeatDetector->update(1.4);
 	float loudness = audio::linearToDecibel(mAudioSource->getVolume()) * 0.01f;
 	mAccumulatedLoudness += loudness;
 
@@ -164,7 +117,7 @@ void FlockingVisualization::update()
 	mUpdateShader->uniform("cohesionDistance", mSeparationDistance);
 	mUpdateShader->uniform("loudness", loudness);
 	mUpdateShader->uniform("accumulatedLoudness", mAccumulatedLoudness);
-	mUpdateShader->uniform("beat", 1.0f);
+	mUpdateShader->uniform("beat", mBeatDetector->getBeat());
 	mUpdateShader->uniform("roamingDistance", mRoamingDistance);
 	mUpdateShader->uniform("speed", mSpeed);
 	mUpdateShader->uniform("eqs", &(mAudioSource->getEqs(3))[0], 3);
@@ -190,29 +143,6 @@ void FlockingVisualization::update()
 	gl::drawArrays(GL_POINTS, 0, NUM_PARTICLES);
 
 	gl::endTransformFeedback();
-
-
-		//CameraPersp cam((int)mParticlesFbo.getBounds().getWidth(), (int)mParticlesFbo.getBounds().getHeight(), 60);
-		//cam.setPerspective(60, 1.0f, BUFFER_WIDTH, BUFFER_WIDTH);
-
-		//gl::ScopedFramebuffer fboScope(mParticlesFbo.getFbo());
-		//gl::ScopedViewport viewportScope(ivec2(0), mParticlesFbo.getSize());
-		//gl::ScopedMatrices matScope;
-		//gl::setMatrices(cam);
-
-		//mParticlesFbo.bindUpdate();
-		//gl::ScopedTextureBind tex(mParticlesFbo.texture(0), 0);
-		//gl::ScopedTextureBind tex2(mParticlesFbo.texture(1), 1);
-
-		//glBindFragDataLocation(mUpdateShader->getHandle(), 0, "oPosition");
-		//glBindFragDataLocation(mUpdateShader->getHandle(), 1, "oVelocity");
-
-		//mUpdateShader->uniform("uPositionTexture", 0);
-		//mUpdateShader->uniform("uVelocityTexture", 1);
-
-		//mParticlesBatch->draw();
-
-		//mParticlesFbo.unbindUpdate();
 }
 
 void FlockingVisualization::draw()

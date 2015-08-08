@@ -192,22 +192,22 @@
     <ClCompile Include="..\src\AudioShaderVisualization.cpp" />
     <ClCompile Include="..\src\AudioSource.cpp" />
     <ClCompile Include="..\src\AVSynApp.cpp" />
+    <ClCompile Include="..\src\BeatDetector.cpp" />
     <ClCompile Include="..\src\DeltaSource.cpp" />
     <ClCompile Include="..\src\DotsVisualization.cpp" />
     <ClCompile Include="..\src\EQPointCloud.cpp" />
     <ClCompile Include="..\src\FlockingVisualization.cpp" />
-    <ClCompile Include="..\src\PingPongFbo.cpp" />
     <ClCompile Include="..\src\ShaderVisualization.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\src\AudioShaderVisualization.h" />
     <ClInclude Include="..\src\AudioSource.h" />
+    <ClInclude Include="..\src\BeatDetector.h" />
     <ClInclude Include="..\src\DeltaSource.h" />
     <ClInclude Include="..\src\DotsVisualization.h" />
     <ClInclude Include="..\src\EQPointCloud.h" />
     <ClInclude Include="..\src\FlockingVisualization.h" />
-    <ClInclude Include="..\src\PingPongFBO.h" />
     <ClInclude Include="..\src\ShaderVisualization.h" />
     <ClInclude Include="..\src\Visualization.h" />
   </ItemGroup>

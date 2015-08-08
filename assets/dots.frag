@@ -38,7 +38,7 @@ float iDot(float section, vec2 uv) {
   vec2 center = toCartesian(cuv);
   float dist = length(center - uv);
 
-  return smoothstep(l * 4.0, 0.0, dist * dist);
+  return smoothstep(l * resolution.x * 0.001, 0.0, dist * dist);
 }
 
 void main() {

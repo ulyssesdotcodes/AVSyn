@@ -10,6 +10,10 @@
 using namespace ci;
 using namespace std;
 
+/*
+ * Note: All outputs are scaled to decibel then divided by 100.
+ */
+
 void AudioSource::setup() {
 	auto ctx = audio::Context::master();
 
@@ -26,16 +30,31 @@ void AudioSource::setup() {
 	app::getWindow()->setTitle(mInputNode->getDevice()->getName());
 }
 
+void AudioSource::update() {
+	int frame = app::getElapsedFrames();
+	if (frame <= mLastUpdateFrame) {
+		return;
+	}
+
+	vector<float> scaledSpectrum = mMonitor->getMagSpectrum();
+	for (int i = 0; i < scaledSpectrum.size(); ++i) {
+		scaledSpectrum[i] = audio::linearToDecibel(scaledSpectrum[i]) / 100.0f;
+	}
+	mSpectrum = scaledSpectrum;
+
+	mLastUpdateFrame = frame;
+}
+
 vector<float> AudioSource::getMagSpectrum() {
-	return mMonitor->getMagSpectrum();
+	return mSpectrum;
 }
 
 gl::TextureRef AudioSource::getMagSpectrumTexture() {
 	float spectrum[1024 * 4];
-	vector<float> spectrumVec = getMagSpectrum();
+	vector<float> spectrumVec = mSpectrum;
 
 	for (vector<float>::size_type i = 0; i < spectrumVec.size(); i++) {
-		spectrum[i * 4] = audio::linearToDecibel(spectrumVec[i]) / 100.0f;
+		spectrum[i * 4] = spectrumVec[i];
 		spectrum[i * 4 + 1] = 0.0f;
 		spectrum[i * 4 + 2] = 0.0f;
 		spectrum[i * 4 + 3] = 256.0f;
@@ -50,22 +69,22 @@ float AudioSource::getVolume()
 }
 
 vector<float> AudioSource::getEqs(int binCount) {
-	vector<float> buffer = getMagSpectrum();
+	vector<float> buffer = mSpectrum;
 	vector<float> bins(binCount);
-	int binSize = buffer.size() / binCount;
+	int binSize = buffer.size() * 0.5 / binCount;
 
-	for (vector<float>::size_type i = 0; i < buffer.size(); i++) {
+	for (vector<float>::size_type i = 0; i < buffer.size() * 0.5; i++) {
 		int bin = i / binSize;
 
 		// Just discard the last one if it fits perfectly.
 		if(bin < bins.size()) {
-			bins[bin] += audio::linearToDecibel(buffer[i]);
+			bins[bin] += buffer[i];
 		}
 	}
 
 	for (vector<float>::iterator it = bins.begin(); it != bins.end(); ++it) {
 		// 100.0f to account for linear to decibal
-		*it = *it / (binSize * 100.0f);
+		*it = *it / binSize;
 	}
 
 	return bins;

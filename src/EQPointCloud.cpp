@@ -10,6 +10,7 @@ using namespace ci;
 
 const int NUM_PARTICLES = 3000000;
 const int SIZE = 100;
+const float DAMPING = 0.1;
 
 void EQPointCloud::setup(AudioSource* audioSource)
 {
@@ -65,8 +66,11 @@ void EQPointCloud::update()
 
 	mParticleBuffer[0]->copyData(mParticles.size() * sizeof(vec3), mParticles.data());
 
+	mAudioSource->update();
 	auto eqVolumes = mAudioSource->getEqs(3);
-	mEqVolumes = vec3(eqVolumes.at(0), eqVolumes.at(1), eqVolumes.at(2));
+	for (int i = 0; i < 3; ++i) {
+		mEqVolumes[i] = eqVolumes[i] > mEqVolumes[i] ? eqVolumes[i] : mEqVolumes[i] - (mEqVolumes[i] - eqVolumes[i]) * DAMPING;
+	}
 }
 
 void EQPointCloud::draw()
