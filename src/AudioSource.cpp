@@ -69,6 +69,11 @@ float AudioSource::getVolume()
 }
 
 vector<float> AudioSource::getEqs(int binCount) {
+	return getEqs(binCount, 1.0);
+}
+
+vector<float> AudioSource::getEqs(int binCount, float scale)
+{
 	vector<float> buffer = mSpectrum;
 	vector<float> bins(binCount);
 	int binSize = buffer.size() * 0.5 / binCount;
@@ -84,7 +89,7 @@ vector<float> AudioSource::getEqs(int binCount) {
 
 	for (vector<float>::iterator it = bins.begin(); it != bins.end(); ++it) {
 		// 100.0f to account for linear to decibal
-		*it = *it / binSize;
+		*it = *it * scale/ binSize;
 	}
 
 	return bins;

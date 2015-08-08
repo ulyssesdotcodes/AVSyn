@@ -14,8 +14,7 @@ public:
 	virtual void draw() override;
 	virtual bool perspective() override;
 	virtual void switchCamera(CameraPersp camera) override;
-	//void setupPingPongFbo();
-	//void setupVbo();
+	virtual void switchParams(params::InterfaceGlRef params) override;
 
 private:
 	AudioSource* mAudioSource;
@@ -39,4 +38,6 @@ private:
 	float mRoamingDistance;
 	float mAccumulatedLoudness;
 	float mSpeed;
+	float mBeatConstant;
+	float mLoudness;
 };

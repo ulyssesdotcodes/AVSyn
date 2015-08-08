@@ -16,6 +16,7 @@ public:
 	gl::TextureRef getMagSpectrumTexture();
 	float getVolume();
 	vector<float> getEqs(int binCount);
+	vector<float> getEqs(int binCount, float scale);
 
 private:
 	audio::InputDeviceNodeRef mInputNode;

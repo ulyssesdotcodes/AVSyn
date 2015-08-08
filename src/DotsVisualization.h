@@ -11,11 +11,16 @@ public:
 
 protected:
 	virtual void renderUniforms() override;
+	virtual void switchParams(params::InterfaceGlRef params) override;
 
 private:
-	float mAccumulatedLoudness;
 	AudioSource* mAudioSource;
 	BeatDetector* mBeatDetector;
 
 	array<float, BIN_COUNT> mEqs;
+
+	float mAccumulatedLoudness;
+
+	float mLoudness;
+	float mHue;
 };

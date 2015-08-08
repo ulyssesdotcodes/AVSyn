@@ -7,7 +7,7 @@
 using namespace ci;
 
 const int SIZE = 50;
-const int BUFFER_WIDTH = 128;
+const int BUFFER_WIDTH = 64;
 const int NUM_PARTICLES = BUFFER_WIDTH * BUFFER_WIDTH;
 
 FlockingVisualization::FlockingVisualization()
@@ -18,9 +18,12 @@ FlockingVisualization::FlockingVisualization()
 
 	mRoamingDistance = 40.0f;
 
+	mLoudness = 1.0;
 	mAccumulatedLoudness = 0.0f;
 
 	mSpeed = 3.0f;
+
+	mBeatConstant = 1.4;
 }
 
 void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSource, BeatDetector* beatDetector)
@@ -103,12 +106,26 @@ void FlockingVisualization::switchCamera(CameraPersp cam)
 	cam.lookAt(vec3(0.0, 100.0, 400.0), vec3(0.0));
 }
 
+void FlockingVisualization::switchParams(params::InterfaceGlRef params) {
+	addParamName("Loudness");
+	params->addParam("Loudness", &mLoudness, "min=0.0 max=2.0 step=0.001");
+
+	addParamName("Speed");
+	params->addParam("Speed", &mSpeed, "min=0.5 max=4.0 step=0.001");
+
+	addParamName("Beat Constant");
+	params->addParam("Beat Constant", &mBeatConstant, "min=1.1 max=1.6 step=0.001");
+
+	addParamName("Roaming Distance");
+	params->addParam("Roaming Distance", &mRoamingDistance, "min=20.0 max=120.0 step=1.0");
+}
+
 
 void FlockingVisualization::update()
 {
 	mAudioSource->update();
-	mBeatDetector->update(1.4);
-	float loudness = audio::linearToDecibel(mAudioSource->getVolume()) * 0.01f;
+	mBeatDetector->update(mBeatConstant);
+	float loudness = audio::linearToDecibel(mAudioSource->getVolume()) * 0.01f * mLoudness;;
 	mAccumulatedLoudness += loudness;
 
 	mUpdateShader->uniform("delta", mDeltaSource->delta());
@@ -120,7 +137,7 @@ void FlockingVisualization::update()
 	mUpdateShader->uniform("beat", mBeatDetector->getBeat());
 	mUpdateShader->uniform("roamingDistance", mRoamingDistance);
 	mUpdateShader->uniform("speed", mSpeed);
-	mUpdateShader->uniform("eqs", &(mAudioSource->getEqs(3))[0], 3);
+	mUpdateShader->uniform("eqs", &(mAudioSource->getEqs(3, mLoudness))[0], 3);
 
 
 	gl::ScopedVao scopedVao(mVaos[mIteratonIndex & 1]);

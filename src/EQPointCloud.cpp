@@ -14,6 +14,7 @@ const float DAMPING = 0.1;
 
 void EQPointCloud::setup(AudioSource* audioSource)
 {
+	mLoudness = 0;
 	mAudioSource = audioSource;
 
 	for (int i = 0; i < NUM_PARTICLES; i++) {
@@ -43,6 +44,11 @@ void EQPointCloud::switchCamera(CameraPersp cam) {
 	cam.lookAt(vec3(0.0, 100.0, 400.0), vec3(0.0));
 }
 
+void EQPointCloud::switchParams(params::InterfaceGlRef params) {
+	addParamName("Loudness");
+	params->addParam("Loudness", &mLoudness, "min=0.0 max=2.0 step=0.001");
+}
+
 void EQPointCloud::update()
 {
 	for (vector<EQ>::iterator it = mEqs.begin(); it != mEqs.end(); ++it) {
@@ -69,7 +75,7 @@ void EQPointCloud::update()
 	mAudioSource->update();
 	auto eqVolumes = mAudioSource->getEqs(3);
 	for (int i = 0; i < 3; ++i) {
-		mEqVolumes[i] = eqVolumes[i] > mEqVolumes[i] ? eqVolumes[i] : mEqVolumes[i] - (mEqVolumes[i] - eqVolumes[i]) * DAMPING;
+		mEqVolumes[i] = eqVolumes[i] > mEqVolumes[i] ? eqVolumes[i] * mLoudness : mEqVolumes[i] - (mEqVolumes[i] - eqVolumes[i]) * DAMPING;
 	}
 }
 

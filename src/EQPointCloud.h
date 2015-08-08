@@ -16,6 +16,7 @@ public:
 	virtual void update();
 	virtual void draw();
 	virtual void switchCamera(CameraPersp cam);
+	virtual void switchParams(params::InterfaceGlRef params) override;
 	bool perspective() override;
 
 private:
@@ -28,4 +29,6 @@ private:
 
 	vector<EQ> mEqs;
 	vec3 mEqVolumes;
+
+	float mLoudness;
 };

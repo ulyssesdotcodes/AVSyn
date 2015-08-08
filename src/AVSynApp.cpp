@@ -3,6 +3,7 @@
 #include "cinder/gl/gl.h"
 #include "cinder\params\Params.h"
 #include "cinder\Camera.h"
+#include "cinder\Display.h"
 #include "boost\range\adaptor\map.hpp"
 
 #include "Visualization.h"
@@ -49,6 +50,7 @@ private:
 void AVSynApp::setup()
 {
 	getWindow()->getSignalDraw().connect([=]() { drawRender(); });
+	vector<DisplayRef> displays = Display::getDisplays();
 
 	mCam = CameraPersp(getWindowWidth(), getWindowHeight(), 50);
 	//mCam = CameraPersp();
@@ -74,15 +76,15 @@ void AVSynApp::setup()
 	mBeatDetector = new BeatDetector(mAudioSource);
 	mAudioSource->setup();
 
-	AudioShaderVisualization *simpleVis = new AudioShaderVisualization();
-	simpleVis->setup(mAudioSource, "simple.frag");
-	mVisualizations.insert(make_pair("Simple", simpleVis));
-	mVisualizationOptions.push_back("Simple");
+	//AudioShaderVisualization *simpleVis = new AudioShaderVisualization();
+	//simpleVis->setup(mAudioSource, "simple.frag");
+	//mVisualizations.insert(make_pair("Simple", simpleVis));
+	//mVisualizationOptions.push_back("Simple");
 
-	AudioShaderVisualization *circularVis = new AudioShaderVisualization();
-	circularVis->setup(mAudioSource, "circular_fft.frag");
-	mVisualizations.insert(make_pair("Circular", circularVis));
-	mVisualizationOptions.push_back("Circular");
+	//AudioShaderVisualization *circularVis = new AudioShaderVisualization();
+	//circularVis->setup(mAudioSource, "circular_fft.frag");
+	//mVisualizations.insert(make_pair("Circular", circularVis));
+	//mVisualizationOptions.push_back("Circular");
 
 	auto *dotsVis = new DotsVisualization();
 	dotsVis->setup(mAudioSource, mBeatDetector);
@@ -101,12 +103,17 @@ void AVSynApp::setup()
 
 	mCurrentVisOption = mVisualizations.size() - 1;
 	mVisualization = flocking;
+	
+	mVisualization->switchCamera(mCam);
+	mVisualization->switchParams(mParams);
 
 	mParams->addParam("Visualizations", mVisualizationOptions, 
 		[=](int ind) {
+			mVisualization->resetParams(mParams);
 			mCurrentVisOption = ind;
 			mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
 			mVisualization->switchCamera(mCam);
+			mVisualization->switchParams(mParams);
 		},
 		[=]() {
 			return mCurrentVisOption;
@@ -150,6 +157,13 @@ void AVSynApp::drawParams()
 }
 
 CINDER_APP(AVSynApp, RendererGl(), [&](App::Settings *settings) {
-	settings->setFullScreen(true, FullScreenOptions());
+	FullScreenOptions options;
+	vector<DisplayRef> displays = Display::getDisplays();
+	if (displays.size() > 1) {
+		options.display(displays[1]);
+		settings->setDisplay(displays[1]);
+	}
+	app::console() << options.getDisplay()->getSize() << endl;
+	settings->setFullScreen(true, options);
 	settings->setFrameRate(60.0f);
 })
