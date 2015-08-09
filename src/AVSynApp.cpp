@@ -12,6 +12,7 @@
 #include "DotsVisualization.h"
 #include "EQPointCloud.h"
 #include "FlockingVisualization.h"
+#include "TreeVisualization.h"
 
 #include "DeltaSource.h"
 
@@ -101,8 +102,13 @@ void AVSynApp::setup()
 	mVisualizations.insert(make_pair("Flocking", flocking));
 	mVisualizationOptions.push_back("Flocking");
 
+	auto *trees = new TreeVisualization();
+	trees->setup(mAudioSource, mBeatDetector);
+	mVisualizations.insert(make_pair("Trees", trees));
+	mVisualizationOptions.push_back("Trees");
+
 	mCurrentVisOption = mVisualizations.size() - 1;
-	mVisualization = flocking;
+	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
 	
 	mVisualization->switchCamera(mCam);
 	mVisualization->switchParams(mParams);
