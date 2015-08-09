@@ -14,7 +14,7 @@ const float DAMPING = 0.1;
 
 void EQPointCloud::setup(AudioSource* audioSource)
 {
-	mLoudness = 0;
+	mLoudness = 1.0;
 	mAudioSource = audioSource;
 
 	for (int i = 0; i < NUM_PARTICLES; i++) {

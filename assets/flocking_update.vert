@@ -116,7 +116,8 @@ vec4 calculateVelocity(vec3 position, vec3 velocity, float hue) {
   cohesionCount = 0.0;
 
   for(float y=0.0; y < WIDTH; y++) {
-    for(float x = 0.0; x < WIDTH; x++){
+    for(float x = float(int(accumulatedLoudness) % 3); x < WIDTH; x++){
+	  if(int(x) % 3 == 0) continue;
       pointPosition = texelFetch(tex_position, int(y * WIDTH + x)).xyz;
       pointVelocity = texelFetch(tex_velocity, int(y * WIDTH + x)).xyz;
       dir = pointPosition.xyz - position.xyz;

@@ -7,7 +7,7 @@
 using namespace ci;
 
 const int SIZE = 50;
-const int BUFFER_WIDTH = 64;
+const int BUFFER_WIDTH = 128;
 const int NUM_PARTICLES = BUFFER_WIDTH * BUFFER_WIDTH;
 
 FlockingVisualization::FlockingVisualization()
