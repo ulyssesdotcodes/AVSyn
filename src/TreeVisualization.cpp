@@ -13,18 +13,18 @@ void TreeVisualization::setup(AudioSource* audioSource, BeatDetector* beatDetect
 	mColors = {};
 	mIndex = 0;
 	
-	gl::VboRef positionVbo = gl::Vbo::create(GL_ARRAY_BUFFER, mPositions.size() * sizeof(vec3), mPositions.data(), GL_STATIC_DRAW);
+	gl::VboRef positionVbo = gl::Vbo::create(GL_ARRAY_BUFFER, mPositions.size() * sizeof(vec3), mPositions.data(), GL_DYNAMIC_DRAW);
 	geom::BufferLayout positionBufferLayout;
 	positionBufferLayout.append(geom::Attrib::POSITION, 3, sizeof(vec3), 0);
 
-	gl::VboRef colorVbo = gl::Vbo::create(GL_ARRAY_BUFFER, mColors.size() * sizeof(vec4), mColors.data(), GL_STATIC_DRAW);
+	gl::VboRef colorVbo = gl::Vbo::create(GL_ARRAY_BUFFER, mColors.size() * sizeof(vec4), mColors.data(), GL_DYNAMIC_DRAW);
 	geom::BufferLayout colorBufferLayout;
 	colorBufferLayout.append(geom::Attrib::COLOR, 4, sizeof(vec4), 0);
 
-	gl::VboMeshRef mesh = gl::VboMesh::create(MAX_LINE_VERTICES, GL_LINES, 
+	mMesh = gl::VboMesh::create(MAX_LINE_VERTICES, GL_LINES, 
 		{ {positionBufferLayout, positionVbo}, {colorBufferLayout, colorVbo} });
 
-	mBatch = gl::Batch::create(mesh, gl::getStockShader(gl::ShaderDef().color()));
+	mBatch = gl::Batch::create(mMesh, gl::getStockShader(gl::ShaderDef().color()));
 
 	// LSystem
 	mRu[0] = glm::angleAxis(DELTA_ANGLE, vec3(0, 1, 0));
@@ -34,6 +34,7 @@ void TreeVisualization::setup(AudioSource* audioSource, BeatDetector* beatDetect
 	mRh[0] = glm::angleAxis(DELTA_ANGLE, vec3(0, 0, 1));
 	mRh[1] = glm::angleAxis(-DELTA_ANGLE, vec3(0, 0, 1));
 
+	resetGen();
 }
 
 void TreeVisualization::switchParams(params::InterfaceGlRef params) {}
@@ -43,12 +44,6 @@ void TreeVisualization::switchCamera(CameraPersp mCam) {}
 bool TreeVisualization::perspective() 
 {
 	return true;
-}
-
-
-void TreeVisualization::update()
-{
-
 }
 
 void TreeVisualization::draw()
@@ -95,19 +90,28 @@ void TreeVisualization::runCommand(char rule, Gen* gen)
 
 void TreeVisualization::resetGen()
 {
+	mPositions = {};
+	mColors = {};
+
 	mGenStack.clear();
-	Gen gen = { "F", 0, vec3(8, 0, 0), vec3(1, 0, 0), -1 };
-	mGenStack.push_back(&gen);
-	gen = {"F", 0, vec3(-8, 0, 0), vec3(-1, 0, 0), -1};
-	mGenStack.push_back(&gen);
-	gen = {"F", 0, vec3(0, 8, 0), vec3(0, 1, 0), -1};
-	mGenStack.push_back(&gen);
-	gen = {"F", 0, vec3(0, -8, 0), vec3(0, -1, 0), -1};
-	mGenStack.push_back(&gen);
-	gen = {"F", 0, vec3(0, 0, 8), vec3(0, 0, 1), -1};
-	mGenStack.push_back(&gen);
-	gen = {"F", 0, vec3(0, 0, -8), vec3(0, 0, -1), -1};
-	mGenStack.push_back(&gen);
+	Gen* gen = new Gen();
+	*gen = { "F", 0, vec3(8, 0, 0), vec3(1, 0, 0), -1 };
+	mGenStack.push_back(gen);
+	gen = new Gen();
+	*gen = {"F", 0, vec3(-8, 0, 0), vec3(-1, 0, 0), -1};
+	mGenStack.push_back(gen);
+	gen = new Gen();
+	*gen = {"F", 0, vec3(0, 8, 0), vec3(0, 1, 0), -1};
+	mGenStack.push_back(gen);
+	gen = new Gen();
+	*gen = {"F", 0, vec3(0, -8, 0), vec3(0, -1, 0), -1};
+	mGenStack.push_back(gen);
+	gen = new Gen();
+	*gen = {"F", 0, vec3(0, 0, 8), vec3(0, 0, 1), -1};
+	mGenStack.push_back(gen);
+	gen = new Gen();
+	*gen = {"F", 0, vec3(0, 0, -8), vec3(0, 0, -1), -1};
+	mGenStack.push_back(gen);
 
 	mIndex = 0;
 	int stepCount = 0;
@@ -124,30 +128,65 @@ void TreeVisualization::lstep()
 {
 	for (int i = 0; i < mGenStack.size(); ++i) {
 		string newGen = "";
-		string gen = mGenStack[0]->str;
-		for (int j = 0; j < gen.length; ++j) {
+		string gen = mGenStack[i]->str;
+		for (int j = 0; j < gen.length(); ++j) {
 			if (RULES.find(gen[j]) == RULES.end()) {
-				newGen += gen[j];
+				newGen.append(1, gen[j]);
 			}
 			else {
-				vector<string> choices = RULES[gen[j]];
-				string choice = choices[Rand::randInt(choice.size())];
-				newGen += choice;
+				vector<string> choices = RULES.at(gen[j]);
+				string choice = choices[Rand::randInt(choices.size())];
+				newGen.append(choice);
 			}
-
 		}
+
+		mGenStack[i]->str = newGen;
 	}
 }
 
 void TreeVisualization::update()
 {
 	int j = 0;
-	while (mGenStack.size() - 1 > j && j < 4) {
+	while (mGenStack.size() > j && j < 4) {
 		Gen* gen = mGenStack[j];
-		int i;
-		if (gen->index >= gen->str.length) {
-
+		if (gen->index >= gen->str.length()) {
+			mGenStack.erase(mGenStack.begin() + j);
+			continue;
 		}
 
+		int i;
+		int max = math<int>::min(gen->str.length(), gen->index + 3);
+		for (i = gen->index; i < max; ++i) {
+			char command = gen->str[i];
+			if (command == '[') {
+				int len = 0;
+				int bracketCount = 0;
+				while (!(bracketCount == 0 && gen->str[i + 1 + len] == ']')) {
+					bracketCount += gen->str[i + 1 + len] == '[' ? 1 : 0;
+					bracketCount -= gen->str[i + 1 + len] == ']' ? 1 : 0;
+					len++;
+				}
+
+				Gen* newGen = new Gen();
+				*newGen = { gen->str.substr(i + 1, len), 0, gen->currentVertex, gen->heading, j };
+				mGenStack.push_back(newGen);
+
+				max = math<int>::min(gen->str.length(), max + len);
+				i += len + 1;
+			}
+			else {
+				runCommand(command, gen);
+			}
+		}
+
+		mGenStack[j]->index = i;
+		j++;
 	}
+
+	if (mIndex > 5000 || mGenStack.size() == 0) {
+		resetGen();
+	}
+
+	mMesh->bufferAttrib(geom::POSITION, sizeof(vec3) * MAX_LINE_VERTICES, &mPositions[0]);
+	mMesh->bufferAttrib(geom::COLOR, sizeof(vec4) * MAX_LINE_VERTICES, &mColors[0]);
 }

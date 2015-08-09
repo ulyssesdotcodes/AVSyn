@@ -60,6 +60,7 @@ private:
 
 	gl::GlslProgRef mShader;
 	gl::BatchRef mBatch;
+	gl::VboMeshRef mMesh;
 
 	array<quat, 2> mRu, mRl, mRh;
 
