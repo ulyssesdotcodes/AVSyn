@@ -87,20 +87,20 @@ void AVSynApp::setup()
 	//mVisualizations.insert(make_pair("Circular", circularVis));
 	//mVisualizationOptions.push_back("Circular");
 
-	//auto *dotsVis = new DotsVisualization();
-	//dotsVis->setup(mAudioSource, mBeatDetector);
-	//mVisualizations.insert(make_pair("Dots", dotsVis));
-	//mVisualizationOptions.push_back("Dots");
+	auto *dotsVis = new DotsVisualization();
+	dotsVis->setup(mAudioSource, mBeatDetector);
+	mVisualizations.insert(make_pair("Dots", dotsVis));
+	mVisualizationOptions.push_back("Dots");
 
-	//auto *eqPointCloud = new EQPointCloud();
-	//eqPointCloud->setup(mAudioSource);
-	//mVisualizations.insert(make_pair("EQPointCloud", eqPointCloud));
-	//mVisualizationOptions.push_back("EQPointCloud");
+	auto *eqPointCloud = new EQPointCloud();
+	eqPointCloud->setup(mAudioSource);
+	mVisualizations.insert(make_pair("EQPointCloud", eqPointCloud));
+	mVisualizationOptions.push_back("EQPointCloud");
 
-	//auto *flocking = new FlockingVisualization();
-	//flocking->setup(mAudioSource, mDeltaSource, mBeatDetector);
-	//mVisualizations.insert(make_pair("Flocking", flocking));
-	//mVisualizationOptions.push_back("Flocking");
+	auto *flocking = new FlockingVisualization();
+	flocking->setup(mAudioSource, mDeltaSource, mBeatDetector);
+	mVisualizations.insert(make_pair("Flocking", flocking));
+	mVisualizationOptions.push_back("Flocking");
 
 	auto *trees = new TreeVisualization();
 	trees->setup(mAudioSource, mBeatDetector);
