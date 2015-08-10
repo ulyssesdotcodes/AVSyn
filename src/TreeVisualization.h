@@ -8,8 +8,9 @@
 using namespace ci;
 
 const int MAX_LINE_VERTICES = 5000;
-const float DELTA_ANGLE = 180 - 22.5;
+const float DELTA_ANGLE = M_PI * 22.5 / 180.0;
 const float LENGTH = 4.0;
+const float ROTATION_DAMP = 0.01;
 
 const map<char, vector<string>> RULES = 
 {
@@ -65,4 +66,12 @@ private:
 	array<quat, 2> mRu, mRl, mRh;
 
 	vector<Gen*> mGenStack;
+
+	int mGrowth;
+	float mRotationSpeed;
+	float mHue;
+	float mBeatConstant;
+
+	ColorA mColor;
+	quat mRotation;
 };

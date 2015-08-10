@@ -6,6 +6,11 @@ void TreeVisualization::setup(AudioSource* audioSource, BeatDetector* beatDetect
 {
 	mAudioSource = audioSource;
 	mBeatDetector = beatDetector;
+	mRotationSpeed = 1.0;
+	mGrowth = 3;
+	mHue = 0.0;
+	mBeatConstant = 1.6;
+	mRotation = quat();
 
 	// Graphics 
 
@@ -37,19 +42,26 @@ void TreeVisualization::setup(AudioSource* audioSource, BeatDetector* beatDetect
 	resetGen();
 }
 
-void TreeVisualization::switchParams(params::InterfaceGlRef params) {}
+void TreeVisualization::switchParams(params::InterfaceGlRef params) 
+{
+	addParamName("Rotation Speed");
+	params->addParam("Rotation Speed", &mRotationSpeed, "min=0.0 max=4.0 step=0.001");
+
+	addParamName("Growth");
+	params->addParam("Growth", &mGrowth, "min=1 max=8 step=1");
+
+	addParamName("Hue");
+	params->addParam("Hue", &mHue, "min=-0.5 max=0.5 step=0.001");
+
+	addParamName("Beat Constant");
+	params->addParam("Beat Constant", &mBeatConstant, "min=1.1 max=2.1 step=0.001");
+}
 
 void TreeVisualization::switchCamera(CameraPersp mCam) {}
 
 bool TreeVisualization::perspective() 
 {
 	return true;
-}
-
-void TreeVisualization::draw()
-{
-	gl::lineWidth(4.0f);
-	mBatch->draw();
 }
 
 void TreeVisualization::runCommand(char rule, Gen* gen) 
@@ -64,7 +76,7 @@ void TreeVisualization::runCommand(char rule, Gen* gen)
 
 		for (int i = 0; i < 2; ++i) {
 			int j = mIndex - 2 + i;
-			mColors[j] = vec4(Rand::randVec3(), 1.0);
+			mColors[j] = mColor;
 		}
 		return;
 	}
@@ -110,7 +122,7 @@ void TreeVisualization::resetGen()
 	*gen = {"F", 0, vec3(0, 0, 8), vec3(0, 0, 1), -1};
 	mGenStack.push_back(gen);
 	gen = new Gen();
-	*gen = {"F", 0, vec3(0, 0, -8), vec3(0, 0, -1), -1};
+	*gen = {"F", 0, vec3(0, 0, -8), vec3(0, 0.001, -1), -1};
 	mGenStack.push_back(gen);
 
 	mIndex = 0;
@@ -146,6 +158,25 @@ void TreeVisualization::lstep()
 
 void TreeVisualization::update()
 {
+	// Audio
+	mAudioSource->update();
+	mBeatDetector->update(mBeatConstant);
+	float beat = mBeatDetector->getBeat();
+
+	//Rotation
+	mRotation = glm::rotate(mRotation, mRotationSpeed * ROTATION_DAMP, normalize(vec3(1.0, 0.5, 0)));
+
+	// Quit if there's no audio
+	if (mAudioSource->getVolume() < 0.01) return;
+
+	// Set the current vertex color
+	auto eqs = mAudioSource->getEqs(3);
+	auto rgb = ColorA(vec4(glm::normalize(vec3(eqs[0], eqs[1], eqs[2])), 1.0));
+	auto hsv = rgbToHsv(rgb);
+	hsv.x = fmod(hsv.x + mHue, 1.);
+	mColor = ColorA(hsvToRgb(hsv), 1.0);
+
+	// Loop through the gens and do the operations
 	int j = 0;
 	while (mGenStack.size() > j && j < 4) {
 		Gen* gen = mGenStack[j];
@@ -155,7 +186,7 @@ void TreeVisualization::update()
 		}
 
 		int i;
-		int max = math<int>::min(gen->str.length(), gen->index + 3);
+		int max = math<int>::min(gen->str.length(), gen->index + mGrowth * beat);
 		for (i = gen->index; i < max; ++i) {
 			char command = gen->str[i];
 			if (command == '[') {
@@ -189,4 +220,11 @@ void TreeVisualization::update()
 
 	mMesh->bufferAttrib(geom::POSITION, sizeof(vec3) * MAX_LINE_VERTICES, &mPositions[0]);
 	mMesh->bufferAttrib(geom::COLOR, sizeof(vec4) * MAX_LINE_VERTICES, &mColors[0]);
+}
+
+void TreeVisualization::draw()
+{
+	gl::lineWidth(4.0f);
+	gl::rotate(mRotation);
+	mBatch->draw();
 }
