@@ -3,18 +3,21 @@
 #include "cinder\Color.h"
 #include "cinder\Rand.h"
 #include "cinder\app\App.h"
+#include "cinder\CinderMath.h"
 #include <vector>
 
 using namespace std;
 using namespace ci;
 
-const int NUM_PARTICLES = 3000000;
-const int SIZE = 100;
+const int NUM_PARTICLES = 300000;
+const int SIZE = 64;
 const float DAMPING = 0.1;
+const float ROTATION_DAMP = 0.01;
 
 void EQPointCloud::setup(AudioSource* audioSource)
 {
 	mLoudness = 1.0;
+	mRotationSpeed = 1.0;
 	mAudioSource = audioSource;
 
 	for (int i = 0; i < NUM_PARTICLES; i++) {
@@ -73,6 +76,10 @@ void EQPointCloud::update()
 	mParticleBuffer[0]->copyData(mParticles.size() * sizeof(vec3), mParticles.data());
 
 	mAudioSource->update();
+	float volume = mAudioSource->getVolume();
+	float rotation = math<float>::pow(volume, 4) * mRotationSpeed * ROTATION_DAMP;
+	mRotation = glm::rotate(mRotation, rotation, vec3(1.0, 0.0, 0.0));
+	mRotation = glm::rotate(mRotation, rotation * 0.5f, vec3(0.0, 1.0, 0.0));
 	auto eqVolumes = mAudioSource->getEqs(3);
 	for (int i = 0; i < 3; ++i) {
 		mEqVolumes[i] = eqVolumes[i] > mEqVolumes[i] ? eqVolumes[i] * mLoudness : mEqVolumes[i] - (mEqVolumes[i] - eqVolumes[i]) * DAMPING;
@@ -86,6 +93,7 @@ void EQPointCloud::draw()
 	mRenderProg->uniform("eq1", mEqs.at(1).pos);
 	mRenderProg->uniform("eq2", mEqs.at(2).pos);
 
+	gl::rotate(mRotation);
 	mBatch->draw();
 }
 

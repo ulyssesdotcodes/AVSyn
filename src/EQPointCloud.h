@@ -31,4 +31,6 @@ private:
 	vec3 mEqVolumes;
 
 	float mLoudness;
+	quat mRotation;
+	float mRotationSpeed;
 };
