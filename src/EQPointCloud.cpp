@@ -19,6 +19,7 @@ void EQPointCloud::setup(AudioSource* audioSource)
 	mLoudness = 1.0;
 	mRotationSpeed = 1.0;
 	mAudioSource = audioSource;
+	mHue = 0.0;
 
 	for (int i = 0; i < NUM_PARTICLES; i++) {
 		float x = (Rand::randFloat() - 0.5f) * SIZE;
@@ -50,6 +51,9 @@ void EQPointCloud::switchCamera(CameraPersp cam) {
 void EQPointCloud::switchParams(params::InterfaceGlRef params) {
 	addParamName("Loudness");
 	params->addParam("Loudness", &mLoudness, "min=0.0 max=2.0 step=0.001");
+
+	addParamName("Hue");
+	params->addParam("Hue", &mHue, "min=0.0 max=1.0 step=0.01");
 }
 
 void EQPointCloud::update()
@@ -92,6 +96,7 @@ void EQPointCloud::draw()
 	mRenderProg->uniform("eq0", mEqs.at(0).pos);
 	mRenderProg->uniform("eq1", mEqs.at(1).pos);
 	mRenderProg->uniform("eq2", mEqs.at(2).pos);
+	mRenderProg->uniform("hue", mHue);
 
 	gl::rotate(mRotation);
 	mBatch->draw();

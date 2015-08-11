@@ -66,8 +66,8 @@ void AVSynApp::setup()
 	mCurrentVisOption = 0;
 	auto format = Window::Format();
 	format.setSize(paramsSize + vec2(40, 40));
+	format.setPos(ivec2(100, 100));
 	mParamWindow = createWindow(format);
-	mParamWindow->setPos(vec2(0, 0));
 	mParamWindow->getSignalDraw().connect([=]() { drawParams(); });
 	mParams = params::InterfaceGl::create(getWindow(), "Options", paramsSize);
 

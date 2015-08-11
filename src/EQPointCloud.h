@@ -33,4 +33,5 @@ private:
 	float mLoudness;
 	quat mRotation;
 	float mRotationSpeed;
+	float mHue;
 };
