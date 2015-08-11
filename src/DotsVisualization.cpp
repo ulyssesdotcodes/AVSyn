@@ -47,5 +47,5 @@ void DotsVisualization::switchParams(params::InterfaceGlRef params) {
 	params->addParam("Loudness", &mLoudness, "min=0.0 max=2.0 step=0.001");
 
 	addParamName("Hue");
-	params->addParam("Hue", &mHue, "min=-0.5 max=0.5 step=0.001");
+	params->addParam("Hue", &mHue, "min=0.0 max=1.0 step=0.01");
 }

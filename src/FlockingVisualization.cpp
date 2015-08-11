@@ -21,9 +21,12 @@ FlockingVisualization::FlockingVisualization()
 	mLoudness = 1.0;
 	mAccumulatedLoudness = 0.0f;
 
-	mSpeed = 3.0f;
+	mSpeed = 2.0f;
 
 	mBeatConstant = 1.4;
+
+	mHue = 0.0;
+	mSaturation = 1.0;
 }
 
 void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSource, BeatDetector* beatDetector)
@@ -118,6 +121,12 @@ void FlockingVisualization::switchParams(params::InterfaceGlRef params) {
 
 	addParamName("Roaming Distance");
 	params->addParam("Roaming Distance", &mRoamingDistance, "min=20.0 max=120.0 step=1.0");
+
+	addParamName("Hue");
+	params->addParam("Hue", &mHue, "min=0.0 max=1.0 step=0.01");
+
+	addParamName("Saturation");
+	params->addParam("Saturation", &mSaturation, "min=0.0 max=1.0 step=0.01");
 }
 
 
@@ -137,6 +146,8 @@ void FlockingVisualization::update()
 	mUpdateShader->uniform("beat", mBeatDetector->getBeat());
 	mUpdateShader->uniform("roamingDistance", mRoamingDistance);
 	mUpdateShader->uniform("speed", mSpeed);
+	mUpdateShader->uniform("hue", mHue);
+	mUpdateShader->uniform("saturation", mSaturation);
 	mUpdateShader->uniform("eqs", &(mAudioSource->getEqs(3, mLoudness))[0], 3);
 
 

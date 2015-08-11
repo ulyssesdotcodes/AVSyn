@@ -40,4 +40,6 @@ private:
 	float mSpeed;
 	float mBeatConstant;
 	float mLoudness;
+	float mHue;
+	float mSaturation;
 };

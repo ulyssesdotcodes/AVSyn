@@ -32,6 +32,7 @@ private:
 	WindowRef mParamWindow;
 	params::InterfaceGlRef mParams;
 	quat mSceneRotation;
+	bool mSaveFrames;
 
 	CameraPersp mCam;
 	vec3 mEye;
@@ -71,6 +72,8 @@ void AVSynApp::setup()
 	mParams = params::InterfaceGl::create(getWindow(), "Options", paramsSize);
 
 	mParams->addParam("Rotation", &mSceneRotation);
+	mSaveFrames = false;
+	mParams->addParam("Record", &mSaveFrames);
 
 	mAudioSource = new AudioSource();
 	mDeltaSource = new DeltaSource();
@@ -87,6 +90,11 @@ void AVSynApp::setup()
 	//mVisualizations.insert(make_pair("Circular", circularVis));
 	//mVisualizationOptions.push_back("Circular");
 
+	auto *flocking = new FlockingVisualization();
+	flocking->setup(mAudioSource, mDeltaSource, mBeatDetector);
+	mVisualizations.insert(make_pair("Flocking", flocking));
+	mVisualizationOptions.push_back("Flocking");
+
 	auto *dotsVis = new DotsVisualization();
 	dotsVis->setup(mAudioSource, mBeatDetector);
 	mVisualizations.insert(make_pair("Dots", dotsVis));
@@ -97,17 +105,12 @@ void AVSynApp::setup()
 	mVisualizations.insert(make_pair("EQPointCloud", eqPointCloud));
 	mVisualizationOptions.push_back("EQPointCloud");
 
-	auto *flocking = new FlockingVisualization();
-	flocking->setup(mAudioSource, mDeltaSource, mBeatDetector);
-	mVisualizations.insert(make_pair("Flocking", flocking));
-	mVisualizationOptions.push_back("Flocking");
-
 	auto *trees = new TreeVisualization();
 	trees->setup(mAudioSource, mBeatDetector);
 	mVisualizations.insert(make_pair("Trees", trees));
 	mVisualizationOptions.push_back("Trees");
 
-	mCurrentVisOption = mVisualizations.size() - 1;
+	mCurrentVisOption = 0;
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
 	
 	mVisualization->switchCamera(mCam);
@@ -153,6 +156,10 @@ void AVSynApp::drawRender()
 	}
 
 	mVisualization->draw();
+
+	if (mSaveFrames) {
+		writeImage(app::getAppPath().generic_string() + "\\save scene\\image_" + to_string(app::getElapsedFrames()) + ".png", copyWindowSurface());
+	}
 }
 
 void AVSynApp::drawParams()

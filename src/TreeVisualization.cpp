@@ -167,13 +167,13 @@ void TreeVisualization::update()
 	mRotation = glm::rotate(mRotation, mRotationSpeed * ROTATION_DAMP, normalize(vec3(1.0, 0.5, 0)));
 
 	// Quit if there's no audio
-	if (mAudioSource->getVolume() < 0.01) return;
+	if (mAudioSource->getVolume() < 0.2) return;
 
 	// Set the current vertex color
 	auto eqs = mAudioSource->getEqs(3);
 	auto rgb = ColorA(vec4(glm::normalize(vec3(eqs[0], eqs[1], eqs[2])), 1.0));
 	auto hsv = rgbToHsv(rgb);
-	hsv.x = fmod(hsv.x + mHue, 1.);
+	hsv.x = fmod(1.0 + hsv.x + mHue, 1.);
 	mColor = ColorA(hsvToRgb(hsv), 1.0);
 
 	// Loop through the gens and do the operations

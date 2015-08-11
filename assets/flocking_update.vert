@@ -19,6 +19,8 @@ uniform float accumulatedLoudness;
 uniform float roamingDistance;
 uniform float speed;
 uniform float eqs[3];
+uniform float hue;
+uniform float saturation;
 
 out vec3 tf_position;
 out vec3 tf_velocity;
@@ -62,7 +64,7 @@ vec3 calculatePosition(vec3 position, vec3 velocity) {
   return position.xyz + velocity * delt * 12.0;
 }
 
-vec4 calculateVelocity(vec3 position, vec3 velocity, float hue) {
+vec4 calculateVelocity(vec3 position, vec3 velocity, float prevHue) {
   float delt = min(1.0, delta);
   float cd = cohesionDistance * (0.6 + 0.2 * sin(accumulatedLoudness * 0.05) + eqs[2]);
   float sd = separationDistance * (0.4 + cos(accumulatedLoudness * 0.05) + beat * loudness + eqs[1]);
@@ -169,18 +171,17 @@ vec4 calculateVelocity(vec3 position, vec3 velocity, float hue) {
     selfHueVelocity = 0.33;
   }
   else if (alignmentCount < separationCount && separationCount > cohesionCount){
-    selfHueVelocity = 1.0;
+    selfHueVelocity = 0.0;
   }
   else if (cohesionCount > separationCount && alignmentCount < cohesionCount){
     selfHueVelocity = 0.66;
   }
 
-
   if(zoneCount == 0.0) {
-    selfHueVelocity = hue;
+    selfHueVelocity = prevHue;
   }
   else {
-    selfHueVelocity =  mix(hue, selfHueVelocity, delt * 10.0);
+    selfHueVelocity =  mix(prevHue, selfHueVelocity, delt * 10.0);
   }
 
   if(length(velocity) > speed) {
@@ -192,9 +193,10 @@ vec4 calculateVelocity(vec3 position, vec3 velocity, float hue) {
 
 void main() {
 	vec3 color = rgb2hsv(iColor);
+	color.x = fract(color.x - hue);
 	vec4 velocity = calculateVelocity(iPosition, iVelocity.xyz, color.x);
 	vec3 position = calculatePosition(iPosition, iVelocity.xyz);
 	tf_position = position;
 	tf_velocity = velocity.xyz;
-	tf_color = hsv2rgb(vec3(velocity.w, 1.0, 1.0));
+	tf_color = hsv2rgb(vec3(fract(velocity.w + hue), saturation, 1.0));
 }

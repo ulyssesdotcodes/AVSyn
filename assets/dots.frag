@@ -2,6 +2,7 @@ uniform vec3 resolution;
 uniform float time;
 uniform float accumulatedLoudness;
 uniform float eqs[4];
+uniform float hue;
 
 out vec4 fragColor;
 
@@ -46,7 +47,7 @@ void main() {
 
   vec3 col = vec3(0.0);
   for(float i = 0.0; i < 4.0; i++) {
-    vec3 color = hsv2rgb(vec3(i * 0.25, 1.0, 1.0));
+    vec3 color = hsv2rgb(vec3(fract(hue + i * 0.25), 1.0, 1.0));
 
     col += iDot(i, uv) * color ;
   }
