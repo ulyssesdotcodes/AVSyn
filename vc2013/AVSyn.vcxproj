@@ -198,6 +198,7 @@
     <ClCompile Include="..\src\DotsVisualization.cpp" />
     <ClCompile Include="..\src\EQPointCloud.cpp" />
     <ClCompile Include="..\src\FlockingVisualization.cpp" />
+    <ClCompile Include="..\src\KickChangeImage.cpp" />
     <ClCompile Include="..\src\ShaderVisualization.cpp" />
     <ClCompile Include="..\src\TreeVisualization.cpp" />
     <ClCompile Include="..\src\Visualization.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="..\src\DotsVisualization.h" />
     <ClInclude Include="..\src\EQPointCloud.h" />
     <ClInclude Include="..\src\FlockingVisualization.h" />
+    <ClInclude Include="..\src\KickChangeImage.h" />
     <ClInclude Include="..\src\ShaderVisualization.h" />
     <ClInclude Include="..\src\TreeVisualization.h" />
     <ClInclude Include="..\src\Visualization.h" />

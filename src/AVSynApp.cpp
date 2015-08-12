@@ -13,6 +13,7 @@
 #include "EQPointCloud.h"
 #include "FlockingVisualization.h"
 #include "TreeVisualization.h"
+#include "KickChangeImage.h"
 
 #include "DeltaSource.h"
 
@@ -90,25 +91,30 @@ void AVSynApp::setup()
 	//mVisualizations.insert(make_pair("Circular", circularVis));
 	//mVisualizationOptions.push_back("Circular");
 
-	auto *flocking = new FlockingVisualization();
-	flocking->setup(mAudioSource, mDeltaSource, mBeatDetector);
-	mVisualizations.insert(make_pair("Flocking", flocking));
-	mVisualizationOptions.push_back("Flocking");
+	//auto *flocking = new FlockingVisualization();
+	//flocking->setup(mAudioSource, mDeltaSource, mBeatDetector);
+	//mVisualizations.insert(make_pair("Flocking", flocking));
+	//mVisualizationOptions.push_back("Flocking");
 
-	auto *dotsVis = new DotsVisualization();
-	dotsVis->setup(mAudioSource, mBeatDetector);
-	mVisualizations.insert(make_pair("Dots", dotsVis));
-	mVisualizationOptions.push_back("Dots");
+	//auto *dotsVis = new DotsVisualization();
+	//dotsVis->setup(mAudioSource, mBeatDetector);
+	//mVisualizations.insert(make_pair("Dots", dotsVis));
+	//mVisualizationOptions.push_back("Dots");
 
-	auto *eqPointCloud = new EQPointCloud();
-	eqPointCloud->setup(mAudioSource);
-	mVisualizations.insert(make_pair("EQPointCloud", eqPointCloud));
-	mVisualizationOptions.push_back("EQPointCloud");
+	//auto *eqPointCloud = new EQPointCloud();
+	//eqPointCloud->setup(mAudioSource);
+	//mVisualizations.insert(make_pair("EQPointCloud", eqPointCloud));
+	//mVisualizationOptions.push_back("EQPointCloud");
 
-	auto *trees = new TreeVisualization();
-	trees->setup(mAudioSource, mBeatDetector);
-	mVisualizations.insert(make_pair("Trees", trees));
-	mVisualizationOptions.push_back("Trees");
+	//auto *trees = new TreeVisualization();
+	//trees->setup(mAudioSource, mBeatDetector);
+	//mVisualizations.insert(make_pair("Trees", trees));
+	//mVisualizationOptions.push_back("Trees");
+
+	auto *kickChangeImage = new KickChangeImage();
+	kickChangeImage->setup(mAudioSource);
+	mVisualizations.insert(make_pair("Kick Change Image", kickChangeImage));
+	mVisualizationOptions.push_back("Kick Change Image");
 
 	mCurrentVisOption = 0;
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];

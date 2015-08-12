@@ -11,6 +11,7 @@ public:
 	virtual void draw() = 0;
 	virtual void update() = 0;
 	virtual bool perspective() = 0;
+	// TODO: CHange to ref
 	virtual void switchCamera(ci::CameraPersp cam) = 0;
 	virtual void switchParams(ci::params::InterfaceGlRef params) = 0;
 	virtual void addParamName(const string &param);
