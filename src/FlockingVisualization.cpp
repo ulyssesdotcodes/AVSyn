@@ -104,9 +104,9 @@ void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSo
 	mVelocityBufTex[1] = gl::BufferTexture::create(mVelocities[1], GL_RGB32F);
 }
 
-void FlockingVisualization::switchCamera(CameraPersp cam) 
+void FlockingVisualization::switchCamera(CameraPersp* cam) 
 {
-	cam.lookAt(vec3(0.0, 100.0, 400.0), vec3(0.0));
+	cam->lookAt(vec3(0.0, 100.0, 400.0), vec3(0.0));
 }
 
 void FlockingVisualization::switchParams(params::InterfaceGlRef params) {

@@ -15,7 +15,7 @@ void ShaderVisualization::update()
 {
 }
 
-void ShaderVisualization::switchCamera(CameraPersp cam) {}
+void ShaderVisualization::switchCamera(CameraPersp* cam) {}
 
 void ShaderVisualization::renderUniforms() {
 	mShader->uniform("resolution", vec3(app::getWindowWidth(), app::getWindowHeight(), 0.0f));

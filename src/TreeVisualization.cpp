@@ -57,7 +57,7 @@ void TreeVisualization::switchParams(params::InterfaceGlRef params)
 	params->addParam("Beat Constant", &mBeatConstant, "min=1.1 max=2.1 step=0.001");
 }
 
-void TreeVisualization::switchCamera(CameraPersp mCam) {}
+void TreeVisualization::switchCamera(CameraPersp* mCam) {}
 
 bool TreeVisualization::perspective() 
 {

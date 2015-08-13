@@ -15,7 +15,7 @@ public:
 	virtual void setup(AudioSource* audioSource);
 	virtual void update();
 	virtual void draw();
-	virtual void switchCamera(CameraPersp cam);
+	virtual void switchCamera(CameraPersp* cam);
 	virtual void switchParams(params::InterfaceGlRef params) override;
 	bool perspective() override;
 

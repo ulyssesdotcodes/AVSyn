@@ -223,6 +223,7 @@
     <None Include="..\assets\dots.frag" />
     <None Include="..\assets\eq_pointcloud.vert" />
     <None Include="..\assets\flocking.vert" />
+    <None Include="..\assets\kick_image.vert" />
     <None Include="..\assets\old_flocking_update.frag" />
     <None Include="..\assets\flocking_update.vert" />
     <None Include="..\assets\passthru.vert" />

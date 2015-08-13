@@ -43,7 +43,7 @@ public:
 	void setup(AudioSource* audioSource, BeatDetector* beatDetector);
 	void update() override;
 	void draw() override;
-	void switchCamera(CameraPersp cam) override;
+	void switchCamera(CameraPersp* cam) override;
 	void switchParams(params::InterfaceGlRef params) override;
 	bool perspective() override;
 

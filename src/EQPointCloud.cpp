@@ -44,8 +44,8 @@ void EQPointCloud::setup(AudioSource* audioSource)
 	mEqs.push_back({ mParticles.at(2), Rand::randVec3()});
 }
 
-void EQPointCloud::switchCamera(CameraPersp cam) {
-	cam.lookAt(vec3(0.0, 100.0, 400.0), vec3(0.0));
+void EQPointCloud::switchCamera(CameraPersp* cam) {
+	cam->lookAt(vec3(0.0, 100.0, 400.0), vec3(0.0));
 }
 
 void EQPointCloud::switchParams(params::InterfaceGlRef params) {

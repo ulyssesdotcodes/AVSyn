@@ -12,7 +12,7 @@ public:
 	void setup(const fs::path &fragmentShader);
 	virtual void update() override;
 	virtual void draw() override;
-	virtual void switchCamera(CameraPersp cam) override;
+	virtual void switchCamera(CameraPersp* cam) override;
 	bool perspective() override;
 
 protected:
