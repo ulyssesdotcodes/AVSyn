@@ -112,7 +112,7 @@ void AVSynApp::setup()
 	//mVisualizationOptions.push_back("Trees");
 
 	auto *kickChangeImage = new KickChangeImage();
-	kickChangeImage->setup(mAudioSource);
+	kickChangeImage->setup(mAudioSource, mBeatDetector);
 	mVisualizations.insert(make_pair("Kick Change Image", kickChangeImage));
 	mVisualizationOptions.push_back("Kick Change Image");
 

@@ -65,7 +65,7 @@ gl::TextureRef AudioSource::getMagSpectrumTexture() {
 
 float AudioSource::getVolume() 
 {
-	return audio::linearToDecibel(mMonitor->getVolume()) / 100.0f;
+	return mMonitor->getVolume();
 }
 
 vector<float> AudioSource::getEqs(int binCount) {
