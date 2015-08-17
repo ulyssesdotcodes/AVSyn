@@ -9,6 +9,10 @@ void AudioShaderVisualization::setup(AudioSource* audioSource, const fs::path &f
 	mAudioSource = audioSource;
 }
 
+void AudioShaderVisualization::switchParams(params::InterfaceGlRef params)
+{
+}
+
 void AudioShaderVisualization::update()
 {
 	mAudioSource->update();

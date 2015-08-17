@@ -1,8 +1,11 @@
 #pragma once
 
 #include "Visualization.h"
+#include "AudioShaderVisualization.h"
 #include "AudioSource.h"
 #include "BeatDetector.h"
+#include "cinder\app\App.h"
+#include "Kinect2.h"
 
 struct Particle {
 	vec3 pos;
@@ -21,11 +24,14 @@ public:
 	virtual void switchCamera(CameraPersp* camera);
 	virtual void switchParams(params::InterfaceGlRef params);
 	virtual bool perspective() override;
+	virtual void mouseMove(app::MouseEvent mouseEvent);
 
 private:
 	AudioSource* mAudioSource;
 	BeatDetector* mBeatDetector;
 	float mLastBeat;
+
+	AudioShaderVisualization* mVisualization;
 
 	vector<gl::TextureRef> mImages;
 	int mCurrentImage;
@@ -39,4 +45,9 @@ private:
 	gl::VboRef mParticleBuffer[2];
 	int mIteration;
 
+	gl::FboRef mMousePositionFbo;
+	gl::FboRef mVisFbo;
+
+	Kinect2::DeviceRef mDevice;
+	Channel8uRef mChannelBodyImage;
 };

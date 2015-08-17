@@ -56,8 +56,6 @@ void AVSynApp::setup()
 	vector<DisplayRef> displays = Display::getDisplays();
 
 	mCam = CameraPersp(getWindowWidth(), getWindowHeight(), 50);
-	//mCam = CameraPersp();
-	//mCam.setOrtho(0, getWindowWidth(), getWindowHeight(), 0, -1, 1);
 	mCam.setPerspective(60.0f, getWindowAspectRatio(), 1.0f, 3000.0f);
 	mEye = vec3(0.0, 0.0, 100.0f);
 	mCenter = vec3(0);
@@ -75,6 +73,8 @@ void AVSynApp::setup()
 	mParams->addParam("Rotation", &mSceneRotation);
 	mSaveFrames = false;
 	mParams->addParam("Record", &mSaveFrames);
+
+	getWindowIndex(0)->getRenderer()->makeCurrentContext();
 
 	mAudioSource = new AudioSource();
 	mDeltaSource = new DeltaSource();
@@ -116,6 +116,11 @@ void AVSynApp::setup()
 	mVisualizations.insert(make_pair("Kick Change Image", kickChangeImage));
 	mVisualizationOptions.push_back("Kick Change Image");
 
+	getWindowIndex(0)->getSignalMouseMove().connect([kickChangeImage](MouseEvent e) {
+		app::getWindowIndex(0)->getRenderer()->makeCurrentContext();
+		kickChangeImage->mouseMove(e);
+	});
+
 	mCurrentVisOption = 0;
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
 	
@@ -144,6 +149,7 @@ void AVSynApp::keyDown(KeyEvent event) {
 
 void AVSynApp::update()
 {
+	getWindowIndex(0)->getRenderer()->makeCurrentContext();
 	mDeltaSource->update();
 	mVisualization->update();
 }

@@ -7,6 +7,7 @@ public:
 	void setup(AudioSource* audioSource, const fs::path &fragmentShader);
 	virtual void update() override;
 	virtual void draw() override;
+	virtual void switchParams(params::InterfaceGlRef params);
 
 protected:
 	virtual void renderUniforms() override;

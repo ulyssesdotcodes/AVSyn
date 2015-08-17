@@ -75,11 +75,39 @@ void KickChangeImage::setup(AudioSource* audioSource, BeatDetector* beatDetector
 		.attribLocation("iDamping", 4)
 		.attribLocation("iRef", 5)
 		);
+
+	mUpdateProg->uniform("positionRes", vec2(particlesImageWidth * 0.25, particlesImageHeight * 0.25));
+
+	mDevice = Kinect2::Device::create();
+	mDevice->start();
+	mDevice->connectBodyIndexEventHandler( [ & ]( const Kinect2::BodyIndexFrame& frame )
+	{
+		mChannelBodyImage = frame.getChannel();
+	} );
+
+	mVisualization = new AudioShaderVisualization();
+	mVisualization->setup(mAudioSource, "circular_fft.frag");
+	mVisFbo = gl::Fbo::create(app::getWindowWidth(), app::getWindowHeight());
+}
+
+void KickChangeImage::mouseMove(app::MouseEvent mouseEvent) 
+{
+	//gl::ScopedFramebuffer fbScp(mMousePositionFbo);
+	//gl::clear(Color(0, 0, 0));
+	//gl::ScopedViewport scpVp(ivec2(0), mMousePositionFbo->getSize());
+	//gl::setMatricesWindow(mMousePositionFbo->getSize());
+
+	//float x = (float)mouseEvent.getX();
+	//float y = (float)mouseEvent.getY();
+	//Rectf rect(x, y, x + 500, y + 500);
+	//gl::ScopedGlslProg shaderProg(gl::getStockShader(gl::ShaderDef().color()));
+	//gl::color(Color::white());
+	//gl::drawSolidRect(rect);
 }
 
 void KickChangeImage::switchCamera(CameraPersp* cam) 
 {
-	cam->lookAt(vec3(0, 0, 200), vec3(0));
+	cam->lookAt(vec3(0, 0, 100), vec3(0, 0, 0));
 }
 
 void KickChangeImage::switchParams(params::InterfaceGlRef params)
@@ -98,18 +126,41 @@ bool KickChangeImage::perspective()
 
 void KickChangeImage::update()
 {
-	mBeatDetector->update(1.9);
-	float currentBeat = mBeatDetector->getBeat();
-	if (currentBeat - mLastBeat > 0.9) {
+	float currentBeat = mAudioSource->getVolume();
+	if (currentBeat - mLastBeat > 0.4) {
 		mCurrentImage = (mCurrentImage + 1) % mImages.size();
 		mUpdateProg->uniform("change", true);
 	}
 
 	mLastBeat = currentBeat;
 
-	gl::ScopedTextureBind bind(mImages[mCurrentImage], 0);
+	gl::TextureRef tex;
+
+	if(mChannelBodyImage) {
+		tex = gl::Texture::create(*mChannelBodyImage  );
+	}
+	else {
+		tex = gl::Texture::create(Channel16u());
+	}
+
+	{
+		mVisualization->update();
+		gl::ScopedFramebuffer fbo(mVisFbo);
+		gl::clear(Color(0, 0, 0));
+		gl::ScopedViewport scpVp(ivec2(0), mVisFbo->getSize());
+		gl::pushMatrices();
+		gl::setMatricesWindow(mVisFbo->getSize());
+		mVisualization->draw();
+		gl::popMatrices();
+	}
+
+	gl::ScopedTextureBind texBind(tex, 1);
+	gl::ScopedTextureBind bind(mVisFbo->getColorTexture(), 0);
 	mUpdateProg->uniform("image", 0);
 	mUpdateProg->uniform("time", (float)app::getElapsedSeconds());
+	mUpdateProg->uniform("collisionRes", tex->getSize());
+	mUpdateProg->uniform("collisionMap", 1);
+
 	gl::ScopedGlslProg prog(mUpdateProg);
 	gl::ScopedState rasterizer(GL_RASTERIZER_DISCARD, true);
 
@@ -129,6 +180,18 @@ void KickChangeImage::update()
 
 void KickChangeImage::draw() 
 {
+	if(mChannelBodyImage) {
+		gl::TextureRef tex = gl::Texture::create( *mChannelBodyImage);
+		gl::ScopedTextureBind bindCollision(tex, 1);
+		gl::pushViewport();
+		gl::viewport(app::getWindowSize());
+		gl::pushMatrices();
+		gl::setMatricesWindow(app::getWindowSize());
+		gl::draw(tex, Rectf(0, 0, 256, 256));
+		gl::popMatrices();
+		gl::popViewport();
+	}
+
 	gl::ScopedGlslProg render(mRenderProg);
 	gl::ScopedVao vao(mAttributes[mIteration & 1]);
 	gl::setDefaultShaderVars();

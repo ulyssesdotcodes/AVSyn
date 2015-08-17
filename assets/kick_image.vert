@@ -1,6 +1,9 @@
 uniform bool change;
 uniform sampler2D image;
+uniform sampler2D collisionMap;
 uniform float time;
+uniform ivec2 collisionRes;
+uniform vec2 positionRes;
 
 in vec3   iPosition;
 in vec4   iColor;
@@ -36,12 +39,24 @@ void main() {
 		//float particlesImageHeight = NUM_PARTICLES / particlesImageWidth;
 
 	color = texture2D(image, ref);
+	//color = color + texture2D(collisionMap, position.xy);
 
 	if(change) {
 		velocity = 2.0 * (vec3(0.5) - vec3(rand(ref+time), rand(ref-time), rand(ref*time)));
 	}
 
-	position = position +  velocity;
+	position = position + velocity;
+
+	vec2 kinPos = mix(vec2(0.1), vec2(0.9), position.xy / positionRes) + vec2(0.5);
+	kinPos.x = 1.0 - kinPos.x;
+	vec4 collision = texture2D(collisionMap, kinPos);
+
 	vec3 dir = normalize(home - position);
+
+	// If the target position is a collision, move away instead of towards but keep velocity.
+	if (collision.x + collision.y + collision.z < 2.9) {
+		position = position - vec3(dir.xy, 0.0);
+	}
+
 	velocity = velocity * damping + dir * 64.0 / (60.0 * 60.0);
 }
