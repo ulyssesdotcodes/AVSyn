@@ -13,7 +13,7 @@
 #include "EQPointCloud.h"
 #include "FlockingVisualization.h"
 #include "TreeVisualization.h"
-#include "KickChangeImage.h"
+#include "KinectParticles.h"
 
 #include "DeltaSource.h"
 
@@ -86,33 +86,38 @@ void AVSynApp::setup()
 	//mVisualizations.insert(make_pair("Simple", simpleVis));
 	//mVisualizationOptions.push_back("Simple");
 
-	//AudioShaderVisualization *circularVis = new AudioShaderVisualization();
-	//circularVis->setup(mAudioSource, "circular_fft.frag");
-	//mVisualizations.insert(make_pair("Circular", circularVis));
-	//mVisualizationOptions.push_back("Circular");
+	AudioShaderVisualization *circularVis = new AudioShaderVisualization();
+	circularVis->setup(mAudioSource, "circular_fft.frag");
+	mVisualizations.insert(make_pair("Circular", circularVis));
+	mVisualizationOptions.push_back("Circular");
 
-	//auto *flocking = new FlockingVisualization();
-	//flocking->setup(mAudioSource, mDeltaSource, mBeatDetector);
-	//mVisualizations.insert(make_pair("Flocking", flocking));
-	//mVisualizationOptions.push_back("Flocking");
+	AudioShaderVisualization *flame = new AudioShaderVisualization();
+	flame->setup(mAudioSource, "flame.frag");
+	mVisualizations.insert(make_pair("Flame", flame));
+	mVisualizationOptions.push_back("Flame");
 
-	//auto *dotsVis = new DotsVisualization();
-	//dotsVis->setup(mAudioSource, mBeatDetector);
-	//mVisualizations.insert(make_pair("Dots", dotsVis));
-	//mVisualizationOptions.push_back("Dots");
+	auto *flocking = new FlockingVisualization();
+	flocking->setup(mAudioSource, mDeltaSource, mBeatDetector);
+	mVisualizations.insert(make_pair("Flocking", flocking));
+	mVisualizationOptions.push_back("Flocking");
 
-	//auto *eqPointCloud = new EQPointCloud();
-	//eqPointCloud->setup(mAudioSource);
-	//mVisualizations.insert(make_pair("EQPointCloud", eqPointCloud));
-	//mVisualizationOptions.push_back("EQPointCloud");
+	auto *dotsVis = new DotsVisualization();
+	dotsVis->setup(mAudioSource, mBeatDetector);
+	mVisualizations.insert(make_pair("Dots", dotsVis));
+	mVisualizationOptions.push_back("Dots");
 
-	//auto *trees = new TreeVisualization();
-	//trees->setup(mAudioSource, mBeatDetector);
-	//mVisualizations.insert(make_pair("Trees", trees));
-	//mVisualizationOptions.push_back("Trees");
+	auto *eqPointCloud = new EQPointCloud();
+	eqPointCloud->setup(mAudioSource);
+	mVisualizations.insert(make_pair("EQPointCloud", eqPointCloud));
+	mVisualizationOptions.push_back("EQPointCloud");
 
-	auto *kickChangeImage = new KickChangeImage();
-	kickChangeImage->setup(mAudioSource, mBeatDetector);
+	auto *trees = new TreeVisualization();
+	trees->setup(mAudioSource, mBeatDetector);
+	mVisualizations.insert(make_pair("Trees", trees));
+	mVisualizationOptions.push_back("Trees");
+
+	auto *kickChangeImage = new KinectParticles();
+	kickChangeImage->setup(mAudioSource, mBeatDetector, mVisualizations, mVisualizationOptions);
 	mVisualizations.insert(make_pair("Kick Change Image", kickChangeImage));
 	mVisualizationOptions.push_back("Kick Change Image");
 
@@ -184,10 +189,10 @@ void AVSynApp::drawParams()
 CINDER_APP(AVSynApp, RendererGl(), [&](App::Settings *settings) {
 	FullScreenOptions options;
 	vector<DisplayRef> displays = Display::getDisplays();
+	settings->setFullScreen(true, options);	
 	if (displays.size() > 1) {
 		options.display(displays[1]);
 		settings->setDisplay(displays[1]);
 	}
-	settings->setFullScreen(true, options);
 	settings->setFrameRate(60.0f);
 })

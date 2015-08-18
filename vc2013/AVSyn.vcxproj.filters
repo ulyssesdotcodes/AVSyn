@@ -57,7 +57,10 @@
     <ClCompile Include="..\src\TreeVisualization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\KickChangeImage.cpp">
+    <ClCompile Include="..\blocks\Cinder-KCB2\src\Kinect2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\KinectParticles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -95,7 +98,10 @@
     <ClInclude Include="..\src\TreeVisualization.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\KickChangeImage.h">
+    <ClInclude Include="..\blocks\Cinder-KCB2\src\Kinect2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\KinectParticles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -139,6 +145,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\assets\kick_image.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\flame.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

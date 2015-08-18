@@ -16,9 +16,9 @@ struct Particle {
 	vec2 ref;
 };
 
-class KickChangeImage : public Visualization {
+class KinectParticles : public Visualization {
 public:
-	virtual void setup(AudioSource* audioSource, BeatDetector* beatDetector);
+	virtual void setup(AudioSource* audioSource, BeatDetector* beatDetector, map<string, Visualization*> visualizations, vector<string> visualizationOptions);
 	virtual void update();
 	virtual void draw();
 	virtual void switchCamera(CameraPersp* camera);
@@ -31,7 +31,13 @@ private:
 	BeatDetector* mBeatDetector;
 	float mLastBeat;
 
-	AudioShaderVisualization* mVisualization;
+	Visualization* mVisualization;
+	map<string, Visualization*> mVisualizations;
+	vector<string> mVisualizationOptions;
+	int mCurrentVisOption;
+
+	CameraPersp* mCam;
+	params::InterfaceGlRef mParams;
 
 	vector<gl::TextureRef> mImages;
 	int mCurrentImage;

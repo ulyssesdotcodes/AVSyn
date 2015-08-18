@@ -1,4 +1,4 @@
-#include "KickChangeImage.h"
+#include "KinectParticles.h"
 
 #include "cinder\app\App.h"
 #include "cinder\Rand.h"
@@ -6,10 +6,15 @@
 const int NUM_PARTICLES = 600e3;
 
 
-void KickChangeImage::setup(AudioSource* audioSource, BeatDetector* beatDetector) 
+void KinectParticles::setup(AudioSource* audioSource, BeatDetector* beatDetector, map<string, Visualization*> visualizations, vector<string> visualizationOptions)
 {
 	mAudioSource = audioSource;
 	mBeatDetector = beatDetector;
+
+	mVisualizationOptions = visualizationOptions;
+	mVisualizations = visualizations;
+	mVisualization = mVisualizations.begin()->second;
+	mCurrentVisOption = 0;
 
 	mCurrentImage = 0;
 	mImages.push_back(gl::Texture::create(loadImage(app::loadAsset("N4GII.jpg"))));
@@ -85,12 +90,10 @@ void KickChangeImage::setup(AudioSource* audioSource, BeatDetector* beatDetector
 		mChannelBodyImage = frame.getChannel();
 	} );
 
-	mVisualization = new AudioShaderVisualization();
-	mVisualization->setup(mAudioSource, "circular_fft.frag");
 	mVisFbo = gl::Fbo::create(app::getWindowWidth(), app::getWindowHeight());
 }
 
-void KickChangeImage::mouseMove(app::MouseEvent mouseEvent) 
+void KinectParticles::mouseMove(app::MouseEvent mouseEvent) 
 {
 	//gl::ScopedFramebuffer fbScp(mMousePositionFbo);
 	//gl::clear(Color(0, 0, 0));
@@ -105,26 +108,35 @@ void KickChangeImage::mouseMove(app::MouseEvent mouseEvent)
 	//gl::drawSolidRect(rect);
 }
 
-void KickChangeImage::switchCamera(CameraPersp* cam) 
+void KinectParticles::switchCamera(CameraPersp* cam) 
 {
+	mCam = cam;
 	cam->lookAt(vec3(0, 0, 100), vec3(0, 0, 0));
 }
 
-void KickChangeImage::switchParams(params::InterfaceGlRef params)
+void KinectParticles::switchParams(params::InterfaceGlRef params)
 {
-	params->addButton("Push", [=]() {
-		mCurrentImage = (mCurrentImage + 1) % mImages.size();
-		mUpdateProg->uniform("change", true);
-	});
-
+	mParams = params;
+	addParamName("Kinect Visualizations");
+	params->addParam("Kinect Visualizations", mVisualizationOptions, 
+		[=](int ind) {
+			mVisualization->resetParams(mParams);
+			mCurrentVisOption = ind;
+			mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
+			mVisualization->switchCamera(mCam);
+			mVisualization->switchParams(mParams);
+		},
+			[=]() {
+			return mCurrentVisOption;
+		});
 }
 
-bool KickChangeImage::perspective()
+bool KinectParticles::perspective()
 {
 	return true;
 }
 
-void KickChangeImage::update()
+void KinectParticles::update()
 {
 	float currentBeat = mAudioSource->getVolume();
 	if (currentBeat - mLastBeat > 0.4) {
@@ -149,7 +161,14 @@ void KickChangeImage::update()
 		gl::clear(Color(0, 0, 0));
 		gl::ScopedViewport scpVp(ivec2(0), mVisFbo->getSize());
 		gl::pushMatrices();
-		gl::setMatricesWindow(mVisFbo->getSize());
+		if (mVisualization->perspective()) {
+			mVisualization->switchCamera(mCam);
+			gl::setMatrices(*mCam);
+			switchCamera(mCam);
+		}
+		else {
+			gl::setMatricesWindow(mVisFbo->getSize());
+		}
 		mVisualization->draw();
 		gl::popMatrices();
 	}
@@ -178,7 +197,7 @@ void KickChangeImage::update()
 	mUpdateProg->uniform("change", false);
 }
 
-void KickChangeImage::draw() 
+void KinectParticles::draw() 
 {
 	if(mChannelBodyImage) {
 		gl::TextureRef tex = gl::Texture::create( *mChannelBodyImage);
