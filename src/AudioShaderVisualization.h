@@ -2,11 +2,18 @@
 
 #include "ShaderVisualization.h"
 
+/*
+  Renders a shader that requires the current audio frequency spectrum as a texture to the screen.
+*/
 class AudioShaderVisualization : public ShaderVisualization {
 public:
+	//! Setup with an audio source and an audio fragment shader
 	void setup(AudioSource* audioSource, const fs::path &fragmentShader);
+	//! Update the audio source and texture
 	virtual void update() override;
+	//! Set the texture as a uniform and draw the shader.
 	virtual void draw() override;
+	//! Nullop
 	virtual void switchParams(params::InterfaceGlRef params);
 
 protected:
