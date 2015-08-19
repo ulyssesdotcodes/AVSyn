@@ -4,7 +4,7 @@ AVSyn
 A Cinder project to explore live music visualization. Intended to be projected behind bands or DJs at concerts.
 
 
-# Usage
+### Usage
 
 - Make sure you have a mic connected or a software output monitor (and it's selected in Recording Devices)
 - Build with Visual Studio 2015
@@ -13,6 +13,6 @@ A Cinder project to explore live music visualization. Intended to be projected b
 - Browse through the different visualizations and play with the parameters!
 
 
-## WebGL
+### WebGL
 
 There's also a [WebGL version](https://github.com/ulyssesp/webgl-shader-jockey-ts) that you can [view online](https://ulyssesp.github.io/webgl-shader-jockey-ts).
