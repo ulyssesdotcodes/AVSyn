@@ -1,0 +1,3 @@
+[submodule "blocks/Cinder-KCB2"]
+	path = blocks/Cinder-KCB2
+	url = git@github.com:ulyssesp/Cinder-KCB2.git
