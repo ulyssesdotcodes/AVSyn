@@ -78,7 +78,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\include;..\..\Cinder\include;%(AdditionalIncludeDirectories);..\blocks\Cinder-KCB2\src;..\blocks\Cinder-KCB2\lib;$(KINECTSDK20_DIR)\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\Cinder\include;..\blocks\Cinder-KCB2\src;..\blocks\Cinder-KCB2\lib;$(KINECTSDK20_DIR)\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -198,6 +198,7 @@
     <ResourceCompile Include="Resources.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\blocks\Cinder-KCB2\src\Kinect2.cpp" />
     <ClCompile Include="..\src\AudioShaderVisualization.cpp" />
     <ClCompile Include="..\src\AudioSource.cpp" />
     <ClCompile Include="..\src\AVSynApp.cpp" />
@@ -210,9 +211,9 @@
     <ClCompile Include="..\src\ShaderVisualization.cpp" />
     <ClCompile Include="..\src\TreeVisualization.cpp" />
     <ClCompile Include="..\src\Visualization.cpp" />
-    <ClCompile Include="..\blocks\Cinder-KCB2\src\Kinect2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\blocks\Cinder-KCB2\src\Kinect2.h" />
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\src\AudioShaderVisualization.h" />
     <ClInclude Include="..\src\AudioSource.h" />
@@ -225,7 +226,6 @@
     <ClInclude Include="..\src\ShaderVisualization.h" />
     <ClInclude Include="..\src\TreeVisualization.h" />
     <ClInclude Include="..\src\Visualization.h" />
-    <ClInclude Include="..\blocks\Cinder-KCB2\src\Kinect2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\assets\circular_fft.frag" />
