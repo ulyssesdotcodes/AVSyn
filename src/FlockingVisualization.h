@@ -21,6 +21,7 @@ public:
 	virtual bool perspective() override;
 	//! Make sure that we have the flock in view.
 	virtual void switchCamera(CameraPersp* camera) override;
+	//! So many parameters!
 	virtual void switchParams(params::InterfaceGlRef params) override;
 
 private:

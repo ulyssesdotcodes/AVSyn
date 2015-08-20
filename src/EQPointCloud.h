@@ -9,11 +9,20 @@ struct EQ {
 	vec3 velocity;
 };
 
+/*
+	A cube of particles that respond to the music. The first three particles are moved
+	around the cube, each representing a third of the audio spectrum. They influence the
+	color of the particles around them in a radius proportional to the volume of that 
+	section of the audio spectrum.
+*/
 class EQPointCloud : public Visualization {
 
 public:
+	//! Create the particle buffer and shader program
 	virtual void setup(AudioSource* audioSource);
+	//! Update the three eq particles and the uniforms associated with eqs.
 	virtual void update();
+	//! Draw the particles
 	virtual void draw();
 	virtual void switchCamera(CameraPersp* cam);
 	virtual void switchParams(params::InterfaceGlRef params) override;

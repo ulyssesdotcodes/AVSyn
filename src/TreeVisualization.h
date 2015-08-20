@@ -12,6 +12,7 @@ const float DELTA_ANGLE = M_PI * 22.5 / 180.0;
 const float LENGTH = 4.0;
 const float ROTATION_DAMP = 0.01;
 
+//! The rules for recursively generating an L-System. Each item for a rule has an equal possibility of being used for replacement.
 const map<char, vector<string>> RULES = 
 {
 	{'F', {
@@ -38,18 +39,31 @@ struct Gen {
 	int parent;
 };
 
+/*
+	A visualization based on L-Systems used to model trees. The basic idea is to generate 6 strings 
+	representing completed trees (one for each direction), and then render them branch by branch in
+	time to the music. When we run out of vertices, generate a new L-System and start over!
+*/
 class TreeVisualization: public Visualization {
 public:
+	//! Setup the sources and the transforms needed for displaying the L systems.
 	void setup(AudioSource* audioSource, BeatDetector* beatDetector);
+	//! Run a number of commands based on growth and beat
 	void update() override;
+	//! Draw mPositions with mColors
 	void draw() override;
+	//! Setup the camera.
 	void switchCamera(CameraPersp* cam) override;
+	//! Setup params
 	void switchParams(params::InterfaceGlRef params) override;
 	bool perspective() override;
 
 private:
+	//! Generate the final L system strings and store them in mGen
 	void resetGen();
+	//! Perform one L system replacement of strings in mGen. Used in resetGen()
 	void lstep();
+	//! Perform one command - moving forward or turning. Modifies mGen and mPositions.
 	void runCommand(char rule, Gen* gen);
 
 	AudioSource* mAudioSource;

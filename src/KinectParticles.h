@@ -16,10 +16,19 @@ struct Particle {
 	vec2 ref;
 };
 
+/*
+	Transforms a different visualization into a visualization that responds to Kinect
+	data. It renders the visualization as particles then uses the body image Kinect
+	channel to force particles away from where the users are standing. As the users
+	move, the particles converge back to their home positions using a velocity function.
+*/
 class KinectParticles : public Visualization {
 public:
+	//! Pass in all the sources and also the visualizations that should be turned into a particle field
 	virtual void setup(AudioSource* audioSource, BeatDetector* beatDetector, map<string, Visualization*> visualizations, vector<string> visualizationOptions);
+	//! Render the secondary visualization to an FBO, transform that FBO into particles, and Kinect it!
 	virtual void update();
+	//! Draw the particles and the kinect body image
 	virtual void draw();
 	virtual void switchCamera(CameraPersp* camera);
 	virtual void switchParams(params::InterfaceGlRef params);
