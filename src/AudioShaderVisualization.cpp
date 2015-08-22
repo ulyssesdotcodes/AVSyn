@@ -7,10 +7,13 @@ void AudioShaderVisualization::setup(AudioSource* audioSource, const fs::path &f
 {
 	ShaderVisualization::setup(fragmentShader);
 	mAudioSource = audioSource;
+	mHue = 0;
 }
 
 void AudioShaderVisualization::switchParams(params::InterfaceGlRef params)
 {
+	addParamName("Hue");
+	params->addParam("Hue", &mHue, "min=0.0 max=1.0 step=0.01");
 }
 
 void AudioShaderVisualization::update()
@@ -22,6 +25,7 @@ void AudioShaderVisualization::update()
 void AudioShaderVisualization::renderUniforms()
 {
 	mShader->uniform("audioTexture", 0);
+	mShader->uniform("hue", mHue);
 	ShaderVisualization::renderUniforms();
 }
 
