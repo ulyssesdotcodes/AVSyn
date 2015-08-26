@@ -1,11 +1,14 @@
 #pragma once
 
 #include "Visualization.h"
+#include "cinder\gl\gl.h"
+#include "cinder\gl\BufferTexture.h"
 
 using namespace ci;
 
-class Fluuid : public Visualization {
+class Fluid : public Visualization {
 public:
+	virtual void setup();
 	virtual void update() override;
 	virtual void draw() override;
 	virtual bool perspective() override;
@@ -13,5 +16,15 @@ public:
 	virtual void switchParams(params::InterfaceGlRef params) override;
 
 private:
+	gl::GlslProgRef mAdvectShader, mForcesShader, mDivergenceShader, mPressureSolveShader, mSubtractPressureShader, mRenderShader;
 
+	array<gl::VaoRef, 2> mVaos, mPressureVaos;
+	array<gl::VboRef, 2> mVelocities, mPressures, mConnections;
+	array<gl::BufferTextureRef, 2> mVelocityBufTexs, mPressureBufTexs;
+
+	void advect();
+	void applyForce();
+	void computeDivergence();
+	void solvePressure();
+	void subtractPressure();
 };
