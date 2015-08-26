@@ -16,12 +16,17 @@ void Fluid::setup()
 	mAdvectShader = gl::GlslProg::create(updateFormat);
 	updateFormat.vertex(app::loadAsset("apply_force.vert"));
 	mForcesShader = gl::GlslProg::create(updateFormat);
+	updateFormat.vertex(app::loadAsset("subtract_pressure.vert"));
+	mSubtractPressureShader = gl::GlslProg::create(updateFormat);
+
+	vector<string> pressureVaryings({ "tf_pressure" });
+	gl::GlslProg::Format updateFormat;
+	updateFormat.feedbackVaryings(feedbackVaryings)
+		.feedbackFormat(GL_SEPARATE_ATTRIBS);
 	updateFormat.vertex(app::loadAsset("velocity_divergence.vert"));
 	mDivergenceShader = gl::GlslProg::create(updateFormat);
 	updateFormat.vertex(app::loadAsset("solve_pressure.vert"));
 	mPressureSolveShader = gl::GlslProg::create(updateFormat);
-	updateFormat.vertex(app::loadAsset("subtract_pressure.vert"));
-	mSubtractPressureShader = gl::GlslProg::create(updateFormat);
 
 	array<vec3, NUM_PARTICLES> velocities;
 	array<vec2, NUM_PARTICLES> pressures;
@@ -80,17 +85,29 @@ void Fluid::setup()
 		}
 
 		mVelocityBufTexs[i] = gl::BufferTexture::create(mVelocities[i], GL_RGB);
-		mPressureBufTexs[i] = gl::BufferTexture::create(mPressures[i], GL_FLOAT);
+		mPressureBufTexs[i] = gl::BufferTexture::create(mPressures[i], GL_RG);
 	}
 
 }
 
 void Fluid::update()
 {
+	float time = app::getElapsedSeconds();
+	float dt = time - mLastTime;
+	mLastTime = time;
+
+	advect(dt);
+
+	applyForce(dt);
+
+	computeDivergence();
+	solvePressure();
+	subtractPressure();
 }
 
 void Fluid::draw()
 {
+
 }
 
 bool Fluid::perspective()
@@ -106,22 +123,65 @@ void Fluid::switchParams(params::InterfaceGlRef params)
 {
 }
 
-void Fluid::advect()
+void Fluid::advect(float dt)
 {
+	mAdvectShader->uniform("dt", dt);
+	gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getTarget(), mVelocityBufTexs[mIteration & 1]->getId(), 0);
+	mAdvectShader->uniform("tex_target", 0);
+
+	renderToBuffer(mAdvectShader, mVaos[mIteration & 1], mVelocities[(mIteration + 1) & 1]);
 }
 
-void Fluid::applyForce()
+void Fluid::applyForce(float dt)
 {
+	mForcesShader->uniform("dt", dt);
+	renderToBuffer(mForcesShader, mVaos[mIteration & 1], mVelocities[(mIteration + 1) & 1]);
+	++mIteration;
 }
 
 void Fluid::computeDivergence()
 {
+	gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getTarget(), mVelocityBufTexs[mIteration & 1]->getId(), 0);
+	mDivergenceShader->uniform("tex_velocity", 0);
+
+	renderToBuffer(mDivergenceShader, mVaos[mIteration & 1], mPressures[(mIteration + 1) & 1]);
+	++mIteration;
 }
 
 void Fluid::solvePressure()
 {
+	int i;
+	for (i = mIteration; i < mIteration + 30; ++i) {
+		gl::ScopedTextureBind scopeVel(mPressureBufTexs[i & 1]->getTarget(), mPressureBufTexs[i & 1]->getId(), 0);
+		mPressureSolveShader->uniform("tex_pressure", 0);
+		renderToBuffer(mPressureSolveShader, mPressureVaos[i & 1], mPressures[(i + 1) & 1]);
+	}
+
+	if (mIteration & 1 != i & 1) {
+		gl::ScopedTextureBind scopeVel(mPressureBufTexs[i & 1]->getTarget(), mPressureBufTexs[i & 1]->getId(), 0);
+		mPressureSolveShader->uniform("tex_pressure", 0);
+		renderToBuffer(mPressureSolveShader, mPressureVaos[i & 1], mPressures[mIteration & 1]);
+	}
 }
 
 void Fluid::subtractPressure()
 {
+	gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getTarget(), mVelocityBufTexs[mIteration & 1]->getId(), 0);
+	gl::ScopedTextureBind scopePressure(mPressureBufTexs[mIteration & 1]->getTarget(), mVelocityBufTexs[mIteration & 1]->getId(), 0);
+
+	renderToBuffer(mSubtractPressureShader, mVaos[mIteration & 1], mVelocities[(mIteration + 1) & 1]);
+}
+
+void Fluid::renderToBuffer(gl::GlslProgRef shader, gl::VaoRef vao, gl::VboRef target)
+{
+	gl::ScopedVao scopevao(vao);
+	gl::ScopedGlslProg glsl(shader);
+	gl::ScopedState scopeState(GL_RASTERIZER_DISCARD, true);
+
+	gl::bindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, target);
+
+	gl::beginTransformFeedback(GL_POINTS);
+	gl::drawArrays(GL_POINTS, 0, NUM_PARTICLES);
+
+	gl::endTransformFeedback();
 }
