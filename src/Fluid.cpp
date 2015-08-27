@@ -12,10 +12,15 @@ void Fluid::setup()
 	gl::GlslProg::Format updateFormat;
 	updateFormat.feedbackVaryings(feedbackVaryings)
 		.feedbackFormat(GL_SEPARATE_ATTRIBS);
+
 	updateFormat.vertex(app::loadAsset("advect.vert"));
 	mAdvectShader = gl::GlslProg::create(updateFormat);
+	mAdvectShader->uniform("WIDTH", BUFFER_WIDTH);
+
 	updateFormat.vertex(app::loadAsset("apply_force.vert"));
 	mForcesShader = gl::GlslProg::create(updateFormat);
+	mForcesShader->uniform("WIDTH", BUFFER_WIDTH);
+
 	updateFormat.vertex(app::loadAsset("subtract_pressure.vert"));
 	mSubtractPressureShader = gl::GlslProg::create(updateFormat);
 
@@ -28,11 +33,12 @@ void Fluid::setup()
 	updateFormat.vertex(app::loadAsset("solve_pressure.vert"));
 	mPressureSolveShader = gl::GlslProg::create(updateFormat);
 
-	array<vec3, NUM_PARTICLES> velocities;
+	// Even though we only use 2 of these, every advected quantity has to be a vec4
+	array<vec4, NUM_PARTICLES> velocities;
 	array<vec2, NUM_PARTICLES> pressures;
 	array<ivec4, NUM_PARTICLES> connections;
 
-	velocities.assign(vec3(0));
+	velocities.assign(vec4(0));
 	pressures.assign(vec2(0));
 
 	int n = 0;
@@ -52,10 +58,10 @@ void Fluid::setup()
 		mVaos[i] = gl::Vao::create();
 		{
 			gl::ScopedVao scopeVao(mVaos[i]);
-			mVelocities[i] = gl::Vbo::create(GL_ARRAY_BUFFER, velocities.size() * sizeof(vec3), velocities.data(), GL_DYNAMIC_DRAW);
+			mVelocities[i] = gl::Vbo::create(GL_ARRAY_BUFFER, velocities.size() * sizeof(vec4), velocities.data(), GL_DYNAMIC_DRAW);
 			{
 				gl::ScopedBuffer scopeBuffer(mVelocities[i]);
-				gl::vertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)0);
+				gl::vertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, (const GLvoid*)0);
 				gl::enableVertexAttribArray(0);
 			}
 
@@ -84,7 +90,7 @@ void Fluid::setup()
 			}
 		}
 
-		mVelocityBufTexs[i] = gl::BufferTexture::create(mVelocities[i], GL_RGB);
+		mVelocityBufTexs[i] = gl::BufferTexture::create(mVelocities[i], GL_RG);
 		mPressureBufTexs[i] = gl::BufferTexture::create(mPressures[i], GL_RG);
 	}
 
