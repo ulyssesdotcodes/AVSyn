@@ -23,4 +23,6 @@ protected:
 private:
 	gl::TextureRef mTexture;
 	float mHue;
+	float mVolume;
+	float mCycleHueSpeed;
 };

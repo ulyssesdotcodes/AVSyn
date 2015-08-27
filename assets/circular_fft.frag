@@ -2,6 +2,7 @@ uniform vec3 resolution;
 uniform sampler2D audioTexture; 
 uniform float time;
 uniform float hue;
+uniform float volume;
 
 out vec4 fragColor;
 
@@ -34,7 +35,7 @@ vec4 fromPos(vec2 uv, vec3 te) {
     vec2 cuv = toPolar(uv, te.xy);
 
     // FFT
-    float fft = texture2D(audioTexture, vec2(cuv.y * 0.33, 0.25)).x;
+    float fft = texture2D(audioTexture, vec2(cuv.y * 0.33, 0.25)).x * volume;
 
     // Rotating colors
     float fftSin = (0.5 + 0.3 * sin(cuv.y * 64.0 * 3.1415)) * fft * fft;

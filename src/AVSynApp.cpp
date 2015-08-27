@@ -61,7 +61,7 @@ void AVSynApp::setup()
 	mCenter = vec3(0);
 	mCam.lookAt(mEye, mCenter);
 
-	vec2 paramsSize = vec2(255, 200);
+	vec2 paramsSize = vec2(255, 512);
 	mCurrentVisOption = 0;
 	auto format = Window::Format();
 	format.setSize(paramsSize + vec2(40, 40));
@@ -126,7 +126,7 @@ void AVSynApp::setup()
 		kickChangeImage->mouseMove(e);
 	});
 
-	mCurrentVisOption = 0;
+	mCurrentVisOption = 2;
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
 	
 	mVisualization->switchCamera(&mCam);

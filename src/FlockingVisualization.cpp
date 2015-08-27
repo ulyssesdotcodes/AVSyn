@@ -26,7 +26,10 @@ FlockingVisualization::FlockingVisualization()
 	mBeatConstant = 1.4;
 
 	mHue = 0.0;
+	mCycleHueSpeed = 0.0;
 	mSaturation = 1.0;
+
+	mUndulate = true;
 }
 
 void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSource, BeatDetector* beatDetector)
@@ -127,6 +130,21 @@ void FlockingVisualization::switchParams(params::InterfaceGlRef params) {
 
 	addParamName("Saturation");
 	params->addParam("Saturation", &mSaturation, "min=0.0 max=1.0 step=0.01");
+
+	addParamName("Cycle Hue Speed");
+	params->addParam("Cycle Hue Speed", &mCycleHueSpeed, "min=0.0 max=0.01667 step=0.0001");
+
+	addParamName("Speed");
+	params->addParam("Speed", &mSpeed, "min=0.5 max=4.0 step=0.001");
+
+	addParamName("Separation Distance");
+	params->addParam("Separation Distance", &mSeparationDistance, "min=0.0 max=30.0 step=1");
+
+	addParamName("Cohesion Distance");
+	params->addParam("Cohesion Distance", &mCohesionDistance, "min=0.0 max=30.0 step=1");
+
+	addParamName("Alignment Distance");
+	params->addParam("Alignment Distance", &mAlignmentDistance, "min=0.0 max=30.0 step=1");
 }
 
 
@@ -137,10 +155,12 @@ void FlockingVisualization::update()
 	float loudness = audio::linearToDecibel(mAudioSource->getVolume()) * 0.01f * mLoudness;;
 	mAccumulatedLoudness += loudness;
 
+	mHue = glm::fract(mHue + mCycleHueSpeed);
+
 	mUpdateShader->uniform("delta", mDeltaSource->delta());
 	mUpdateShader->uniform("separationDistance", mSeparationDistance);
-	mUpdateShader->uniform("alignmentDistance", mSeparationDistance);
-	mUpdateShader->uniform("cohesionDistance", mSeparationDistance);
+	mUpdateShader->uniform("alignmentDistance", mAlignmentDistance);
+	mUpdateShader->uniform("cohesionDistance", mCohesionDistance);
 	mUpdateShader->uniform("loudness", loudness);
 	mUpdateShader->uniform("accumulatedLoudness", mAccumulatedLoudness);
 	mUpdateShader->uniform("beat", mBeatDetector->getBeat());
