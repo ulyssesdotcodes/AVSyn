@@ -29,7 +29,7 @@ void AudioShaderVisualization::update()
 	mAudioSource->update();
 	mTexture = mAudioSource->getMagSpectrumTexture();
 
-	mHue += glm::fract(mHue + mCycleHueSpeed);
+	mHue = glm::fract(mHue + mCycleHueSpeed);
 }
 
 void AudioShaderVisualization::renderUniforms()
