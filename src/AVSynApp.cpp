@@ -132,6 +132,10 @@ void AVSynApp::setup()
 	//	app::getWindowIndex(0)->getRenderer()->makeCurrentContext();
 	//	kickChangeImage->mouseMove(e);
 	//});
+	getWindowIndex(0)->getSignalMouseDrag().connect([fluid](MouseEvent e) {
+		app::getWindowIndex(0)->getRenderer()->makeCurrentContext();
+		fluid->mouseDrag(e);
+	});
 
 	mCurrentVisOption = 0;
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];

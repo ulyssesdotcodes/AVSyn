@@ -3,6 +3,7 @@
 #include "Visualization.h"
 #include "cinder\gl\gl.h"
 #include "cinder\gl\BufferTexture.h"
+#include "cinder\app\App.h"
 
 using namespace ci;
 
@@ -14,15 +15,17 @@ public:
 	virtual bool perspective() override;
 	virtual void switchCamera(CameraPersp* camera) override;
 	virtual void switchParams(params::InterfaceGlRef params) override;
+	virtual void mouseDrag(app::MouseEvent mouseEvent);
 
 private:
 	gl::GlslProgRef mAdvectShader, mForcesShader, mDivergenceShader, mPressureSolveShader, mSubtractPressureShader, mRenderShader;
 
 	array<gl::VaoRef, 2> mVaos, mPressureVaos;
-	array<gl::VboRef, 2> mVelocities, mPressures, mConnections;
-	array<gl::BufferTextureRef, 2> mVelocityBufTexs, mPressureBufTexs;
+	array<gl::VboRef, 2> mVelocities, mPressures, mConnections, mDyes;
+	array<gl::BufferTextureRef, 2> mVelocityBufTexs, mPressureBufTexs, mDyeBufTexs;
 
 	void advect(float dt);
+	void advectDye(float dt);
 	void applyForce(float dt);
 	void computeDivergence();
 	void solvePressure();
@@ -30,6 +33,9 @@ private:
 	void renderToBuffer(gl::GlslProgRef shader, gl::VaoRef vao, gl::VboRef target);
 
 	int mIteration;
+	int mPressureIteration;
+	int mDyeIteration;
 
 	float mLastTime;
+	vec2 mLastMouse;
 };

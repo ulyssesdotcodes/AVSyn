@@ -15,7 +15,7 @@ vec2 inner() {
 
 	float bC = iDivergePressure.x;
 
-	return vec2(bC, (L + R + B + T + bC) * .25);
+	return vec2(bC, (L + R + B + T - bC) * .25);
 }
 
 vec2 boundary() {
