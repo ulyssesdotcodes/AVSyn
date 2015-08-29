@@ -184,5 +184,13 @@
     <None Include="..\assets\fluid\velocity_divergence.vert">
       <Filter>Shaders\Fluid</Filter>
     </None>
+    <None Include="..\assets\render.frag" />
+    <None Include="..\assets\render.vert" />
+    <None Include="..\assets\fluid\render.vert">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\fluid\render.frag">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
   </ItemGroup>
 </Project>

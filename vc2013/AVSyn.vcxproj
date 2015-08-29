@@ -238,6 +238,8 @@
     <None Include="..\assets\flocking.vert" />
     <None Include="..\assets\fluid\advect.vert" />
     <None Include="..\assets\fluid\apply_force.vert" />
+    <None Include="..\assets\fluid\render.frag" />
+    <None Include="..\assets\fluid\render.vert" />
     <None Include="..\assets\fluid\solve_pressure.vert" />
     <None Include="..\assets\fluid\subtract_pressure.vert" />
     <None Include="..\assets\fluid\velocity_divergence.vert" />
@@ -247,6 +249,8 @@
     <None Include="..\assets\flocking_update.vert" />
     <None Include="..\assets\passthru.vert" />
     <None Include="..\assets\point_circle.frag" />
+    <None Include="..\assets\render.frag" />
+    <None Include="..\assets\render.vert" />
     <None Include="..\assets\simple.frag" />
     <None Include="..\assets\velocity.frag" />
   </ItemGroup>

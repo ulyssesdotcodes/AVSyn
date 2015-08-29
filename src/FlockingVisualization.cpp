@@ -7,7 +7,7 @@
 using namespace ci;
 
 const int SIZE = 50;
-const int BUFFER_WIDTH = 512;
+const int BUFFER_WIDTH = 128;
 const int NUM_PARTICLES = BUFFER_WIDTH * BUFFER_WIDTH;
 
 FlockingVisualization::FlockingVisualization()
@@ -37,7 +37,6 @@ void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSo
 
 	mStep = true;
 	mIteratonIndex = 0;
-
 
 	vector<string> feedbackVaryings({
 		"tf_position",

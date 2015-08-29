@@ -1,19 +1,21 @@
+#version 330 core
+
 uniform int WIDTH;
 
-in vec4 iVelocity;
-in ivec4 iConnections;
+layout (location = 0) in vec4 iVelocity;
+layout (location = 2) in ivec4 iConnections;
 
 uniform float dt;
 
-out vec4 velocity;
+out vec4 tf_velocity;
 
 vec4 boundary() {
-	return vec4(0);
+	return iVelocity;
 }
 
 vec4 inner() {
-	float x = float(mod(iConnections[0] - 1, WIDTH)) / float(WIDTH);
-	float F = max(abs(0.5 - x) - 0.4, 0.0);
+	float x = float(mod(iConnections[0] + 1, WIDTH)) / float(WIDTH);
+	float F = 0.5 - abs(0.5 - x);
 	return iVelocity + dt * vec2(0, 1) * F;
 }
 
