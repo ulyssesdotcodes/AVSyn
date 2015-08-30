@@ -7,7 +7,23 @@ uniform sampler2D tex_velocity;
 out vec4 fragColor;
 
 vec4 boundary(vec2 pos) {
-	return texture2D(tex_velocity, pos);
+	vec2 offset = vec2(0, 0);
+
+	if(pos.x <= 1. / resolution.x) {
+		offset.x = 1.1/resolution.x;
+	}
+	else if(pos.x >= 1.0 - 1. / resolution.x) {
+		offset.x = -1.1/resolution.x;
+	}
+
+	if(pos.y <= 1. / resolution.y) {
+		offset.y = 1.1/resolution.y;
+	}
+	else if(pos.y >= 1.0 - 1. / resolution.y) {
+		offset.y = -1.1/resolution.y;
+	}
+
+	return -texture2D(tex_velocity, pos + offset);
 }
 
 vec4 inner(vec2 pos) {
@@ -17,14 +33,14 @@ vec4 inner(vec2 pos) {
 	float B = texture2D(tex_pressure, pos + vec2(0, -1) / resolution.xy).y;
 
 	vec4 velocity = texture2D(tex_velocity, pos);
-
+//velocity.xy - 0.5 * vec2(R-L, T-B)
 	return vec4(velocity.xy - 0.5 * vec2(R-L, T-B), 0, 1);
 }
 
 void main() {
 	vec4 outVelocity;
 	vec2 pos = gl_FragCoord.xy / resolution.xy;
-	if(pos.x == 0 || pos.y == 0 || floor(pos.x * resolution.x) == resolution.x - 1 || floor(pos.y * resolution.y) == resolution.y - 1) {
+	if(pos.x <= 1. / resolution.x || pos.y <= 1. / resolution.y || pos.x >= 1.0 - 1 / resolution.x || pos.y >= 1.0 - 1 / resolution.y) {
 		outVelocity = boundary(pos);
 	}
 	else {

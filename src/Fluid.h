@@ -36,6 +36,7 @@ private:
 	int mPressureIteration;
 	int mDyeIteration;
 
+	vec2 windowResolution;
 	float mLastTime;
 	vec2 mLastMouse;
 };

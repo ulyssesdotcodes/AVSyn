@@ -3,7 +3,7 @@
 #include "cinder\Rand.h"
 
 const int BUFFER_WIDTH = 128;
-const int BUFFER_HEIGHT = 256;
+const int BUFFER_HEIGHT = 128;
 const int NUM_PARTICLES = BUFFER_WIDTH * BUFFER_HEIGHT;
 
 void Fluid::setup()
@@ -22,13 +22,14 @@ void Fluid::setup()
 	updateFormat.fragment(app::loadAsset("Fluid/advect.frag"));
 	mAdvectShader = gl::GlslProg::create(updateFormat);
 	mAdvectShader->uniform("resolution", vec2(BUFFER_WIDTH, BUFFER_HEIGHT));
+	windowResolution = vec2(app::getWindowIndex(0)->getWidth(), app::getWindowIndex(0)->getHeight());
 
 	//updateFormat.feedbackFormat(GL_SEPARATE_ATTRIBS)
 	//	.feedbackVaryings(velocityVaryings);
 	updateFormat.fragment(app::loadAsset("Fluid/apply_force.frag"));
 	mForcesShader = gl::GlslProg::create(updateFormat);
 	mForcesShader->uniform("resolution", vec2(BUFFER_WIDTH, BUFFER_HEIGHT));
-	mForcesShader->uniform("windowRes", vec2(app::getWindowWidth(), app::getWindowHeight()));
+	mForcesShader->uniform("windowRes", windowResolution);
 
 	updateFormat.fragment(app::loadAsset("Fluid/subtract_pressure.frag"));
 	mSubtractPressureShader = gl::GlslProg::create(updateFormat);
@@ -40,6 +41,7 @@ void Fluid::setup()
 	updateFormat.vertex(app::loadAsset("passthru.vert"));
 	updateFormat.fragment(app::loadAsset("Fluid/velocity_divergence.frag"));
 	mDivergenceShader = gl::GlslProg::create(updateFormat);
+	mDivergenceShader->uniform("resolution", vec2(BUFFER_WIDTH, BUFFER_HEIGHT));
 	updateFormat.fragment(app::loadAsset("Fluid/solve_pressure.frag"));
 	mPressureSolveShader = gl::GlslProg::create(updateFormat);
 	mPressureSolveShader->uniform("resolution", vec2(BUFFER_WIDTH, BUFFER_HEIGHT));
@@ -49,20 +51,20 @@ void Fluid::setup()
 		.vertex(app::loadAsset("passthru.vert"))
 		.fragment(app::loadAsset("Fluid/render.frag"));
 	mRenderShader = gl::GlslProg::create(renderFormat);
-	mRenderShader->uniform("resolution", vec2(BUFFER_WIDTH, BUFFER_HEIGHT));
+	mRenderShader->uniform("resolution", windowResolution);
 
 	// Even though we only use 2 of these, every advected quantity has to be a vec4
 	array<vec4, NUM_PARTICLES> velocities;
 	array<vec2, NUM_PARTICLES> pressures;
 	//array<float, NUM_PARTICLES * 4> dye;
-	Surface32f dye(BUFFER_WIDTH, BUFFER_HEIGHT, false);
+	Surface32f dye(windowResolution.x, windowResolution.y, false);
 
 	velocities.assign(vec4(0));
 	pressures.assign(vec2(0));
 
 	int n = 0;
-	for (int j = 0; j < BUFFER_HEIGHT; ++j) {
-		for (int i = 0; i < BUFFER_WIDTH; ++i) {
+	for (int j = 0; j < windowResolution.y; ++j) {
+		for (int i = 0; i < windowResolution.x; ++i) {
 			// left, top, right, bottom in that order
 			//connections[n][0] = i > 0 ? n - 1 : -1;
 			//connections[n][1] = j > 0 ? n - BUFFER_WIDTH : -1;
@@ -70,7 +72,7 @@ void Fluid::setup()
 			//connections[n][3] = j < BUFFER_HEIGHT - 1 ? n + BUFFER_WIDTH : -1;
 
 			//velocities[n] = glm::vec4(Rand::randVec3(), 1.0);
-			dye.setPixel(ivec2(i, j), Color((float)j / (float)BUFFER_HEIGHT, (float)i / (float)BUFFER_WIDTH, 0));
+			dye.setPixel(ivec2(i, j), Color((float)j / (float)windowResolution.y, (float)i / (float)windowResolution.x, 0));
 			n++;
 		}
 	}
@@ -122,20 +124,22 @@ void Fluid::setup()
 		gl::Texture2d::Format texFmt;
 		texFmt.setInternalFormat(GL_RGBA32F);
 		texFmt.setDataType(GL_FLOAT);
+		texFmt.setTarget(GL_TEXTURE_2D);
+		texFmt.setWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 		gl::Fbo::Format fmt;
 		fmt.disableDepth()
 			.setColorTextureFormat(texFmt);
 		mVelocityBufTexs[i] = gl::Fbo::create(BUFFER_WIDTH, BUFFER_HEIGHT, fmt);
 		mPressureBufTexs[i] = gl::Fbo::create(BUFFER_WIDTH, BUFFER_HEIGHT, fmt);
-		mDyeBufTexs[i] = gl::Fbo::create(BUFFER_WIDTH, BUFFER_HEIGHT, fmt);
-		//{
-		//	gl::ScopedFramebuffer fbo(mVelocityBufTexs[i]);
-		//	gl::clear(Color(0, 0, 0));
-		//}
-		//{
-		//	gl::ScopedFramebuffer fbo(mPressureBufTexs[i]);
-		//	gl::clear(Color(0, 0, 0));
-		//}
+		mDyeBufTexs[i] = gl::Fbo::create(windowResolution.x, windowResolution.y, fmt);
+		{
+			gl::ScopedFramebuffer fbo(mVelocityBufTexs[i]);
+			gl::clear(Color(0, 0, 0));
+		}
+		{
+			gl::ScopedFramebuffer fbo(mPressureBufTexs[i]);
+			gl::clear(Color(0, 0, 0));
+		}
 		{
 			auto tex = gl::Texture::create(dye);
 			gl::ScopedFramebuffer fbo(mDyeBufTexs[i]);
@@ -173,19 +177,21 @@ void Fluid::mouseDrag(app::MouseEvent mouseEvent)
 {
 	if (mLastMouse.x != 0 && mLastMouse.y != 0) {
 		mForcesShader->uniform("isMouseDown", mouseEvent.isLeftDown());
-		mForcesShader->uniform("mouse", vec2(mouseEvent.getPos()) / vec2(app::getWindowWidth(), app::getWindowHeight()));
-		mForcesShader->uniform("lastMouse", mLastMouse / vec2(app::getWindowWidth(), app::getWindowHeight()));
+		mForcesShader->uniform("mouse", vec2(mouseEvent.getPos()) / windowResolution);
+		mForcesShader->uniform("lastMouse", mLastMouse / windowResolution);
 	}
 	mLastMouse = mouseEvent.getPos();
 }
 
 void Fluid::draw()
 {
-	mRenderShader->uniform("resolution", vec2(app::getWindowWidth(), app::getWindowHeight()));
+	//mRenderShader->uniform("resolution", windowResolution);
 	gl::ScopedTextureBind scopeVel(mDyeBufTexs[mDyeIteration & 1]->getColorTexture(), 2);
 	mRenderShader->uniform("tex_dye", 2);
 	//gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
-	//mAdvectShader->uniform("tex_dye", 0);
+	//mRenderShader->uniform("tex_dye", 0);
+	//gl::ScopedTextureBind scopePres(mPressureBufTexs[mPressureIteration & 1]->getColorTexture(), 1);
+	//mRenderShader->uniform("tex_dye", 1);
 	gl::ScopedGlslProg glsl(mRenderShader);
 	//gl::ScopedVao scopedVao(mVaos[mIteration & 1]);
 	gl::context()->setDefaultShaderVars();
@@ -214,6 +220,8 @@ void Fluid::advect(float dt)
 	gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
 	mAdvectShader->uniform("tex_velocity", 0);
 	mAdvectShader->uniform("tex_target", 0);
+	mAdvectShader->uniform("boundaryConditions", true);
+	mAdvectShader->uniform("target_resolution", vec2(BUFFER_WIDTH, BUFFER_HEIGHT));
 
 	renderToBuffer(mAdvectShader, mVelocityBufTexs[(mIteration + 1) & 1]);
 	++mIteration;
@@ -221,11 +229,13 @@ void Fluid::advect(float dt)
 
 void Fluid::advectDye(float dt) 
 {
+	mAdvectShader->uniform("target_resolution", windowResolution);
 	mAdvectShader->uniform("dt", dt);
 	gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
 	mAdvectShader->uniform("tex_velocity", 0);
 	gl::ScopedTextureBind scopeDye(mDyeBufTexs[mDyeIteration & 1]->getColorTexture(), 2);
 	mAdvectShader->uniform("tex_target", 2);
+	mAdvectShader->uniform("boundaryConditions", false);
 
 	renderToBuffer(mAdvectShader, mDyeBufTexs[(mDyeIteration + 1) & 1]);
 	++mDyeIteration;
@@ -234,7 +244,7 @@ void Fluid::advectDye(float dt)
 void Fluid::applyForce(float dt)
 {
 	gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
-	mAdvectShader->uniform("tex_velocity", 0);
+	mForcesShader->uniform("tex_velocity", 0);
 	mForcesShader->uniform("dt", dt);
 	mForcesShader->uniform("time", mLastTime);
 	renderToBuffer(mForcesShader, mVelocityBufTexs[(mIteration + 1) & 1]);
@@ -246,9 +256,9 @@ void Fluid::applyForce(float dt)
 void Fluid::computeDivergence()
 {
 	gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
-	mAdvectShader->uniform("tex_velocity", 0);
+	mDivergenceShader->uniform("tex_velocity", 0);
 	gl::ScopedTextureBind scopePressure(mPressureBufTexs[mPressureIteration & 1]->getColorTexture(), 1);
-	mPressureSolveShader->uniform("tex_pressure", 1);
+	mDivergenceShader->uniform("tex_pressure", 1);
 
 	renderToBuffer(mDivergenceShader, mPressureBufTexs[(mPressureIteration + 1) & 1]);
 	++mPressureIteration;
@@ -268,9 +278,9 @@ void Fluid::solvePressure()
 void Fluid::subtractPressure()
 {
 	gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
-	mAdvectShader->uniform("tex_velocity", 0);
+	mSubtractPressureShader->uniform("tex_velocity", 0);
 	gl::ScopedTextureBind scopePressure(mPressureBufTexs[mPressureIteration & 1]->getColorTexture(), 1);
-	mPressureSolveShader->uniform("tex_pressure", 1);
+	mSubtractPressureShader->uniform("tex_pressure", 1);
 
 	renderToBuffer(mSubtractPressureShader, mVelocityBufTexs[(mIteration + 1) & 1]);
 	++mIteration;

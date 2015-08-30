@@ -1,52 +1,77 @@
 #version 330 core
 
 uniform vec2 resolution;
+uniform vec2 target_resolution;
 uniform sampler2D tex_velocity;
 uniform sampler2D tex_target;
 uniform float dt;
+uniform bool boundaryConditions;
 
 out vec4 fragColor;
 
-vec4 boundary(vec2 pos) {
-	return texture2D(tex_target, pos);;
+vec4 boundary(vec2 targetPos) {
+	vec4 outVel;
+	vec2 offset = vec2(0, 0);
+
+	if(targetPos.x <= 1. / target_resolution.x) {
+		offset.x = 1.1/target_resolution.x;
+	}
+	else if(targetPos.x * target_resolution.x >= target_resolution.x - 1) {
+		offset.x = -1.1/target_resolution.x;
+	}
+
+	if(targetPos.y <= 1. / target_resolution.y) {
+		offset.y = 1.1/target_resolution.y;
+	}
+	else if(targetPos.y * target_resolution.y >= target_resolution.y - 1) {
+		offset.y = -1.1/target_resolution.y;
+	}
+
+	if(boundaryConditions) {
+		outVel = -texture2D(tex_target, targetPos + offset);
+	}
+	else{
+		outVel = texture2D(tex_target, targetPos);
+	}
+
+	return outVel;
 }
 
-vec4 inner(vec2 pos) {
+vec4 inner(vec2 targetPos) {
 	vec4 outVel;
-	vec4 velocity = texture2D(tex_velocity, pos);
-	if(velocity.x == 0 && velocity.y == 0) {
-		outVel = texture2D(tex_target, pos);
+	vec4 velocity = texture2D(tex_velocity, targetPos);
+	//vec2 resPos = floor(targetPos * target_resolution - 0.5) + 0.5;
+	vec2 tracedPos = targetPos - dt * velocity.xy;
+	tracedPos *= target_resolution;
+
+	// Calculate the top left corner of the nearest 4 pixels
+	vec2 flooredPos = floor(tracedPos - 0.5) + 0.5;
+
+	if(abs(flooredPos.x - targetPos.x * target_resolution.x) <= 1.0 && abs(flooredPos.y - targetPos.y * target_resolution.y) <= 1.0) {
+		outVel = texture2D(tex_target, targetPos);
 	}
 	else {
-		vec2 tracedPos = pos - dt * velocity.xy;
-
-		tracedPos = tracedPos * resolution;
-
-		// Calculate the top left corner of the nearest 4 pixels
-		vec2 flooredPos = floor(tracedPos - 0.5) + 0.5;
-		tracedPos = fract(tracedPos);
-
 		vec2 t = fract(tracedPos);
 
-		vec4 tex11 = texture2D(tex_target, flooredPos / resolution.xy); // Top left
-		vec4 tex12 = texture2D(tex_target, (flooredPos + vec2(1, 0)) / resolution.xy); // Top right
-		vec4 tex21 = texture2D(tex_target, (flooredPos + vec2(0, 1)) / resolution.xy); // Bottom left
-		vec4 tex22 = texture2D(tex_target, (flooredPos + vec2(1, 1)) / resolution.xy); // Bottom right
-		outVel = mix(mix(tex11, tex21, t.y), mix(tex21, tex22, t.y), t.x);
+		vec4 tex11 = texture2D(tex_target, flooredPos / target_resolution.xy); // Top left
+		vec4 tex12 = texture2D(tex_target, (flooredPos + vec2(1, 0)) / target_resolution.xy); // Top right
+		vec4 tex21 = texture2D(tex_target, (flooredPos + vec2(0, 1)) / target_resolution.xy); // Bottom left
+		vec4 tex22 = texture2D(tex_target, (flooredPos + vec2(1, 1)) / target_resolution.xy); // Bottom right
+		outVel = mix(mix(tex11, tex21, t.x), mix(tex21, tex22, t.x), t.y);
 	}
 
 	return outVel;
 }
 
 void main() {
-	vec2 pos = gl_FragCoord.xy / resolution.xy;
+	vec2 targetPos = gl_FragCoord.xy / target_resolution.xy;
 	vec4 outVelocity;
-	if(pos.x <= 1. / resolution.x || pos.y <= 1. / resolution.y || floor(pos.x * resolution.x) == resolution.x - 1 || floor(pos.y * resolution.y) == resolution.y - 1) {
-		outVelocity = boundary(pos);
+	if(targetPos.x <= 1. / target_resolution.x || targetPos.y <= 1. / target_resolution.y || targetPos.x >= 1.0 - 1.1 /target_resolution.x || targetPos.y >= 1.0 - 1.1 / target_resolution.y) {
+		outVelocity = boundary(targetPos);
 	}
 	else {
-		outVelocity = inner(pos);
+		outVelocity = inner(targetPos);
 	}
 
-	fragColor = vec4(outVelocity.xyz, 1);
+	fragColor = outVelocity;
 }

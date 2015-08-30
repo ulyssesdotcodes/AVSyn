@@ -3,7 +3,7 @@
 uniform vec2 resolution;
 uniform sampler2D tex_pressure;
 
-out vec2 tf_pressure;
+out vec4 fragColor;
 
 vec2 inner(vec2 pos) {
 	float L = texture2D(tex_pressure, pos + vec2(-1, 0) / resolution.xy).y;
@@ -17,33 +17,34 @@ vec2 inner(vec2 pos) {
 }
 
 vec2 boundary(vec2 pos) {
-	vec2 outVel = vec2(0);
+	vec2 offset = vec2(0, 0);
 
-	if(pos.x == 0) {
-		outVel = texture2D(tex_pressure, vec2(0 + 1./resolution.x, pos.y)).xy;
+	if(pos.x <= 1. / resolution.x) {
+		offset.x = 1.1/resolution.x;
 	}
-	else if(pos.y == 0) {
-		outVel = texture2D(tex_pressure, vec2(pos.x, 0 + 1./resolution.y)).xy;
-	}
-	else if(floor(pos.x * resolution.x) == resolution.x - 1) {
-		outVel = texture2D(tex_pressure, vec2(1.0 - 1./resolution.x, pos.y)).xy;
-	}
-	else if(floor(pos.y * resolution.y) == resolution.y - 1) {
-		outVel = texture2D(tex_pressure, vec2(pos.x, 1.0 - 1./resolution.y)).xy;
+	else if(pos.x * resolution.x >= resolution.x - 1) {
+		offset.x = -1.1/resolution.x;
 	}
 
-	return outVel;
+	if(pos.y <= 1. / resolution.y) {
+		offset.y = 1.1/resolution.y;
+	}
+	else if(pos.y * resolution.y >= resolution.y - 1) {
+		offset.y = -1.1/resolution.y;
+	}
+
+	return texture2D(tex_pressure, pos + offset).xy;
 }
 
 void main() {
 	vec2 outDP;
 	vec2 pos = gl_FragCoord.xy / resolution.xy;
-	if(pos.x == 0 || pos.y == 0 || floor(pos.x * resolution.x) == resolution.x - 1 || floor(pos.y * resolution.y) == resolution.y - 1) {
+	if(pos.x <= 1. / resolution.x || pos.y <= 1. / resolution.y || pos.x >= 1.0 - 1 / resolution.x || pos.y >= 1.0 - 1 / resolution.y) {
 		outDP = boundary(pos);
 	}
 	else {
 		outDP = inner(pos);
 	}
 
-	tf_pressure = outDP;
+	fragColor = vec4(outDP, 0, 1);
 }
