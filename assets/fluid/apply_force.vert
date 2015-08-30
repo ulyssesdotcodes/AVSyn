@@ -43,8 +43,8 @@ vec4 inner() {
 		vec2 mouseVel = -(lastMouse - mouse) / dt;
 
 		float x = mod(iConnections[0] + 1, WIDTH);
-		float y = floor((iConnections[0] + 1) / WIDTH);
-		v += mouseVel * dt * exp((pow((x - lastMouse.x) / WIDTH,  2) + pow((y - lastMouse.y) / HEIGHT, 2)) / 10);
+		float y = (iConnections[0] + 1) / WIDTH;
+		v += 100 * mouseVel * dt * exp((pow((x - lastMouse.x) / WIDTH,  2) + pow((y - lastMouse.y) / HEIGHT, 2)) / 10);
 
   //      float x = mod(iConnections[0] + 1, WIDTH);
 		//int y = (iConnections[0] + 1) / WIDTH;

@@ -3,7 +3,7 @@
 uniform int WIDTH;
 uniform int HEIGHT;
 
-layout (location = 0) in vec2 iVelocity;
+layout (location = 0) in vec4 iVelocity;
 layout (location = 2) in ivec4 iConnections;
 
 uniform samplerBuffer tex_target;
@@ -23,7 +23,7 @@ vec4 inner() {
 	}
 	else {
 		// We're finding the previous position based on velocity, but we have to convert velocity into 1D first.
-		vec2 tracedPos = vec2(mod(n, WIDTH), n / WIDTH) - dt * iVelocity;
+		vec2 tracedPos = vec2(mod(n, WIDTH), n / WIDTH) - dt * iVelocity.xy;
 
 		// Calculate the top left corner of the nearest 4 pixels
 		vec2 flooredPos = floor(tracedPos - 0.5) + 0.5;
@@ -41,7 +41,7 @@ vec4 inner() {
 		vec4 tex21 = texelFetch(tex_target, n21); // Bottom left
 		vec4 tex22 = texelFetch(tex_target, n22); // Bottom right
 
-		outVel = mix(mix(tex11, tex21, tracedPos.y), mix(tex21, tex22, tracedPos.y), tracedPos.x);
+		outVel -= mix(mix(tex11, tex21, tracedPos.y), mix(tex21, tex22, tracedPos.y), tracedPos.x);
 	}
 	return outVel;
 }

@@ -53,7 +53,6 @@ private:
 
 void AVSynApp::setup()
 {
-	getWindow()->getSignalDraw().connect([=]() { drawRender(); });
 	vector<DisplayRef> displays = Display::getDisplays();
 
 	mCam = CameraPersp(getWindowWidth(), getWindowHeight(), 50);
@@ -155,6 +154,8 @@ void AVSynApp::setup()
 			return mCurrentVisOption;
 		}
 		);
+
+	getWindowIndex(0)->getSignalDraw().connect([=]() { drawRender(); });
 }
 
 void AVSynApp::keyDown(KeyEvent event) {
