@@ -16,6 +16,7 @@ public:
 	virtual void switchCamera(CameraPersp* camera) override;
 	virtual void switchParams(params::InterfaceGlRef params) override;
 	virtual void mouseDrag(app::MouseEvent mouseEvent);
+	virtual void mouseUp(app::MouseEvent mouseEvent);
 
 private:
 	gl::GlslProgRef mAdvectShader, mForcesShader, mDivergenceShader, mPressureSolveShader, mSubtractPressureShader, mRenderShader;
@@ -36,7 +37,8 @@ private:
 	int mPressureIteration;
 	int mDyeIteration;
 
-	vec2 windowResolution;
+	vec2 mWindowResolution;
+	vec2 mFluidResolution;
 	float mLastTime;
 	vec2 mLastMouse;
 };

@@ -2,12 +2,10 @@
 #include "cinder\app\App.h"
 #include "cinder\Rand.h"
 
-const int BUFFER_WIDTH = 128;
-const int BUFFER_HEIGHT = 128;
-const int NUM_PARTICLES = BUFFER_WIDTH * BUFFER_HEIGHT;
-
 void Fluid::setup()
 {
+	mWindowResolution = vec2(app::getWindowIndex(0)->getWidth(), app::getWindowIndex(0)->getHeight());
+	mFluidResolution = glm::floor(mWindowResolution * vec2(0.25));
 	// Setup the shaders
 	//vector<string> targetVaryings({ "tf_target" });
 	//vector<string> velocityVaryings({ "tf_velocity" });
@@ -21,19 +19,18 @@ void Fluid::setup()
 
 	updateFormat.fragment(app::loadAsset("Fluid/advect.frag"));
 	mAdvectShader = gl::GlslProg::create(updateFormat);
-	mAdvectShader->uniform("resolution", vec2(BUFFER_WIDTH, BUFFER_HEIGHT));
-	windowResolution = vec2(app::getWindowIndex(0)->getWidth(), app::getWindowIndex(0)->getHeight());
+	mAdvectShader->uniform("resolution", mFluidResolution);
 
 	//updateFormat.feedbackFormat(GL_SEPARATE_ATTRIBS)
 	//	.feedbackVaryings(velocityVaryings);
 	updateFormat.fragment(app::loadAsset("Fluid/apply_force.frag"));
 	mForcesShader = gl::GlslProg::create(updateFormat);
-	mForcesShader->uniform("resolution", vec2(BUFFER_WIDTH, BUFFER_HEIGHT));
-	mForcesShader->uniform("windowRes", windowResolution);
+	mForcesShader->uniform("resolution", mFluidResolution);
+	mForcesShader->uniform("windowRes", mWindowResolution);
 
 	updateFormat.fragment(app::loadAsset("Fluid/subtract_pressure.frag"));
 	mSubtractPressureShader = gl::GlslProg::create(updateFormat);
-	mSubtractPressureShader->uniform("resolution", vec2(BUFFER_WIDTH, BUFFER_HEIGHT));
+	mSubtractPressureShader->uniform("resolution", mFluidResolution);
 
 	updateFormat = gl::GlslProg::Format();
 	//updateFormat.feedbackFormat(GL_SEPARATE_ATTRIBS)
@@ -41,38 +38,31 @@ void Fluid::setup()
 	updateFormat.vertex(app::loadAsset("passthru.vert"));
 	updateFormat.fragment(app::loadAsset("Fluid/velocity_divergence.frag"));
 	mDivergenceShader = gl::GlslProg::create(updateFormat);
-	mDivergenceShader->uniform("resolution", vec2(BUFFER_WIDTH, BUFFER_HEIGHT));
+	mDivergenceShader->uniform("resolution", mFluidResolution);
 	updateFormat.fragment(app::loadAsset("Fluid/solve_pressure.frag"));
 	mPressureSolveShader = gl::GlslProg::create(updateFormat);
-	mPressureSolveShader->uniform("resolution", vec2(BUFFER_WIDTH, BUFFER_HEIGHT));
+	mPressureSolveShader->uniform("resolution", mFluidResolution);
 
 	gl::GlslProg::Format renderFormat;
 	renderFormat
 		.vertex(app::loadAsset("passthru.vert"))
 		.fragment(app::loadAsset("Fluid/render.frag"));
 	mRenderShader = gl::GlslProg::create(renderFormat);
-	mRenderShader->uniform("resolution", windowResolution);
+	mRenderShader->uniform("resolution", mWindowResolution);
 
-	// Even though we only use 2 of these, every advected quantity has to be a vec4
-	array<vec4, NUM_PARTICLES> velocities;
-	array<vec2, NUM_PARTICLES> pressures;
-	//array<float, NUM_PARTICLES * 4> dye;
-	Surface32f dye(windowResolution.x, windowResolution.y, false);
-
-	velocities.assign(vec4(0));
-	pressures.assign(vec2(0));
+	Surface32f dye(mWindowResolution.x, mWindowResolution.y, false);
 
 	int n = 0;
-	for (int j = 0; j < windowResolution.y; ++j) {
-		for (int i = 0; i < windowResolution.x; ++i) {
+	for (int j = 0; j < mWindowResolution.y; ++j) {
+		for (int i = 0; i < mWindowResolution.x; ++i) {
 			// left, top, right, bottom in that order
 			//connections[n][0] = i > 0 ? n - 1 : -1;
-			//connections[n][1] = j > 0 ? n - BUFFER_WIDTH : -1;
-			//connections[n][2] = i < BUFFER_WIDTH - 1 ? n + 1 : -1;
-			//connections[n][3] = j < BUFFER_HEIGHT - 1 ? n + BUFFER_WIDTH : -1;
+			//connections[n][1] = j > 0 ? n - mFluidResolution.x : -1;
+			//connections[n][2] = i < mFluidResolution.x - 1 ? n + 1 : -1;
+			//connections[n][3] = j < mFluidResolution.y - 1 ? n + mFluidResolution.x : -1;
 
 			//velocities[n] = glm::vec4(Rand::randVec3(), 1.0);
-			dye.setPixel(ivec2(i, j), Color((float)j / (float)windowResolution.y, (float)i / (float)windowResolution.x, 0));
+			dye.setPixel(ivec2(i, j), Color((float)j / (float)mWindowResolution.y, (float)i / (float)mWindowResolution.x, 0));
 			n++;
 		}
 	}
@@ -129,9 +119,9 @@ void Fluid::setup()
 		gl::Fbo::Format fmt;
 		fmt.disableDepth()
 			.setColorTextureFormat(texFmt);
-		mVelocityBufTexs[i] = gl::Fbo::create(BUFFER_WIDTH, BUFFER_HEIGHT, fmt);
-		mPressureBufTexs[i] = gl::Fbo::create(BUFFER_WIDTH, BUFFER_HEIGHT, fmt);
-		mDyeBufTexs[i] = gl::Fbo::create(windowResolution.x, windowResolution.y, fmt);
+		mVelocityBufTexs[i] = gl::Fbo::create(mFluidResolution.x, mFluidResolution.y, fmt);
+		mPressureBufTexs[i] = gl::Fbo::create(mFluidResolution.x, mFluidResolution.y, fmt);
+		mDyeBufTexs[i] = gl::Fbo::create(mWindowResolution.x, mWindowResolution.y, fmt);
 		{
 			gl::ScopedFramebuffer fbo(mVelocityBufTexs[i]);
 			gl::clear(Color(0, 0, 0));
@@ -177,15 +167,21 @@ void Fluid::mouseDrag(app::MouseEvent mouseEvent)
 {
 	if (mLastMouse.x != 0 && mLastMouse.y != 0) {
 		mForcesShader->uniform("isMouseDown", mouseEvent.isLeftDown());
-		mForcesShader->uniform("mouse", vec2(mouseEvent.getPos()) / windowResolution);
-		mForcesShader->uniform("lastMouse", mLastMouse / windowResolution);
+		mForcesShader->uniform("mouse", vec2(mouseEvent.getPos()) / mWindowResolution);
+		mForcesShader->uniform("lastMouse", mLastMouse / mWindowResolution);
 	}
 	mLastMouse = mouseEvent.getPos();
 }
 
+void Fluid::mouseUp(app::MouseEvent mouseEvent) 
+{
+	if (!mouseEvent.isLeftDown()) {
+		mLastMouse = vec2(0);
+	}
+}
+
 void Fluid::draw()
 {
-	//mRenderShader->uniform("resolution", windowResolution);
 	gl::ScopedTextureBind scopeVel(mDyeBufTexs[mDyeIteration & 1]->getColorTexture(), 2);
 	mRenderShader->uniform("tex_dye", 2);
 	//gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
@@ -221,7 +217,7 @@ void Fluid::advect(float dt)
 	mAdvectShader->uniform("tex_velocity", 0);
 	mAdvectShader->uniform("tex_target", 0);
 	mAdvectShader->uniform("boundaryConditions", true);
-	mAdvectShader->uniform("target_resolution", vec2(BUFFER_WIDTH, BUFFER_HEIGHT));
+	mAdvectShader->uniform("target_resolution", mFluidResolution);
 
 	renderToBuffer(mAdvectShader, mVelocityBufTexs[(mIteration + 1) & 1]);
 	++mIteration;
@@ -229,7 +225,7 @@ void Fluid::advect(float dt)
 
 void Fluid::advectDye(float dt) 
 {
-	mAdvectShader->uniform("target_resolution", windowResolution);
+	mAdvectShader->uniform("target_resolution", mWindowResolution);
 	mAdvectShader->uniform("dt", dt);
 	gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
 	mAdvectShader->uniform("tex_velocity", 0);
@@ -267,7 +263,7 @@ void Fluid::computeDivergence()
 void Fluid::solvePressure()
 {
 	int i;
-	for (i = mPressureIteration; i < mPressureIteration + 30; ++i) {
+	for (i = mPressureIteration; i < mPressureIteration + 60; ++i) {
 		gl::ScopedTextureBind scopeVel(mPressureBufTexs[i & 1]->getColorTexture(), 1);
 		mPressureSolveShader->uniform("tex_pressure", 1);
 		renderToBuffer(mPressureSolveShader, mPressureBufTexs[(i + 1) & 1]);

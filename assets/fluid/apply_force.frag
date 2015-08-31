@@ -30,12 +30,12 @@ vec4 boundary(vec2 pos) {
 		offset.y = -1/resolution.y;
 	}
 
-	return -texture2D(tex_velocity, pos + offset);
+	return vec4(-texture2D(tex_velocity, pos + offset).xy, 0, 1);
 }
 
 vec4 inner(vec2 pos) {
 	vec4 velocity = texture2D(tex_velocity, pos);
-	vec2 v = velocity.xy * 0.99;
+	vec2 v = velocity.xy * (1.0 - 1.0 * dt);
 
 	if(isMouseDown) {
 		vec2 mRev = vec2(mouse.x, 1.0 - mouse.y);

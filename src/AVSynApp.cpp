@@ -136,6 +136,11 @@ void AVSynApp::setup()
 		fluid->mouseDrag(e);
 	});
 
+	getWindowIndex(0)->getSignalMouseUp().connect([fluid](MouseEvent e) {
+		app::getWindowIndex(0)->getRenderer()->makeCurrentContext();
+		fluid->mouseUp(e);
+	});
+
 	mCurrentVisOption = 0;
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
 	
