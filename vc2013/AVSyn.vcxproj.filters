@@ -207,5 +207,8 @@
     <None Include="..\assets\fluid\apply_force.frag">
       <Filter>Shaders\Fluid</Filter>
     </None>
+    <None Include="..\assets\fluid\dye_drop.frag">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
   </ItemGroup>
 </Project>

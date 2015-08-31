@@ -240,6 +240,7 @@
     <None Include="..\assets\fluid\advect.vert" />
     <None Include="..\assets\fluid\apply_force.frag" />
     <None Include="..\assets\fluid\apply_force.vert" />
+    <None Include="..\assets\fluid\dye_drop.frag" />
     <None Include="..\assets\fluid\render.frag" />
     <None Include="..\assets\fluid\render.vert" />
     <None Include="..\assets\fluid\solve_pressure.frag" />

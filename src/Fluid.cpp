@@ -5,7 +5,7 @@
 void Fluid::setup()
 {
 	mWindowResolution = vec2(app::getWindowIndex(0)->getWidth(), app::getWindowIndex(0)->getHeight());
-	mFluidResolution = glm::floor(mWindowResolution * vec2(0.25));
+	mFluidResolution = glm::floor(mWindowResolution * vec2(0.2));
 	// Setup the shaders
 	//vector<string> targetVaryings({ "tf_target" });
 	//vector<string> velocityVaryings({ "tf_velocity" });
@@ -27,6 +27,9 @@ void Fluid::setup()
 	mForcesShader = gl::GlslProg::create(updateFormat);
 	mForcesShader->uniform("resolution", mFluidResolution);
 	mForcesShader->uniform("windowRes", mWindowResolution);
+	updateFormat.fragment(app::loadAsset("Fluid/dye_drop.frag"));
+	mDyeDropShader = gl::GlslProg::create(updateFormat);
+	mDyeDropShader->uniform("resolution", mWindowResolution);
 
 	updateFormat.fragment(app::loadAsset("Fluid/subtract_pressure.frag"));
 	mSubtractPressureShader = gl::GlslProg::create(updateFormat);
@@ -50,22 +53,22 @@ void Fluid::setup()
 	mRenderShader = gl::GlslProg::create(renderFormat);
 	mRenderShader->uniform("resolution", mWindowResolution);
 
-	Surface32f dye(mWindowResolution.x, mWindowResolution.y, false);
+	//Surface32f dye(mWindowResolution.x, mWindowResolution.y, false);
 
-	int n = 0;
-	for (int j = 0; j < mWindowResolution.y; ++j) {
-		for (int i = 0; i < mWindowResolution.x; ++i) {
-			// left, top, right, bottom in that order
-			//connections[n][0] = i > 0 ? n - 1 : -1;
-			//connections[n][1] = j > 0 ? n - mFluidResolution.x : -1;
-			//connections[n][2] = i < mFluidResolution.x - 1 ? n + 1 : -1;
-			//connections[n][3] = j < mFluidResolution.y - 1 ? n + mFluidResolution.x : -1;
+	//int n = 0;
+	//for (int j = 0; j < mWindowResolution.y; ++j) {
+	//	for (int i = 0; i < mWindowResolution.x; ++i) {
+	//		// left, top, right, bottom in that order
+	//		//connections[n][0] = i > 0 ? n - 1 : -1;
+	//		//connections[n][1] = j > 0 ? n - mFluidResolution.x : -1;
+	//		//connections[n][2] = i < mFluidResolution.x - 1 ? n + 1 : -1;
+	//		//connections[n][3] = j < mFluidResolution.y - 1 ? n + mFluidResolution.x : -1;
 
-			//velocities[n] = glm::vec4(Rand::randVec3(), 1.0);
-			dye.setPixel(ivec2(i, j), Color((float)j / (float)mWindowResolution.y, (float)i / (float)mWindowResolution.x, 0));
-			n++;
-		}
-	}
+	//		//velocities[n] = glm::vec4(Rand::randVec3(), 1.0);
+	//		dye.setPixel(ivec2(i, j), Color((float)j / (float)mWindowResolution.y, (float)i / (float)mWindowResolution.x, 0));
+	//		n++;
+	//	}
+	//}
 
 
 	for (int i = 0; i < 2; ++i) {
@@ -131,15 +134,15 @@ void Fluid::setup()
 			gl::clear(Color(0, 0, 0));
 		}
 		{
-			auto tex = gl::Texture::create(dye);
+			//auto tex = gl::Texture::create(dye);
 			gl::ScopedFramebuffer fbo(mDyeBufTexs[i]);
-			gl::clear(Color(0, 0, 0));
+			gl::clear(Color(1, 1, 1));
 			gl::ScopedViewport vp(ivec2(0), mDyeBufTexs[i]->getSize());
 			gl::pushMatrices();
 			gl::setMatricesWindow(mDyeBufTexs[i]->getSize());
 			gl::disableDepthRead();
 			gl::disableDepthWrite();
-			gl::draw(tex);
+			//gl::draw(tex);
 			gl::popMatrices();
 		}
 	}
@@ -160,7 +163,7 @@ void Fluid::update()
 	solvePressure();
 	subtractPressure();
 
-	advectDye(dt);
+	advectDye(dt, time);
 }
 
 void Fluid::mouseDrag(app::MouseEvent mouseEvent) 
@@ -169,6 +172,10 @@ void Fluid::mouseDrag(app::MouseEvent mouseEvent)
 		mForcesShader->uniform("isMouseDown", mouseEvent.isLeftDown());
 		mForcesShader->uniform("mouse", vec2(mouseEvent.getPos()) / mWindowResolution);
 		mForcesShader->uniform("lastMouse", mLastMouse / mWindowResolution);
+
+		mDyeDropShader->uniform("isMouseDown", mouseEvent.isLeftDown());
+		mDyeDropShader->uniform("lastMouse", mLastMouse / mWindowResolution);
+		mDyeDropShader->uniform("mouse", vec2(mouseEvent.getPos()) / mWindowResolution);
 	}
 	mLastMouse = mouseEvent.getPos();
 }
@@ -223,18 +230,31 @@ void Fluid::advect(float dt)
 	++mIteration;
 }
 
-void Fluid::advectDye(float dt) 
+void Fluid::advectDye(float dt, float time) 
 {
-	mAdvectShader->uniform("target_resolution", mWindowResolution);
-	mAdvectShader->uniform("dt", dt);
-	gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
-	mAdvectShader->uniform("tex_velocity", 0);
-	gl::ScopedTextureBind scopeDye(mDyeBufTexs[mDyeIteration & 1]->getColorTexture(), 2);
-	mAdvectShader->uniform("tex_target", 2);
-	mAdvectShader->uniform("boundaryConditions", false);
+	{
+		mAdvectShader->uniform("target_resolution", mWindowResolution);
+		mAdvectShader->uniform("dt", dt);
+		gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
+		mAdvectShader->uniform("tex_velocity", 0);
+		gl::ScopedTextureBind scopeDye(mDyeBufTexs[mDyeIteration & 1]->getColorTexture(), 2);
+		mAdvectShader->uniform("tex_target", 2);
+		mAdvectShader->uniform("boundaryConditions", false);
 
-	renderToBuffer(mAdvectShader, mDyeBufTexs[(mDyeIteration + 1) & 1]);
-	++mDyeIteration;
+		renderToBuffer(mAdvectShader, mDyeBufTexs[(mDyeIteration + 1) & 1]);
+		++mDyeIteration;
+	}
+
+
+	{
+		gl::ScopedTextureBind scopeDyeDrop(mDyeBufTexs[mDyeIteration & 1]->getColorTexture(), 2);
+		mDyeDropShader->uniform("time", time);
+		mDyeDropShader->uniform("tex_prev", 2);
+		renderToBuffer(mDyeDropShader, mDyeBufTexs[(mDyeIteration + 1) & 1]);
+		++mDyeIteration;
+
+		mDyeDropShader->uniform("isMouseDown", false);
+	}
 }
 
 void Fluid::applyForce(float dt)

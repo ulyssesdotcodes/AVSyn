@@ -19,14 +19,15 @@ public:
 	virtual void mouseUp(app::MouseEvent mouseEvent);
 
 private:
-	gl::GlslProgRef mAdvectShader, mForcesShader, mDivergenceShader, mPressureSolveShader, mSubtractPressureShader, mRenderShader;
+	gl::GlslProgRef mAdvectShader, mForcesShader, mDivergenceShader, mPressureSolveShader, mSubtractPressureShader, mRenderShader,
+		mDyeDropShader;
 
 	//array<gl::VaoRef, 2> mVaos, mPressureVaos;
 	//array<gl::VboRef, 2> mVelocities, mPressures, mConnections, mDyes;
 	array<gl::FboRef, 2> mVelocityBufTexs, mPressureBufTexs, mDyeBufTexs;
 
 	void advect(float dt);
-	void advectDye(float dt);
+	void advectDye(float dt, float time);
 	void applyForce(float dt);
 	void computeDivergence();
 	void solvePressure();

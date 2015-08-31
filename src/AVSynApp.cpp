@@ -207,9 +207,9 @@ CINDER_APP(AVSynApp, RendererGl(), [&](App::Settings *settings) {
 	FullScreenOptions options;
 	vector<DisplayRef> displays = Display::getDisplays();
 	settings->setFullScreen(true, options);	
-	if (displays.size() > 1) {
-		options.display(displays[1]);
-		settings->setDisplay(displays[1]);
-	}
+	//if (displays.size() > 1) {
+	//	options.display(displays[1]);
+	//	settings->setDisplay(displays[1]);
+	//}
 	settings->setFrameRate(60.0f);
 })

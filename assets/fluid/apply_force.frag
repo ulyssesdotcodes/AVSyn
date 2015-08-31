@@ -70,8 +70,14 @@ vec4 inner(vec2 pos) {
 		float m = exp(-dist / 0.025);
 
 		m *= pf * pf;
-		
-		v += (mouseVel - v) * m;
+
+		vec2 mv = pos - mRev;
+
+		v += (mouseVel - v + mv) * m;
+
+		//if(dot(mv,mv) < 0.01) {
+		//	v += mv * dot(mv, mv) * 0.05 ;
+		//}
 
 		//float xDist = max(0.1 - abs(pos.x - mouse.x), 0);
 
