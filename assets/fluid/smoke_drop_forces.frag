@@ -37,13 +37,12 @@ vec4 boundary(vec2 pos) {
 
 vec4 inner(vec2 pos) {
 	vec4 velocity = texture2D(tex_velocity, pos);
-	vec2 v = velocity.xy * (1.0 - 1.0 * dt);
+	vec2 v = velocity.xy ;
 
 	vec2 dist = vec2(smokeDropPos.x, 1.0 - smokeDropPos.y) - pos;
 
-	if(smokeDropPos.x > 0 && smokeDropPos.y > 0 && dot(dist, dist) < 0.0001) {
-		velocity.x = 0.2 * (rand(vec2(time, pos.x * pos.y)) - 0.5);
-		velocity.y = 0.2 * (rand(vec2(time, pos.x * pos.y)) - 0.5);
+	if(smokeDropPos.x > 0 && smokeDropPos.y > 0 && dot(dist, dist) < 0.004) {
+		velocity.x = rand(vec2(time + 50, pos.x * pos.y)) * 10;
 		velocity.z = 0.98;
 	}
 
@@ -54,6 +53,7 @@ vec4 inner(vec2 pos) {
 	else if(velocity.z < 1.0) {
 		float zDif = 1.0 - velocity.z;
 		velocity.z = velocity.z + min(zDif * dt * 0.5, zDif);
+		velocity.y =  velocity.y * (1.0 - dt);
 	}
 
 

@@ -4,12 +4,14 @@
 #include "cinder\gl\gl.h"
 #include "cinder\gl\BufferTexture.h"
 #include "cinder\app\App.h"
+#include "AudioSource.h"
+#include "BeatDetector.h"
 
 using namespace ci;
 
 class Fluid : public Visualization {
 public:
-	virtual void setup();
+	virtual void setup(AudioSource *audioSource, BeatDetector *beatDetector);
 	virtual void update() override;
 	virtual void draw() override;
 	virtual bool perspective() override;
@@ -19,6 +21,9 @@ public:
 	virtual void mouseUp(app::MouseEvent mouseEvent);
 
 private:
+	AudioSource *mAudioSource;
+	BeatDetector *mBeatDetector;
+
 	gl::GlslProgRef mAdvectShader, mForcesShader, mDivergenceShader, mPressureSolveShader, mSubtractPressureShader, mRenderShader,
 		mDyeDropShader;
 

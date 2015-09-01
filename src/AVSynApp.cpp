@@ -122,7 +122,7 @@ void AVSynApp::setup()
 	//mVisualizationOptions.push_back("Kick Change Image");
 
 	auto *fluid = new Fluid();
-	fluid->setup();
+	fluid->setup(mAudioSource, mBeatDetector);
 	mVisualizations.insert(make_pair("Fluid", fluid));
 	mVisualizationOptions.push_back("Fluid");
 

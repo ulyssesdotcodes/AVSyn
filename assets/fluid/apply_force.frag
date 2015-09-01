@@ -29,6 +29,7 @@ vec4 boundary(vec2 pos) {
 	}
 	else if(pos.y * resolution.y >= resolution.y - 1) {
 		offset.y = -1/resolution.y;
+		return vec4(texture2D(tex_velocity, pos + offset).xyz, 1);
 	}
 
 	return vec4(-texture2D(tex_velocity, pos + offset).xy, 0, 1);

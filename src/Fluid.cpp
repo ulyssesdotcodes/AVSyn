@@ -2,8 +2,10 @@
 #include "cinder\app\App.h"
 #include "cinder\Rand.h"
 
-void Fluid::setup()
+void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
 {
+	mAudioSource = audioSource;
+	mBeatDetector = beatDetector;
 	mWindowResolution = vec2(app::getWindowIndex(0)->getWidth(), app::getWindowIndex(0)->getHeight());
 	mFluidResolution = glm::floor(mWindowResolution * vec2(0.2));
 
@@ -175,8 +177,11 @@ void Fluid::advectDye(float dt, float time)
 
 
 	{
+		mAudioSource->update();
+		mBeatDetector->update(1.6);
 		gl::ScopedTextureBind scopeDyeDrop(mDyeBufTexs[mDyeIteration & 1]->getColorTexture(), 2);
-		mDyeDropShader->uniform("time", time);
+		mDyeDropShader->uniform("beat", mBeatDetector->getBeat());
+		mDyeDropShader->uniform("volume", mAudioSource->getVolume());
 		mDyeDropShader->uniform("dt", dt);
 		mDyeDropShader->uniform("tex_prev", 2);
 		renderToBuffer(mDyeDropShader, mDyeBufTexs[(mDyeIteration + 1) & 1]);

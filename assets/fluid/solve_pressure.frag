@@ -31,6 +31,7 @@ vec2 boundary(vec2 pos) {
 	}
 	else if(pos.y * resolution.y >= resolution.y - 1) {
 		offset.y = -1.1/resolution.y;
+		return vec2(0);
 	}
 
 	return texture2D(tex_pressure, pos + offset).xy;
