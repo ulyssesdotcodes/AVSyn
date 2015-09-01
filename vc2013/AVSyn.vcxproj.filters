@@ -169,21 +169,6 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\assets\fluid_update.vert" />
-    <None Include="..\assets\fluid\advect.vert">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
-    <None Include="..\assets\fluid\apply_force.vert">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
-    <None Include="..\assets\fluid\solve_pressure.vert">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
-    <None Include="..\assets\fluid\subtract_pressure.vert">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
-    <None Include="..\assets\fluid\velocity_divergence.vert">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
     <None Include="..\assets\render.frag" />
     <None Include="..\assets\render.vert" />
     <None Include="..\assets\fluid\render.vert">
@@ -208,6 +193,12 @@
       <Filter>Shaders\Fluid</Filter>
     </None>
     <None Include="..\assets\fluid\dye_drop.frag">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\fluid\smoke_drop.frag">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\fluid\smoke_drop_forces.frag">
       <Filter>Shaders\Fluid</Filter>
     </None>
   </ItemGroup>
