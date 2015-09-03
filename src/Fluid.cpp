@@ -20,12 +20,12 @@ void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
 	updateFormat.fragment(app::loadAsset("Fluid/smoke_drop_forces.frag"));
 	mForcesShader = gl::GlslProg::create(updateFormat);
 	mForcesShader->uniform("resolution", mFluidResolution);
-	mForcesShader->uniform("smokeDropPos", vec2(0.5, 0.9));
+	mForcesShader->uniform("smokeDropPos", vec2(0.5, 0.8));
 
 	updateFormat.fragment(app::loadAsset("Fluid/smoke_drop.frag"));
 	mDyeDropShader = gl::GlslProg::create(updateFormat);
 	mDyeDropShader->uniform("resolution", mWindowResolution);
-	mDyeDropShader->uniform("smokeDropPos", vec2(0.5, 0.9));
+	mDyeDropShader->uniform("smokeDropPos", vec2(0.5, 0.8));
 
 	updateFormat.fragment(app::loadAsset("Fluid/subtract_pressure.frag"));
 	mSubtractPressureShader = gl::GlslProg::create(updateFormat);

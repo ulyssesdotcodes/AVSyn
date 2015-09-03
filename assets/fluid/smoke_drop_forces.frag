@@ -42,7 +42,7 @@ vec4 inner(vec2 pos) {
 	vec2 dist = vec2(smokeDropPos.x, 1.0 - smokeDropPos.y) - pos;
 
 	if(smokeDropPos.x > 0 && smokeDropPos.y > 0 && dot(dist, dist) < 0.004) {
-		velocity.x = rand(vec2(time + 50, pos.x * pos.y)) * 10;
+		velocity.x = dist.x * (rand(vec2(time + 50, pos.x * pos.y))) * 1000;
 		velocity.z = 0.98;
 	}
 
@@ -50,15 +50,10 @@ vec4 inner(vec2 pos) {
 	if(velocity.z <= 0.00001) {
 		velocity.z = 1.0;
 	}
-	else if(velocity.z < 1.0) {
-		float zDif = 1.0 - velocity.z;
-		velocity.z = velocity.z + min(zDif * dt * 0.5, zDif);
-		velocity.y =  velocity.y * (1.0 - dt);
-	}
 
 
 	float P = texture2D(tex_pressure, pos).y;
-	v += -0.0787 * (1.0 - 1 / max(velocity.z, 0.0001)) * vec2(0, 1);
+	v.y += -0.1787 * (1.0 - 1 / velocity.z);
 
 	return vec4(v, velocity.z, 1);
 }
