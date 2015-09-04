@@ -209,6 +209,7 @@
     <ClCompile Include="..\src\FlockingVisualization.cpp" />
     <ClCompile Include="..\src\Fluid.cpp" />
     <ClCompile Include="..\src\KinectParticles.cpp" />
+    <ClCompile Include="..\src\PingPongFBO.cpp" />
     <ClCompile Include="..\src\ShaderVisualization.cpp" />
     <ClCompile Include="..\src\TreeVisualization.cpp" />
     <ClCompile Include="..\src\Visualization.cpp" />
@@ -225,6 +226,7 @@
     <ClInclude Include="..\src\FlockingVisualization.h" />
     <ClInclude Include="..\src\Fluid.h" />
     <ClInclude Include="..\src\KinectParticles.h" />
+    <ClInclude Include="..\src\PingPongFBO.h" />
     <ClInclude Include="..\src\ShaderVisualization.h" />
     <ClInclude Include="..\src\TreeVisualization.h" />
     <ClInclude Include="..\src\Visualization.h" />

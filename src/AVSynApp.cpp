@@ -126,21 +126,6 @@ void AVSynApp::setup()
 	mVisualizations.insert(make_pair("Fluid", fluid));
 	mVisualizationOptions.push_back("Fluid");
 
-
-	//getWindowIndex(0)->getSignalMouseMove().connect([kickChangeImage](MouseEvent e) {
-	//	app::getWindowIndex(0)->getRenderer()->makeCurrentContext();
-	//	kickChangeImage->mouseMove(e);
-	//});
-	getWindowIndex(0)->getSignalMouseDrag().connect([fluid](MouseEvent e) {
-		app::getWindowIndex(0)->getRenderer()->makeCurrentContext();
-		fluid->mouseDrag(e);
-	});
-
-	getWindowIndex(0)->getSignalMouseUp().connect([fluid](MouseEvent e) {
-		app::getWindowIndex(0)->getRenderer()->makeCurrentContext();
-		fluid->mouseUp(e);
-	});
-
 	mCurrentVisOption = 0;
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
 	

@@ -43,7 +43,7 @@ vec4 inner(vec2 pos) {
 	vec2 lmRev = vec2(lastMouse.x, 1.0 - lastMouse.y);
 	vec2 mDist = mRev - lmRev;
 
-	if(isMouseDown && dt > 0.001 && dot(mDist, mDist) > 0.00001) {
+	if(false && dt > 0.001 && dot(mDist, mDist) > 0.00001) {
 		vec2 mouseVel = mDist / dt;
 
 		vec2 dm = mRev - lmRev;
@@ -78,8 +78,7 @@ vec4 inner(vec2 pos) {
 		velocity.z = 1.0;
 	}
 
-	float P = texture2D(tex_pressure, pos).y;
-	v += -1.1787 * (1.0 - 1 / max(velocity.z, 0.0001)) * vec2(0, 1);
+	v.y += -0.3787 * (1.0 - 1 / max(velocity.z, 0.0001));
 
 	return vec4(v, velocity.z, 1);
 }

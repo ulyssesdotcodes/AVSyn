@@ -6,6 +6,7 @@
 #include "cinder\app\App.h"
 #include "AudioSource.h"
 #include "BeatDetector.h"
+#include "PingPongFBO.h"
 
 using namespace ci;
 
@@ -17,34 +18,30 @@ public:
 	virtual bool perspective() override;
 	virtual void switchCamera(CameraPersp* camera) override;
 	virtual void switchParams(params::InterfaceGlRef params) override;
-	virtual void mouseDrag(app::MouseEvent mouseEvent);
-	virtual void mouseUp(app::MouseEvent mouseEvent);
 
 private:
 	AudioSource *mAudioSource;
 	BeatDetector *mBeatDetector;
 
-	gl::GlslProgRef mAdvectShader, mForcesShader, mDivergenceShader, mPressureSolveShader, mSubtractPressureShader, mRenderShader,
-		mDyeDropShader;
-
-	//array<gl::VaoRef, 2> mVaos, mPressureVaos;
-	//array<gl::VboRef, 2> mVelocities, mPressures, mConnections, mDyes;
-	array<gl::FboRef, 2> mVelocityBufTexs, mPressureBufTexs, mDyeBufTexs;
+	gl::GlslProgRef 
+		mAdvectShader, 
+		mForcesShader, 
+		mDivergenceShader, 
+		mPressureSolveShader, 
+		mSubtractPressureShader, 
+		mRenderShader,
+		mSmokeDropShader;
 
 	void advect(float dt);
-	void advectDye(float dt, float time);
+	void advectSmoke(float dt, float time);
 	void applyForce(float dt);
 	void computeDivergence();
 	void solvePressure();
 	void subtractPressure();
-	void renderToBuffer(gl::GlslProgRef shader, gl::FboRef target);
-
-	int mIteration;
-	int mPressureIteration;
-	int mDyeIteration;
 
 	vec2 mWindowResolution;
 	vec2 mFluidResolution;
 	float mLastTime;
-	vec2 mLastMouse;
+
+	PingPongFBO mVelocityFBO, mPressureFBO, mSmokeFBO;
 };

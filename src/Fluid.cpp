@@ -2,6 +2,10 @@
 #include "cinder\app\App.h"
 #include "cinder\Rand.h"
 
+const int VELOCITY_POINTER = 0;
+const int PRESSURE_POINTER = 1;
+const int SMOKE_POINTER = 2;
+
 void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
 {
 	mAudioSource = audioSource;
@@ -23,58 +27,37 @@ void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
 	mForcesShader->uniform("smokeDropPos", vec2(0.5, 0.8));
 
 	updateFormat.fragment(app::loadAsset("Fluid/smoke_drop.frag"));
-	mDyeDropShader = gl::GlslProg::create(updateFormat);
-	mDyeDropShader->uniform("resolution", mWindowResolution);
-	mDyeDropShader->uniform("smokeDropPos", vec2(0.5, 0.8));
+	mSmokeDropShader = gl::GlslProg::create(updateFormat);
+	mSmokeDropShader->uniform("resolution", mWindowResolution);
+	mSmokeDropShader->uniform("smokeDropPos", vec2(0.5, 0.8));
 
 	updateFormat.fragment(app::loadAsset("Fluid/subtract_pressure.frag"));
 	mSubtractPressureShader = gl::GlslProg::create(updateFormat);
 	mSubtractPressureShader->uniform("resolution", mFluidResolution);
 
-	updateFormat = gl::GlslProg::Format();
-	//updateFormat.feedbackFormat(GL_SEPARATE_ATTRIBS)
-	//	.feedbackVaryings(pressureVaryings);
-	updateFormat.vertex(app::loadAsset("passthru.vert"));
 	updateFormat.fragment(app::loadAsset("Fluid/velocity_divergence.frag"));
 	mDivergenceShader = gl::GlslProg::create(updateFormat);
 	mDivergenceShader->uniform("resolution", mFluidResolution);
+
 	updateFormat.fragment(app::loadAsset("Fluid/solve_pressure.frag"));
 	mPressureSolveShader = gl::GlslProg::create(updateFormat);
 	mPressureSolveShader->uniform("resolution", mFluidResolution);
 
-	gl::GlslProg::Format renderFormat;
-	renderFormat
-		.vertex(app::loadAsset("passthru.vert"))
-		.fragment(app::loadAsset("Fluid/render.frag"));
-	mRenderShader = gl::GlslProg::create(renderFormat);
+	updateFormat.fragment(app::loadAsset("Fluid/render.frag"));
+	mRenderShader = gl::GlslProg::create(updateFormat);
 	mRenderShader->uniform("resolution", mWindowResolution);
 
-
-	for (int i = 0; i < 2; ++i) {
-		gl::Texture2d::Format texFmt;
-		texFmt.setInternalFormat(GL_RGBA16F);
-		texFmt.setDataType(GL_FLOAT);
-		texFmt.setTarget(GL_TEXTURE_2D);
-		texFmt.setWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-		gl::Fbo::Format fmt;
-		fmt.disableDepth()
-			.setColorTextureFormat(texFmt);
-		mVelocityBufTexs[i] = gl::Fbo::create(mFluidResolution.x, mFluidResolution.y, fmt);
-		mPressureBufTexs[i] = gl::Fbo::create(mFluidResolution.x, mFluidResolution.y, fmt);
-		mDyeBufTexs[i] = gl::Fbo::create(mWindowResolution.x, mWindowResolution.y, fmt);
-		{
-			gl::ScopedFramebuffer fbo(mVelocityBufTexs[i]);
-			gl::clear(Color(0, 0, 0));
-		}
-		{
-			gl::ScopedFramebuffer fbo(mPressureBufTexs[i]);
-			gl::clear(Color(0, 0, 0));
-		}
-		{
-			gl::ScopedFramebuffer fbo(mDyeBufTexs[i]);
-			gl::clear(Color(0, 0, 0));
-		}
-	}
+	gl::Texture2d::Format texFmt;
+	texFmt.setInternalFormat(GL_RGBA16F);
+	texFmt.setDataType(GL_FLOAT);
+	texFmt.setTarget(GL_TEXTURE_2D);
+	texFmt.setWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+	gl::Fbo::Format fmt;
+	fmt.disableDepth()
+		.setColorTextureFormat(texFmt);
+	mVelocityFBO = PingPongFBO(fmt, mFluidResolution, 2);
+	mPressureFBO = PingPongFBO(fmt, mFluidResolution, 2);
+	mSmokeFBO = PingPongFBO(fmt, mWindowResolution, 2);
 }
 
 void Fluid::update()
@@ -91,40 +74,15 @@ void Fluid::update()
 	solvePressure();
 	subtractPressure();
 
-	advectDye(dt, time);
-}
-
-void Fluid::mouseDrag(app::MouseEvent mouseEvent) 
-{
-	if (mLastMouse.x != 0 && mLastMouse.y != 0) {
-		mForcesShader->uniform("isMouseDown", mouseEvent.isLeftDown());
-		mForcesShader->uniform("smokeDropPos", vec2(mouseEvent.getPos()) / mWindowResolution);
-		mForcesShader->uniform("lastMouse", mLastMouse / mWindowResolution);
-
-		mDyeDropShader->uniform("isMouseDown", mouseEvent.isLeftDown());
-		mDyeDropShader->uniform("lastMouse", mLastMouse / mWindowResolution);
-		mDyeDropShader->uniform("smokeDropPos", vec2(mouseEvent.getPos()) / mWindowResolution);
-	}
-	mLastMouse = mouseEvent.getPos();
-}
-
-void Fluid::mouseUp(app::MouseEvent mouseEvent) 
-{
-	if (!mouseEvent.isLeftDown()) {
-		mLastMouse = vec2(0);
-	}
+	advectSmoke(dt, time);
 }
 
 void Fluid::draw()
 {
-	gl::ScopedTextureBind scopeDye(mDyeBufTexs[mDyeIteration & 1]->getColorTexture(), 2);
-	mRenderShader->uniform("tex_dye", 2);
-	//gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
-	//mRenderShader->uniform("tex_dye", 0);
-	//gl::ScopedTextureBind scopePres(mPressureBufTexs[mPressureIteration & 1]->getColorTexture(), 1);
-	//mRenderShader->uniform("tex_dye", 1);
+	gl::ScopedTextureBind scopeSmoke(mSmokeFBO.getTexture(), SMOKE_POINTER);
+	mRenderShader->uniform("tex_smoke", SMOKE_POINTER);
+
 	gl::ScopedGlslProg glsl(mRenderShader);
-	//gl::ScopedVao scopedVao(mVaos[mIteration & 1]);
 	gl::context()->setDefaultShaderVars();
 
 	gl::drawSolidRect(app::getWindowBounds());
@@ -146,106 +104,84 @@ void Fluid::switchParams(params::InterfaceGlRef params)
 void Fluid::advect(float dt)
 {
 	mAdvectShader->uniform("dt", dt);
-	//gl::ScopedTextureBind scopeTarget(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 1);
-	//mAdvectShader->uniform("tex_target", 1);
-	gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
-	mAdvectShader->uniform("tex_velocity", 0);
-	mAdvectShader->uniform("tex_target", 0);
-	gl::ScopedTextureBind scopePressure(mPressureBufTexs[mPressureIteration & 1]->getColorTexture(), 1);
-	mAdvectShader->uniform("tex_pressure", 1);
 	mAdvectShader->uniform("boundaryConditions", true);
 	mAdvectShader->uniform("target_resolution", mFluidResolution);
 
-	renderToBuffer(mAdvectShader, mVelocityBufTexs[(mIteration + 1) & 1]);
-	++mIteration;
+	gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
+	mAdvectShader->uniform("tex_velocity", VELOCITY_POINTER);
+	mAdvectShader->uniform("tex_target", VELOCITY_POINTER);
+
+	gl::ScopedTextureBind scopePressure(mPressureFBO.getTexture(), PRESSURE_POINTER);
+	mAdvectShader->uniform("tex_pressure", PRESSURE_POINTER);
+
+	mVelocityFBO.render(mAdvectShader);
 }
 
-void Fluid::advectDye(float dt, float time) 
+void Fluid::advectSmoke(float dt, float time) 
 {
-	{
-		mAdvectShader->uniform("target_resolution", mWindowResolution);
-		mAdvectShader->uniform("dt", dt);
-		gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
-		mAdvectShader->uniform("tex_velocity", 0);
-		gl::ScopedTextureBind scopeDye(mDyeBufTexs[mDyeIteration & 1]->getColorTexture(), 2);
-		mAdvectShader->uniform("tex_target", 2);
-		mAdvectShader->uniform("boundaryConditions", false);
 
-		renderToBuffer(mAdvectShader, mDyeBufTexs[(mDyeIteration + 1) & 1]);
-		++mDyeIteration;
-	}
+	// Advect the smoke
+	mAdvectShader->uniform("target_resolution", mWindowResolution);
+	mAdvectShader->uniform("dt", dt);
+	mAdvectShader->uniform("boundaryConditions", false);
 
+	gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
+	mAdvectShader->uniform("tex_velocity", VELOCITY_POINTER);
 
-	{
-		mAudioSource->update();
-		mBeatDetector->update(1.6);
-		gl::ScopedTextureBind scopeDyeDrop(mDyeBufTexs[mDyeIteration & 1]->getColorTexture(), 2);
-		mDyeDropShader->uniform("beat", mBeatDetector->getBeat());
-		mDyeDropShader->uniform("volume", mAudioSource->getVolume());
-		mDyeDropShader->uniform("dt", dt);
-		mDyeDropShader->uniform("tex_prev", 2);
-		renderToBuffer(mDyeDropShader, mDyeBufTexs[(mDyeIteration + 1) & 1]);
-		++mDyeIteration;
+	gl::ScopedTextureBind scopeSmoke(mSmokeFBO.getTexture(), SMOKE_POINTER);
+	mAdvectShader->uniform("tex_target", SMOKE_POINTER);
 
-		mDyeDropShader->uniform("isMouseDown", false);
-	}
+	mSmokeFBO.render(mAdvectShader);
+
+	// Create new smoke
+	mAudioSource->update();
+	mBeatDetector->update(1.6);
+	mSmokeDropShader->uniform("beat", mBeatDetector->getBeat());
+	mSmokeDropShader->uniform("volume", mAudioSource->getVolume());
+	mSmokeDropShader->uniform("dt", dt);
+
+	gl::ScopedTextureBind scopeSmokeDrop(mSmokeFBO.getTexture(), SMOKE_POINTER);
+	mSmokeDropShader->uniform("tex_prev", SMOKE_POINTER);
+
+	mSmokeFBO.render(mSmokeDropShader);
 }
 
 void Fluid::applyForce(float dt)
 {
-	gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
-	mForcesShader->uniform("tex_velocity", 0);
 	mForcesShader->uniform("dt", dt);
 	mForcesShader->uniform("time", mLastTime);
-	renderToBuffer(mForcesShader, mVelocityBufTexs[(mIteration + 1) & 1]);
-	++mIteration;
 
-	mForcesShader->uniform("isMouseDown", false);
+	gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
+	mForcesShader->uniform("tex_velocity", VELOCITY_POINTER);
+
+	mVelocityFBO.render(mForcesShader);
 }
 
 void Fluid::computeDivergence()
 {
-	gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
-	mDivergenceShader->uniform("tex_velocity", 0);
-	gl::ScopedTextureBind scopePressure(mPressureBufTexs[mPressureIteration & 1]->getColorTexture(), 1);
-	mDivergenceShader->uniform("tex_pressure", 1);
+	gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
+	mDivergenceShader->uniform("tex_velocity", VELOCITY_POINTER);
+	gl::ScopedTextureBind scopePressure(mPressureFBO.getTexture(), PRESSURE_POINTER);
+	mDivergenceShader->uniform("tex_pressure", PRESSURE_POINTER);
 
-	renderToBuffer(mDivergenceShader, mPressureBufTexs[(mPressureIteration + 1) & 1]);
-	++mPressureIteration;
+	mPressureFBO.render(mDivergenceShader);
 }
 
 void Fluid::solvePressure()
 {
-	int i;
-	for (i = mPressureIteration; i < mPressureIteration + 40; ++i) {
-		gl::ScopedTextureBind scopeVel(mPressureBufTexs[i & 1]->getColorTexture(), 1);
-		mPressureSolveShader->uniform("tex_pressure", 1);
-		renderToBuffer(mPressureSolveShader, mPressureBufTexs[(i + 1) & 1]);
+	for (int i = 0; i < 40; ++i) {
+		gl::ScopedTextureBind scopePressure(mPressureFBO.getTexture(), PRESSURE_POINTER);
+		mPressureSolveShader->uniform("tex_pressure", PRESSURE_POINTER);
+		mPressureFBO.render(mPressureSolveShader);
 	}
-	mPressureIteration = i;
 }
 
 void Fluid::subtractPressure()
 {
-	gl::ScopedTextureBind scopeVel(mVelocityBufTexs[mIteration & 1]->getColorTexture(), 0);
-	mSubtractPressureShader->uniform("tex_velocity", 0);
-	gl::ScopedTextureBind scopePressure(mPressureBufTexs[mPressureIteration & 1]->getColorTexture(), 1);
-	mSubtractPressureShader->uniform("tex_pressure", 1);
+	gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
+	mSubtractPressureShader->uniform("tex_velocity", VELOCITY_POINTER);
+	gl::ScopedTextureBind scopePressure(mPressureFBO.getTexture(), PRESSURE_POINTER);
+	mSubtractPressureShader->uniform("tex_pressure", PRESSURE_POINTER);
 
-	renderToBuffer(mSubtractPressureShader, mVelocityBufTexs[(mIteration + 1) & 1]);
-	++mIteration;
-}
-
-void Fluid::renderToBuffer(gl::GlslProgRef shader, gl::FboRef target)
-{
-	gl::ScopedFramebuffer fbo(target);
-	gl::clear(Color(0, 0, 0));
-	gl::ScopedViewport vp(ivec2(0), target->getSize());
-	gl::pushMatrices();
-	gl::setMatricesWindow(target->getSize());
-	gl::ScopedGlslProg glsl(shader);
-
-	gl::drawSolidRect(target->getBounds());
-
-	gl::popMatrices();
+	mVelocityFBO.render(mSubtractPressureShader);
 }

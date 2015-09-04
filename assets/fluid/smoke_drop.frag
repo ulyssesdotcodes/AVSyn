@@ -16,7 +16,7 @@ float rand(vec2 co){
 
 void main() {
 	vec2 pos = gl_FragCoord.xy / resolution.xy;
-	vec3 current = texture2D(tex_prev, pos).xyz * 0.999;
+	vec3 current = texture2D(tex_prev, pos).xyz * 0.99;
 
 	vec2 mSDP = vec2(smokeDropPos.x, 1.0 - smokeDropPos.y);
 
@@ -25,7 +25,7 @@ void main() {
 
 	vec2 dropDistance = pos - mSDP;
 
-	vec3 smoke = vec3(max(0, 0.004 - dot(dropDistance, dropDistance))) * dt * 256 * pow(beat, 2);
+	vec3 smoke = vec3(max(0, 0.004 - dot(dropDistance, dropDistance))) * dt * 256 * beat;
 
 	smoke *= mix(0.8, 1.0, rand(vec2(pos.x * pos.y, cos(dt + volume))));
 
