@@ -5,6 +5,7 @@
 const int VELOCITY_POINTER = 0;
 const int PRESSURE_POINTER = 1;
 const int SMOKE_POINTER = 2;
+const int ADVECT_POINTER = 3;
 
 void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
 {
@@ -76,10 +77,10 @@ void Fluid::update()
 	float dt = time - mLastTime;
 	mLastTime = time;
 
-	updateSmokePos(time);
+	updateSmokePos(time, dt);
 
 
-	advect(dt);
+	advectVelocity(dt);
 
 	applyForce(dt);
 
@@ -116,46 +117,15 @@ void Fluid::switchParams(params::InterfaceGlRef params)
 {
 }
 
-void Fluid::advect(float dt)
+void Fluid::advectVelocity(float dt)
 {
 	mAdvectShader->uniform("boundaryConditions", true);
 	mAdvectShader->uniform("target_resolution", mFluidResolution);
 
-	{
-		mAdvectShader->uniform("dt", dt);
-		gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
-		mAdvectShader->uniform("tex_velocity", VELOCITY_POINTER);
-		mAdvectShader->uniform("tex_target", VELOCITY_POINTER);
+	mAdvectMaccormackShader->uniform("boundaryConditions", true);
+	mAdvectMaccormackShader->uniform("target_resolution", mFluidResolution);
 
-		mVelocityFBO.render(mAdvectShader);
-	}
-
-	//// Run time backwards for the second one
-	{
-		mAdvectShader->uniform("dt", -dt);
-		gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
-		mAdvectShader->uniform("tex_velocity", VELOCITY_POINTER);
-		mAdvectShader->uniform("tex_target", VELOCITY_POINTER);
-
-		mVelocityFBO.render(mAdvectShader);
-	}
-
-	{
-		mAdvectMaccormackShader->uniform("dt", dt);
-		mAdvectMaccormackShader->uniform("boundaryConditions", true);
-		mAdvectMaccormackShader->uniform("target_resolution", mFluidResolution);
-		vector<gl::TextureRef> textures = mVelocityFBO.getTextures();
-		gl::ScopedTextureBind scopedPhiN(textures.at(1), 3);
-		mAdvectMaccormackShader->uniform("phi_n", 3);
-		mAdvectMaccormackShader->uniform("tex_velocity", 3);
-		mAdvectMaccormackShader->uniform("tex_target", 3);
-		gl::ScopedTextureBind scopedPhiN1Hat(textures.at(2), 4);
-		mAdvectMaccormackShader->uniform("phi_n_1_hat", 4);
-		gl::ScopedTextureBind scopedPhiNHat(textures.at(3), 5);
-		mAdvectMaccormackShader->uniform("phi_n_hat", 5);
-
-		mVelocityFBO.render(mAdvectMaccormackShader);
-	}
+	advect(dt, &mVelocityFBO, &mVelocityFBO);
 }
 
 void Fluid::advectSmoke(float dt, float time) 
@@ -177,35 +147,40 @@ void Fluid::advectSmoke(float dt, float time)
 	mAdvectShader->uniform("boundaryConditions", false);
 	mAdvectShader->uniform("target_resolution", mWindowResolution);
 
+	mAdvectMaccormackShader->uniform("boundaryConditions", false);
+	mAdvectMaccormackShader->uniform("target_resolution", mWindowResolution);
+
+	advect(dt, &mVelocityFBO, &mSmokeFBO);
+}
+
+void Fluid::advect(float dt, PingPongFBO *velocity, PingPongFBO *target) {
 	{
 		mAdvectShader->uniform("dt", dt);
-		gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
+		gl::ScopedTextureBind scopeVel(velocity->getTexture(), VELOCITY_POINTER);
 		mAdvectShader->uniform("tex_velocity", VELOCITY_POINTER);
-		gl::ScopedTextureBind scopeSmoke(mSmokeFBO.getTexture(), SMOKE_POINTER);
-		mAdvectShader->uniform("tex_target", SMOKE_POINTER);
+		gl::ScopedTextureBind scopeTarget(target->getTexture(), ADVECT_POINTER);
+		mAdvectShader->uniform("tex_target", ADVECT_POINTER);
 
-		mSmokeFBO.render(mAdvectShader);
+		target->render(mAdvectShader);
 	}
 
 	// Run time backwards for the second one
 	{
 		mAdvectShader->uniform("dt", -dt);
-		gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
+		gl::ScopedTextureBind scopeVel(velocity->getTexture(), VELOCITY_POINTER);
 		mAdvectShader->uniform("tex_velocity", VELOCITY_POINTER);
-		gl::ScopedTextureBind scopeSmoke(mSmokeFBO.getTexture(), SMOKE_POINTER);
-		mAdvectShader->uniform("tex_target", SMOKE_POINTER);
+		gl::ScopedTextureBind scopeTarget(target->getTexture(), ADVECT_POINTER);
+		mAdvectShader->uniform("tex_target", ADVECT_POINTER);
 
-		mSmokeFBO.render(mAdvectShader);
+		target->render(mAdvectShader);
 	}
 
 	{
 		mAdvectMaccormackShader->uniform("dt", dt);
-		mAdvectMaccormackShader->uniform("boundaryConditions", false);
-		mAdvectMaccormackShader->uniform("target_resolution", mWindowResolution);
-		gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
+		gl::ScopedTextureBind scopeVel(velocity->getTexture(), VELOCITY_POINTER);
 		mAdvectMaccormackShader->uniform("tex_velocity", VELOCITY_POINTER);
 
-		vector<gl::TextureRef> textures = mSmokeFBO.getTextures();
+		vector<gl::TextureRef> textures = target->getTextures();
 		gl::ScopedTextureBind scopedPhiN(textures.at(1), 3);
 		mAdvectMaccormackShader->uniform("phi_n", 3);
 		mAdvectMaccormackShader->uniform("tex_target", 3);
@@ -214,7 +189,7 @@ void Fluid::advectSmoke(float dt, float time)
 		gl::ScopedTextureBind scopedPhiNHat(textures.at(3), 5);
 		mAdvectMaccormackShader->uniform("phi_n_hat", 5);
 
-		mSmokeFBO.render(mAdvectMaccormackShader);
+		target->render(mAdvectMaccormackShader);
 	}
 }
 
@@ -260,19 +235,22 @@ void Fluid::subtractPressure()
 	mVelocityFBO.render(mSubtractPressureShader);
 }
 
-void Fluid::updateSmokePos(float time) {
+void Fluid::updateSmokePos(float time, float dt) {
 	mAudioSource->update();
 	vector<float> audiovel = mAudioSource->getEqs(4);
-	mAudioVel = vec2(pow(audiovel[0], 1.5) - pow(audiovel[1], 1.2), audiovel[2] - pow(audiovel[3], 0.8)) * mAudioVelMult;
-	mAudioVel = mAudioVel * vec2(0.5) + vec2(0.5) * mAudioVel * mBeatDetector->getBeat();
+	vec2 newVel = vec2(pow(audiovel[0], 1.5) - pow(audiovel[2], 1), pow(audiovel[1], 1.2) - pow(audiovel[3], 0.8)) * mAudioVelMult;
+	newVel = newVel * vec2(0.5) + vec2(0.5) * newVel * mBeatDetector->getBeat();
+	mAudioVel = newVel;
 	vec2 smokeDropPos = mSmokePos + mAudioVel;
 
 	if (smokeDropPos.x < 0.2 || smokeDropPos.x > 0.8) {
 		mAudioVelMult.x *= -1;
+		mAudioVel.x *= -1;
 	}
 
 	if (smokeDropPos.y < 0.2 || smokeDropPos.y > 0.8) {
 		mAudioVelMult.y *= -1;
+		mAudioVel.y *= -1;
 	}
 
 	mSmokeDropShader->uniform("smokeDropPos", smokeDropPos);
