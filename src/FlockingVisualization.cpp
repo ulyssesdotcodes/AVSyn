@@ -41,7 +41,6 @@ void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSo
 	mStep = true;
 	mIteratonIndex = 0;
 
-
 	vector<string> feedbackVaryings({
 		"tf_position",
 		"tf_velocity",

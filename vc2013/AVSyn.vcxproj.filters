@@ -25,6 +25,9 @@
     <Filter Include="Blocks\Cinder-KCB2\src">
       <UniqueIdentifier>{9550af8b-28f0-4b5f-8091-fdc8a39259df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Fluid">
+      <UniqueIdentifier>{aeaa4c5c-d372-4014-8be3-d02cfe7873a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\AVSynApp.cpp">
@@ -72,6 +75,12 @@
     <ClCompile Include="..\blocks\Cinder-KCB2\src\Kinect2.cpp">
       <Filter>Blocks\Cinder-KCB2\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Fluid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PingPongFBO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -112,6 +121,12 @@
     </ClInclude>
     <ClInclude Include="..\blocks\Cinder-KCB2\src\Kinect2.h">
       <Filter>Blocks\Cinder-KCB2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Fluid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\PingPongFBO.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +173,42 @@
     </None>
     <None Include="..\assets\flame.frag">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\fluid_update.vert" />
+    <None Include="..\assets\render.frag" />
+    <None Include="..\assets\render.vert" />
+    <None Include="..\assets\fluid\render.vert">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\fluid\render.frag">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\fluid\solve_pressure.frag">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\fluid\subtract_pressure.frag">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\fluid\velocity_divergence.frag">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\fluid\advect.frag">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\fluid\apply_force.frag">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\fluid\dye_drop.frag">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\fluid\smoke_drop.frag">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\fluid\smoke_drop_forces.frag">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\fluid\advect_maccormack.frag">
+      <Filter>Shaders\Fluid</Filter>
     </None>
   </ItemGroup>
 </Project>

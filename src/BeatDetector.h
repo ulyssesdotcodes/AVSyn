@@ -20,4 +20,5 @@ private:
 	array<float, BUCKETS> mAverageEnergy;
 	float mBeat;
 	float mDeterioration;
+	int mLastUpdate;
 };

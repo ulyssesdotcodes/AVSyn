@@ -22,7 +22,15 @@ void BeatDetector::update(float c) {
 	if (mAudioSource->getVolume() < VOLUME_MIN) {
 		mBeat -= mDeterioration;
 		mBeat = math<float>::max(mBeat, 0.0);
+		return;
 	}
+
+	int frames = app::getElapsedFrames();
+	if (mLastUpdate == frames) {
+		return;
+	}
+
+	mLastUpdate = frames;
 
 	array<float, BUCKETS> sum = {};
 	int j = 0;
