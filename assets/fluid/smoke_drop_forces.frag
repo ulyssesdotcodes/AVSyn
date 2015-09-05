@@ -5,6 +5,7 @@ uniform sampler2D tex_velocity;
 uniform sampler2D tex_pressure;
 
 uniform vec2 smokeDropPos;
+uniform vec2 smokeVel;
 
 uniform float time;
 uniform float dt;
@@ -32,7 +33,8 @@ vec4 boundary(vec2 pos) {
 		offset.y = -1/resolution.y;
 	}
 
-	return vec4(-texture2D(tex_velocity, pos + offset).xyz, 1);
+	vec4 vel = texture2D(tex_velocity, pos + offset);
+	return vec4(-vel.xy, vel.z,  1);
 }
 
 vec4 inner(vec2 pos) {
@@ -42,7 +44,8 @@ vec4 inner(vec2 pos) {
 	vec2 dist = vec2(smokeDropPos.x, 1.0 - smokeDropPos.y) - pos;
 
 	if(smokeDropPos.x > 0 && smokeDropPos.y > 0 && dot(dist, dist) < 0.004) {
-		velocity.z = 1.02;
+		velocity.z = 1.04;
+		velocity.xy += vec2(smokeVel.x, -smokeVel.y) * 10;
 	}
 
 	// Initialize T to 1.0

@@ -239,6 +239,7 @@
     <None Include="..\assets\flame.frag" />
     <None Include="..\assets\flocking.vert" />
     <None Include="..\assets\fluid\advect.frag" />
+    <None Include="..\assets\fluid\advect_maccormack.frag" />
     <None Include="..\assets\fluid\apply_force.frag" />
     <None Include="..\assets\fluid\dye_drop.frag" />
     <None Include="..\assets\fluid\render.frag" />

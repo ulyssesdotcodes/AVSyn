@@ -11,6 +11,7 @@ public:
 	PingPongFBO();
 	PingPongFBO(gl::Fbo::Format fmt, vec2 size, int buffers);
 	gl::TextureRef getTexture();
+	vector<gl::TextureRef> getTextures();
 	void render(gl::GlslProgRef shader);
 
 private:

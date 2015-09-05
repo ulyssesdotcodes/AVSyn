@@ -25,6 +25,7 @@ private:
 
 	gl::GlslProgRef 
 		mAdvectShader, 
+		mAdvectMaccormackShader,
 		mForcesShader, 
 		mDivergenceShader, 
 		mPressureSolveShader, 

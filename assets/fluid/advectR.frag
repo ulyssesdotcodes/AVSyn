@@ -31,8 +31,7 @@ vec4 boundary(vec2 targetPos) {
 		return vec4(texture2D(tex_target, targetPos + offset).xy, 1.0, 1);
 	}
 
-	vec4 vel = texture2D(tex_target, targetPos + offset);
-	outVel = vec4(-vel.xy, vel.z, 1);
+	outVel = vec4(-texture2D(tex_target, targetPos + offset).xy, 1.0, 1);
 
 	return outVel;
 }
@@ -40,14 +39,14 @@ vec4 boundary(vec2 targetPos) {
 vec4 inner(vec2 targetPos) {
 	vec4 velocity = texture2D(tex_velocity, targetPos);
 	vec2 resPos = floor(targetPos * target_resolution) + 0.5;
-	vec2 tracedPos = resPos - dt * velocity.xy * target_resolution ;
+	vec2 tracedPos = resPos + dt * velocity.xy * target_resolution ;
 	
 	// Calculate the top left corner of the nearest 4 pixels
 	vec2 flooredPos = floor(tracedPos - 0.5) + 0.5;
 
 	vec2 t = fract(tracedPos);
 
-	vec4 tex11 = texture2D(tex_target, flooredPos / target_resolution); // Top left
+	vec4 tex11 = texture2D(tex_target, flooredPos / target_resolution.xy); // Top left
 	vec4 tex12 = texture2D(tex_target, (flooredPos + vec2(1, 0)) / target_resolution.xy); // Top right
 	vec4 tex21 = texture2D(tex_target, (flooredPos + vec2(0, 1)) / target_resolution.xy); // Bottom left
 	vec4 tex22 = texture2D(tex_target, (flooredPos + vec2(1, 1)) / target_resolution.xy); // Bottom right

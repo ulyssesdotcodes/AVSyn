@@ -4,6 +4,9 @@ uniform vec2 resolution;
 uniform vec2 target_resolution;
 uniform sampler2D tex_velocity;
 uniform sampler2D tex_target;
+uniform sampler2D phi_n_1_hat;
+uniform sampler2D phi_n;
+uniform sampler2D phi_n_hat;
 uniform float dt;
 uniform bool boundaryConditions;
 
@@ -13,6 +16,7 @@ vec4 boundary(vec2 targetPos) {
 	if(!boundaryConditions) {
 		return texture2D(tex_target, targetPos);
 	}
+
 	vec4 outVel;
 	vec2 offset = vec2(0, 0);
 
@@ -43,16 +47,25 @@ vec4 inner(vec2 targetPos) {
 	vec2 tracedPos = resPos - dt * velocity.xy * target_resolution ;
 	
 	// Calculate the top left corner of the nearest 4 pixels
-	vec2 flooredPos = floor(tracedPos - 0.5) + 0.5;
+	vec2 flooredPos = floor(tracedPos + 0.5);
 
 	vec2 t = fract(tracedPos);
 
-	vec4 tex11 = texture2D(tex_target, flooredPos / target_resolution); // Top left
-	vec4 tex12 = texture2D(tex_target, (flooredPos + vec2(1, 0)) / target_resolution.xy); // Top right
-	vec4 tex21 = texture2D(tex_target, (flooredPos + vec2(0, 1)) / target_resolution.xy); // Bottom left
-	vec4 tex22 = texture2D(tex_target, (flooredPos + vec2(1, 1)) / target_resolution.xy); // Bottom right
+	vec4 tex11 = texture2D(phi_n, flooredPos / target_resolution.xy); // Top left
+	vec4 tex12 = texture2D(phi_n, (flooredPos + vec2(1, 0)) / target_resolution.xy); // Top right
+	vec4 tex21 = texture2D(phi_n, (flooredPos + vec2(0, 1)) / target_resolution.xy); // Bottom left
+	vec4 tex22 = texture2D(phi_n, (flooredPos + vec2(1, 1)) / target_resolution.xy); // Bottom right
 
-	return mix(mix(tex11, tex12, t.x), mix(tex21, tex22, t.x), t.y);
+	vec4 phiMin = min(min(min(tex11, tex12), tex21), tex22);
+	vec4 phiMax = max(max(max(tex11, tex12), tex21), tex22);
+
+	vec2 scaledPos = flooredPos / target_resolution;
+
+	vec4 result = texture2D(phi_n_1_hat, scaledPos) + 0.5 * (texture2D(phi_n, scaledPos) - texture2D(phi_n_hat, scaledPos));
+
+	result = max(min(result, phiMax), phiMin);
+
+	return result;
 }
 
 void main() {

@@ -21,10 +21,11 @@ vec4 boundary(vec2 pos) {
 	}
 	else if(pos.y >= 1.0 - 1. / resolution.y) {
 		offset.y = -1.1/resolution.y;
-		return vec4(texture2D(tex_velocity, pos + offset).xy, 1.0, 1);
+		return vec4(texture2D(tex_velocity, pos + offset).xyz, 1);
 	}
 
-	return vec4(-texture2D(tex_velocity, pos + offset).xy, 1.0, 1);
+	vec4 vel = texture2D(tex_velocity, pos + offset);
+	return vec4(-vel.xy, vel.z, 1);
 }
 
 vec4 inner(vec2 pos) {
@@ -34,7 +35,6 @@ vec4 inner(vec2 pos) {
 	float B = texture2D(tex_pressure, pos + vec2(0, -1) / resolution.xy).y;
 
 	vec4 velocity = texture2D(tex_velocity, pos);
-//velocity.xy - 0.5 * vec2(R-L, T-B)
 	return vec4(velocity.xy - 0.5 * vec2(R-L, T-B), velocity.z, 1);
 }
 

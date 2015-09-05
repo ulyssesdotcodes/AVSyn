@@ -34,7 +34,7 @@ vec2 boundary(vec2 pos) {
 		return vec2(0);
 	}
 
-	return vec2(0, texture2D(tex_pressure, pos + offset).y);
+	return texture2D(tex_pressure, pos + offset).xy;
 }
 
 void main() {
