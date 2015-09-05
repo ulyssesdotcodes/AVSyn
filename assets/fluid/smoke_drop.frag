@@ -29,7 +29,7 @@ void main() {
 
 	vec2 dropDistance = pos - mSDP;
 
-	float smoke = max(0, 0.008 - dot(dropDistance, dropDistance)) * dt * 2048 * max(beat, 0.125) * (0.5 + pow(volume, 0.5) * 0.5);
+	float smoke = max(0, 0.008 - dot(dropDistance, dropDistance)) * dt * 2048 * max(beat, 0.125) * pow(volume, 0.5);
 
 	smoke *= mix(0.6, 1.0, rand(vec2(pos.x * pos.y, cos(dt + volume))));
 

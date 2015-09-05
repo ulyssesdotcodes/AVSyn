@@ -43,6 +43,9 @@ private:
 	vec2 mSmokePos;
 	vec2 mAudioVelMult;
 
+	float mVolume;
+	float mSpeed;
+
 	void advectVelocity(float dt);
 	void advectSmoke(float dt, float time);
 	void advect(float dt, PingPongFBO *velocity, PingPongFBO *target);

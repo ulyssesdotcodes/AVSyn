@@ -15,6 +15,8 @@ void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
 	mSmokePos = vec2(0.2, 0.8);
 	mAudioVel = vec2(0);
 	mAudioVelMult = vec2(0.05);
+	mVolume = 1.0;
+	mSpeed = 1.0;
 
 
 	//Setup shaders
@@ -68,7 +70,17 @@ void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
 		.setColorTextureFormat(texFmt);
 	mVelocityFBO = PingPongFBO(fmt, mFluidResolution, 4);
 	mSmokeFBO = PingPongFBO(fmt, mWindowResolution, 4);
-	mPressureFBO = PingPongFBO(fmt, mFluidResolution, 2);
+
+	gl::Texture2d::Format texFmtRG;
+	texFmtRG.setInternalFormat(GL_RG16F);
+	texFmtRG.setDataType(GL_FLOAT);
+	texFmtRG.setTarget(GL_TEXTURE_2D);
+	texFmtRG.setWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+	gl::Fbo::Format fmtRG;
+	fmtRG.disableDepth()
+		.setColorTextureFormat(texFmtRG);
+
+	mPressureFBO = PingPongFBO(fmtRG, mFluidResolution, 2);
 }
 
 void Fluid::update()
@@ -115,6 +127,11 @@ void Fluid::switchCamera(CameraPersp * camera)
 
 void Fluid::switchParams(params::InterfaceGlRef params)
 {
+	addParamName("Volume");
+	params->addParam("Volume", &mVolume, "min=0.0 max=4.0 step=0.01");
+
+	addParamName("Speed");
+	params->addParam("Speed", &mSpeed, "min=0.0 max=4.0 step=0.01");
 }
 
 void Fluid::advectVelocity(float dt)
@@ -135,7 +152,7 @@ void Fluid::advectSmoke(float dt, float time)
 	mBeatDetector->update(1.6);
 	{
 		mSmokeDropShader->uniform("beat", mBeatDetector->getBeat());
-		mSmokeDropShader->uniform("volume", mAudioSource->getVolume());
+		mSmokeDropShader->uniform("volume", mAudioSource->getVolume() * mVolume);
 		mSmokeDropShader->uniform("dt", dt);
 
 		gl::ScopedTextureBind scopeSmokeDrop(mSmokeFBO.getTexture(), SMOKE_POINTER);
@@ -240,7 +257,7 @@ void Fluid::updateSmokePos(float time, float dt) {
 	vector<float> audiovel = mAudioSource->getEqs(4);
 	vec2 newVel = vec2(pow(audiovel[0], 1.5) - pow(audiovel[2], 1), pow(audiovel[1], 1.2) - pow(audiovel[3], 0.8)) * mAudioVelMult;
 	newVel = newVel * vec2(0.5) + vec2(0.5) * newVel * mBeatDetector->getBeat();
-	mAudioVel = newVel;
+	mAudioVel = newVel * mSpeed;
 	vec2 smokeDropPos = mSmokePos + mAudioVel;
 
 	if (smokeDropPos.x < 0.2 || smokeDropPos.x > 0.8) {
