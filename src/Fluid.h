@@ -23,6 +23,9 @@ private:
 	AudioSource *mAudioSource;
 	BeatDetector *mBeatDetector;
 
+	vec2 mWindowResolution;
+	vec2 mFluidResolution;
+
 	gl::GlslProgRef 
 		mAdvectShader, 
 		mAdvectMaccormackShader,
@@ -33,16 +36,18 @@ private:
 		mRenderShader,
 		mSmokeDropShader;
 
+	PingPongFBO mVelocityFBO, mPressureFBO, mSmokeFBO;
+
+	float mLastTime;
+	vec2 mAudioVel;
+	vec2 mSmokePos;
+	vec2 mAudioVelMult;
+
 	void advect(float dt);
 	void advectSmoke(float dt, float time);
 	void applyForce(float dt);
 	void computeDivergence();
 	void solvePressure();
 	void subtractPressure();
-
-	vec2 mWindowResolution;
-	vec2 mFluidResolution;
-	float mLastTime;
-
-	PingPongFBO mVelocityFBO, mPressureFBO, mSmokeFBO;
+	void updateSmokePos(float time);
 };

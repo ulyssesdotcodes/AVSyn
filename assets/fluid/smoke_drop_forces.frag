@@ -9,6 +9,7 @@ uniform vec2 smokeVel;
 
 uniform float time;
 uniform float dt;
+uniform float beat;
 
 out vec4 fragColor;
 
@@ -44,8 +45,8 @@ vec4 inner(vec2 pos) {
 	vec2 dist = vec2(smokeDropPos.x, 1.0 - smokeDropPos.y) - pos;
 
 	if(smokeDropPos.x > 0 && smokeDropPos.y > 0 && dot(dist, dist) < 0.004) {
-		velocity.z = 1.04;
-		velocity.xy += vec2(smokeVel.x, -smokeVel.y) * 10;
+		velocity.z = 1.0 + 0.04 * beat;
+		velocity.xy += vec2(smokeVel.x, -smokeVel.y) * 10 * beat;
 	}
 
 	// Initialize T to 1.0
