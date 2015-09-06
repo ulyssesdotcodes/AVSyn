@@ -12,11 +12,11 @@ using namespace ci;
 const int NUM_PARTICLES = 300000;
 const int SIZE = 64;
 const float DAMPING = 0.1;
-const float ROTATION_DAMP = 0.01;
+const float ROTATION_DAMP = 0.1;
 
 void EQPointCloud::setup(AudioSource* audioSource)
 {
-	mLoudness = 1.0;
+	mLoudness = 0.25;
 	mRotationSpeed = 1.0;
 	mAudioSource = audioSource;
 	mHue = 0.0;
@@ -28,7 +28,6 @@ void EQPointCloud::setup(AudioSource* audioSource)
 
 		mParticles.push_back(vec3(x, y, z));
 	}
-
 
 	geom::BufferLayout layout;
 	layout.append(geom::POSITION, 3, 0, 0);
@@ -54,6 +53,9 @@ void EQPointCloud::switchParams(params::InterfaceGlRef params) {
 
 	addParamName("Hue");
 	params->addParam("Hue", &mHue, "min=0.0 max=1.0 step=0.01");
+
+	addParamName("Rotation Speed");
+	params->addParam("Rotation Speed", &mRotationSpeed, "min=0.0 max=2.0 step=0.01");
 }
 
 void EQPointCloud::update()
@@ -81,7 +83,9 @@ void EQPointCloud::update()
 
 	mAudioSource->update();
 	float volume = mAudioSource->getVolume();
-	float rotation = math<float>::pow(volume, 4) * mRotationSpeed * ROTATION_DAMP;
+	volume = math<float>::max(volume, mLastVolume * 0.95);
+	mLastVolume = volume;
+	float rotation = volume * mRotationSpeed * ROTATION_DAMP;
 	mRotation = glm::rotate(mRotation, rotation, vec3(1.0, 0.0, 0.0));
 	mRotation = glm::rotate(mRotation, rotation * 0.5f, vec3(0.0, 1.0, 0.0));
 	auto eqVolumes = mAudioSource->getEqs(3);

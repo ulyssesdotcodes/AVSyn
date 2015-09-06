@@ -43,4 +43,5 @@ private:
 	quat mRotation;
 	float mRotationSpeed;
 	float mHue;
+	float mLastVolume;
 };
