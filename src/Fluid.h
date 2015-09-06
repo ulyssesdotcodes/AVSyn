@@ -45,6 +45,7 @@ private:
 
 	float mVolume;
 	float mSpeed;
+	float mSaturation;
 	bool mFlipVelocity;
 
 	void advectVelocity(float dt);

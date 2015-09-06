@@ -15,9 +15,10 @@ void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
 	mSmokePos = vec2(0.2, 0.8);
 	mAudioVel = vec2(0);
 	mAudioVelMult = vec2(0.05);
-	mVolume = 1.0;
+	mVolume = 2.0;
 	mSpeed = 1.0;
 	mFlipVelocity = false;
+	mSaturation = 0.5;
 
 
 	//Setup shaders
@@ -133,6 +134,9 @@ void Fluid::switchParams(params::InterfaceGlRef params)
 
 	addParamName("Speed");
 	params->addParam("Speed", &mSpeed, "min=0.0 max=4.0 step=0.01");
+
+	addParamName("Saturation");
+	params->addParam("Saturation", &mSaturation, "min=0.0 max=1.0 step=0.01");
 
 	addParamName("Flip Velocity");
 	params->addParam("Flip Velocity", &mFlipVelocity);
@@ -286,6 +290,7 @@ void Fluid::updateSmokePos(float time, float dt) {
 
 	mSmokeDropShader->uniform("smokeDropPos", smokeDropPos);
 	mSmokeDropShader->uniform("hue", cos(time * 0.5f));
+	mSmokeDropShader->uniform("saturation", mSaturation);
 	mForcesShader->uniform("smokeDropPos", smokeDropPos);
 	mForcesShader->uniform("smokeVel", smokeDropPos - mSmokePos);
 

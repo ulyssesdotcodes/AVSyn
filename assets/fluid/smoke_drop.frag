@@ -8,6 +8,7 @@ uniform float volume;
 uniform float beat;
 uniform float dt;
 uniform float hue;
+uniform float saturation;
 
 out vec4 fragColor;
 
@@ -33,5 +34,5 @@ void main() {
 
 	smoke *= mix(0.6, 1.0, rand(vec2(pos.x * pos.y, cos(dt + volume))));
 
-	fragColor = vec4(current + hsv2rgb(vec3(hue, 0.5, 1.0)) * smoke, 1);
+	fragColor = vec4(current + hsv2rgb(vec3(hue, saturation, 1.0)) * smoke, 1);
 }
