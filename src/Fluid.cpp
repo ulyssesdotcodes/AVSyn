@@ -17,11 +17,12 @@ void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
 	mAudioVelMult = vec2(0.05);
 	mVolume = 1.0;
 	mSpeed = 1.0;
+	mFlipVelocity = false;
 
 
 	//Setup shaders
 	mWindowResolution = vec2(app::getWindowIndex(0)->getWidth(), app::getWindowIndex(0)->getHeight());
-	mFluidResolution = glm::floor(mWindowResolution * vec2(0.2));
+	mFluidResolution = glm::floor(mWindowResolution * vec2(0.25));
 
 	gl::GlslProg::Format updateFormat;
 	updateFormat.vertex(app::loadAsset("passthru.vert"));
@@ -132,6 +133,9 @@ void Fluid::switchParams(params::InterfaceGlRef params)
 
 	addParamName("Speed");
 	params->addParam("Speed", &mSpeed, "min=0.0 max=4.0 step=0.01");
+
+	addParamName("Flip Velocity");
+	params->addParam("Flip Velocity", &mFlipVelocity);
 }
 
 void Fluid::advectVelocity(float dt)
@@ -255,19 +259,29 @@ void Fluid::subtractPressure()
 void Fluid::updateSmokePos(float time, float dt) {
 	mAudioSource->update();
 	vector<float> audiovel = mAudioSource->getEqs(4);
-	vec2 newVel = vec2(pow(audiovel[0], 1.5) - pow(audiovel[2], 1), pow(audiovel[1], 1.2) - pow(audiovel[3], 0.8)) * mAudioVelMult;
+	vec2 newVel = vec2(pow(audiovel[0], 1.5) - pow(audiovel[2], 1), pow(audiovel[1], 1.2) - pow(audiovel[3], 0.8));
 	newVel = newVel * vec2(0.5) + vec2(0.5) * newVel * mBeatDetector->getBeat();
-	mAudioVel = newVel * mSpeed;
-	vec2 smokeDropPos = mSmokePos + mAudioVel;
 
-	if (smokeDropPos.x < 0.2 || smokeDropPos.x > 0.8) {
-		mAudioVelMult.x *= -1;
-		mAudioVel.x *= -1;
+	if (mFlipVelocity) {
+		newVel = vec2(newVel.y, newVel.x);
 	}
 
-	if (smokeDropPos.y < 0.2 || smokeDropPos.y > 0.8) {
-		mAudioVelMult.y *= -1;
-		mAudioVel.y *= -1;
+	mAudioVel = newVel * mSpeed  * mAudioVelMult;
+
+	vec2 smokeDropPos = mSmokePos + mAudioVel;
+
+	if (smokeDropPos.x < 0.1 && mAudioVel.x < 0) {
+		mAudioVelMult.x = -mAudioVelMult.x;
+	}
+	else if (smokeDropPos.x > 0.9 && mAudioVel.x > 0) {
+		mAudioVelMult.x = -mAudioVelMult.x;
+	}
+
+	if (smokeDropPos.y < 0.3 && mAudioVel.y < 0) {
+		mAudioVelMult.y = -mAudioVelMult.y;
+	}
+	else if (smokeDropPos.y > 0.92 && mAudioVel.y > 0) {
+		mAudioVelMult.y = -mAudioVelMult.y;
 	}
 
 	mSmokeDropShader->uniform("smokeDropPos", smokeDropPos);

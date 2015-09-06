@@ -45,6 +45,7 @@ private:
 
 	float mVolume;
 	float mSpeed;
+	bool mFlipVelocity;
 
 	void advectVelocity(float dt);
 	void advectSmoke(float dt, float time);

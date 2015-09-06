@@ -42,11 +42,33 @@ vec4 inner(vec2 pos) {
 	vec4 velocity = texture2D(tex_velocity, pos);
 	vec2 v = velocity.xy ;
 
-	vec2 dist = vec2(smokeDropPos.x, 1.0 - smokeDropPos.y) - pos;
+	vec2 sPRel = vec2(smokeDropPos.x, 1.0 - smokeDropPos.y) - pos;
 
-	if(smokeDropPos.x > 0 && smokeDropPos.y > 0 && dot(dist, dist) < 0.004) {
-		velocity.z = 1.0 + 0.04 * beat;
-		velocity.xy += vec2(smokeVel.x, -smokeVel.y) * 10 * beat;
+	if(smokeDropPos.x > 0 && smokeDropPos.y > 0 && dot(sPRel, sPRel) < 0.008) {
+		float lm = length(smokeVel);
+
+		vec2 smokePrev = smokeDropPos - smokeVel;
+		float projection = dot(smokePrev - pos, smokeVel / lm);
+		float fp = projection / lm;
+		float dist;
+		if(projection < 0.0){
+			dist = length(pos - smokePrev);
+		}
+		else if(projection > lm) {
+			dist = length(pos - smokeDropPos);
+		}
+		else {
+			dist = sqrt(abs(dot(pos - smokePrev, pos - smokePrev) - projection*projection));
+		}
+
+		float pf = 1.0 - clamp(fp, 0.0, 1.0) * 0.6;
+		float m = exp(-dist / 0.025);
+
+		m *= pf * pf;
+
+		v += (smokeVel - v - sPRel) * m;
+
+		velocity.z = 1.0 + 0.06 * beat;
 	}
 
 	// Initialize T to 1.0
