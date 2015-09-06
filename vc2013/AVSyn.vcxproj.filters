@@ -207,5 +207,6 @@
     <None Include="..\assets\fluid\advect_maccormack.frag">
       <Filter>Shaders\Fluid</Filter>
     </None>
+    <None Include="..\README.md" />
   </ItemGroup>
 </Project>
