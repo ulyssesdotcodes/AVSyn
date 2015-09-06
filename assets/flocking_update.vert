@@ -21,6 +21,7 @@ uniform float speed;
 uniform float eqs[3];
 uniform float hue;
 uniform float saturation;
+uniform bool separateOnly;
 
 out vec3 tf_position;
 out vec3 tf_velocity;
@@ -69,10 +70,6 @@ vec4 calculateVelocity(vec3 position, vec3 velocity, float prevHue) {
   float cd = cohesionDistance * (0.6 + 0.2 * sin(accumulatedLoudness * 0.05) + eqs[2]);
   float sd = separationDistance * (0.4 + cos(accumulatedLoudness * 0.05) + beat * loudness + eqs[1]);
   float ad = alignmentDistance * (0.6 + eqs[0]);
-
-  //float cd = cohesionDistance;
-  //float sd = separationDistance;
-  //float ad = alignmentDistance;
 
   float zoneRadius = sd + ad + cd;
   separationThresh = sd / zoneRadius;
@@ -129,7 +126,6 @@ vec4 calculateVelocity(vec3 position, vec3 velocity, float prevHue) {
 	  }
       distSquared = dist * dist;
 
-      //float f = loudness * 0.25;
 	  float f = 0.25;
 
       if(dist > 0.0 && distSquared < zoneRadiusSquared) {
@@ -142,7 +138,7 @@ vec4 calculateVelocity(vec3 position, vec3 velocity, float prevHue) {
           selfHueVelocity += 0.0;
           separationCount += 1.0;
         }
-        else if (percent < alignmentThresh){
+        else if (percent < alignmentThresh && !separateOnly){
           // Align
           float threshDelta = alignmentThresh - separationThresh;
           float adjustedPercent = (percent - separationThresh) / threshDelta;
@@ -152,7 +148,7 @@ vec4 calculateVelocity(vec3 position, vec3 velocity, float prevHue) {
           selfHueVelocity += 0.33;
           alignmentCount += 1.0;
         }
-        else {
+        else if(!separateOnly) {
           // Cohese
           float threshDelta = 1.0 - alignmentThresh;
           float adjustedPercent = (percent - alignmentThresh) / threshDelta;

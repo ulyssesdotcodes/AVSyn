@@ -165,9 +165,6 @@
     <None Include="..\assets\flocking_update.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\assets\old_flocking_update.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\assets\kick_image.vert">
       <Filter>Shaders</Filter>
     </None>

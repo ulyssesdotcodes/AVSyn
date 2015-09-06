@@ -103,8 +103,6 @@ void Fluid::update()
 	subtractPressure();
 
 	advectSmoke(dt, time);
-
-
 }
 
 void Fluid::draw()

@@ -51,5 +51,5 @@ private:
 	float mHue;
 	float mSaturation;
 	float mCycleHueSpeed;
-	bool mUndulate;
+	bool mSeparateOnly;
 };

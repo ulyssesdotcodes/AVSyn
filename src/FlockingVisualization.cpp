@@ -13,7 +13,7 @@ const int NUM_PARTICLES = BUFFER_WIDTH * BUFFER_WIDTH;
 FlockingVisualization::FlockingVisualization()
 {
 	mSeparationDistance = 6.0;
-	mAlignmentDistance = 12.0;
+	mAlignmentDistance = 6.0;
 	mCohesionDistance = 6.0;
 
 	mRoamingDistance = 40.0f;
@@ -29,7 +29,7 @@ FlockingVisualization::FlockingVisualization()
 	mCycleHueSpeed = 0.0;
 	mSaturation = 1.0;
 
-	mUndulate = true;
+	mSeparateOnly = false;
 }
 
 void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSource, BeatDetector* beatDetector)
@@ -144,6 +144,9 @@ void FlockingVisualization::switchParams(params::InterfaceGlRef params) {
 
 	addParamName("Alignment Distance");
 	params->addParam("Alignment Distance", &mAlignmentDistance, "min=0.0 max=30.0 step=1");
+
+	addParamName("Separate Only");
+	params->addParam("Separate Only", &mSeparateOnly);
 }
 
 
@@ -168,6 +171,7 @@ void FlockingVisualization::update()
 	mUpdateShader->uniform("hue", mHue);
 	mUpdateShader->uniform("saturation", mSaturation);
 	mUpdateShader->uniform("eqs", &(mAudioSource->getEqs(3, mLoudness))[0], 3);
+	mUpdateShader->uniform("separateOnly", mSeparateOnly);
 
 
 	gl::ScopedVao scopedVao(mVaos[mIteratonIndex & 1]);
@@ -194,9 +198,6 @@ void FlockingVisualization::update()
 
 void FlockingVisualization::draw()
 {
-	//gl::ScopedTextureBind scopeTexPos(mPositionBufTex[mIteratonIndex & 1]->getTarget(), mPositionBufTex[mIteratonIndex & 1]->getId(), 0);
-	//mRenderShader->uniform("tex_position", 0);
-
 	gl::ScopedGlslProg glsl(mRenderShader);
 	gl::ScopedVao scopedVao(mVaos[mIteratonIndex & 1]);
 	gl::context()->setDefaultShaderVars();
