@@ -13,7 +13,6 @@
 #include "EQPointCloud.h"
 #include "FlockingVisualization.h"
 #include "TreeVisualization.h"
-#include "KinectParticles.h"
 #include "Fluid.h"
 
 #include "DeltaSource.h"
@@ -110,11 +109,6 @@ void AVSynApp::setup()
 	trees->setup(mAudioSource, mBeatDetector);
 	mVisualizations.insert(make_pair("Trees", trees));
 	mVisualizationOptions.push_back("Trees");
-
-	auto *kickChangeImage = new KinectParticles();
-	kickChangeImage->setup(mAudioSource, mBeatDetector, mVisualizations, mVisualizationOptions);
-	mVisualizations.insert(make_pair("Kick Change Image", kickChangeImage));
-	mVisualizationOptions.push_back("Kick Change Image");
 
 	auto *fluid = new Fluid();
 	fluid->setup(mAudioSource, mBeatDetector);

@@ -78,7 +78,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\include;..\..\Cinder\include;..\blocks\Cinder-KCB2\src;..\blocks\Cinder-KCB2\lib;$(KINECTSDK20_DIR)\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\Cinder\include;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -91,7 +91,7 @@
       <AdditionalIncludeDirectories>"..\..\Cinder\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset)_d.lib;OpenGL32.lib;%(AdditionalDependencies);..\blocks\Cinder-KCB2\lib\$(PlatformTarget)\$(Configuration)\KCBv2.lib;$(KINECTSDK20_DIR)\lib\$(PlatformTarget)\kinect20.lib;$(KINECTSDK20_DIR)\lib\$(PlatformTarget)\Kinect20.Face.lib</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset)_d.lib;OpenGL32.lib;%(AdditionalDependencies);</AdditionalDependencies>
       <AdditionalLibraryDirectories>"..\..\Cinder\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -100,8 +100,8 @@
       <IgnoreSpecificDefaultLibraries>LIBCMT;LIBCPMT</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "..\blocks\Cinder-KCB2\lib\$(PlatformTarget)\$(Configuration)\KCBv2.dll" "$(OutDir)"
-xcopy /y "$(KINECTSDK20_DIR)Redist\Face\$(PlatformTarget)\Kinect20.Face.dll" "$(OutDir)"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -121,7 +121,7 @@
       <AdditionalIncludeDirectories>"..\..\Cinder\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset)_d.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset)_d.lib;OpenGL32.lib;%(AdditionalDependencies);</AdditionalDependencies>
       <AdditionalLibraryDirectories>"..\..\Cinder\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -133,7 +133,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\Cinder\include;%(AdditionalIncludeDirectories);..\blocks\Cinder-KCB2\src;..\blocks\Cinder-KCB2\lib;$(KINECTSDK20_DIR)\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\Cinder\include;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
@@ -148,7 +148,7 @@
       <AdditionalIncludeDirectories>"..\..\Cinder\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset).lib;OpenGL32.lib;%(AdditionalDependencies);..\blocks\Cinder-KCB2\lib\$(PlatformTarget)\KCBv2.lib;$(KINECTSDK20_DIR)\lib\$(PlatformTarget)\kinect20.lib;$(KINECTSDK20_DIR)\lib\$(PlatformTarget)\Kinect20.Face.lib</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset).lib;OpenGL32.lib;%(AdditionalDependencies);</AdditionalDependencies>
       <AdditionalLibraryDirectories>"..\..\Cinder\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
@@ -159,8 +159,8 @@
       <DataExecutionPrevention />
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "..\blocks\Cinder-KCB2\lib\$(PlatformTarget)\KCBv2.dll" "$(OutDir)"
-xcopy /y "$(KINECTSDK20_DIR)Redist\Face\$(PlatformTarget)\Kinect20.Face.dll" "$(OutDir)"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -198,7 +198,6 @@
     <ResourceCompile Include="Resources.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\blocks\Cinder-KCB2\src\Kinect2.cpp" />
     <ClCompile Include="..\src\AudioShaderVisualization.cpp" />
     <ClCompile Include="..\src\AudioSource.cpp" />
     <ClCompile Include="..\src\AVSynApp.cpp" />
@@ -208,14 +207,12 @@
     <ClCompile Include="..\src\EQPointCloud.cpp" />
     <ClCompile Include="..\src\FlockingVisualization.cpp" />
     <ClCompile Include="..\src\Fluid.cpp" />
-    <ClCompile Include="..\src\KinectParticles.cpp" />
     <ClCompile Include="..\src\PingPongFBO.cpp" />
     <ClCompile Include="..\src\ShaderVisualization.cpp" />
     <ClCompile Include="..\src\TreeVisualization.cpp" />
     <ClCompile Include="..\src\Visualization.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\blocks\Cinder-KCB2\src\Kinect2.h" />
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\src\AudioShaderVisualization.h" />
     <ClInclude Include="..\src\AudioSource.h" />
@@ -225,7 +222,6 @@
     <ClInclude Include="..\src\EQPointCloud.h" />
     <ClInclude Include="..\src\FlockingVisualization.h" />
     <ClInclude Include="..\src\Fluid.h" />
-    <ClInclude Include="..\src\KinectParticles.h" />
     <ClInclude Include="..\src\PingPongFBO.h" />
     <ClInclude Include="..\src\ShaderVisualization.h" />
     <ClInclude Include="..\src\TreeVisualization.h" />

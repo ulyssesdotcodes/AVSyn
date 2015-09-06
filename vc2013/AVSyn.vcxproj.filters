@@ -19,12 +19,6 @@
     <Filter Include="Blocks">
       <UniqueIdentifier>{4264e91c-8ed7-49a8-8c59-111735b0d733}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Blocks\Cinder-KCB2">
-      <UniqueIdentifier>{ae05267e-956c-4770-8b1a-749ab9beb7aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Blocks\Cinder-KCB2\src">
-      <UniqueIdentifier>{9550af8b-28f0-4b5f-8091-fdc8a39259df}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\Fluid">
       <UniqueIdentifier>{aeaa4c5c-d372-4014-8be3-d02cfe7873a3}</UniqueIdentifier>
     </Filter>
@@ -69,12 +63,6 @@
     <ClCompile Include="..\src\TreeVisualization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\KinectParticles.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\blocks\Cinder-KCB2\src\Kinect2.cpp">
-      <Filter>Blocks\Cinder-KCB2\src</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Fluid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -115,12 +103,6 @@
     </ClInclude>
     <ClInclude Include="..\src\TreeVisualization.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\KinectParticles.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\blocks\Cinder-KCB2\src\Kinect2.h">
-      <Filter>Blocks\Cinder-KCB2\src</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Fluid.h">
       <Filter>Header Files</Filter>
