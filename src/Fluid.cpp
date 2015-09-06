@@ -91,6 +91,10 @@ void Fluid::update()
 	float dt = time - mLastTime;
 	mLastTime = time;
 
+	if (dt > 1.0) {
+		dt = 1.0;
+	}
+
 	updateSmokePos(time, dt);
 
 
