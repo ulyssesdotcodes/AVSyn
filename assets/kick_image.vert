@@ -31,15 +31,7 @@ void main() {
 	home = iHome;
 	ref = iRef;
 
-		//float imageScale = math<float>::sqrt(NUM_PARTICLES / mImages[mCurrentImage]->getAspectRatio());
-		//float particlesImageWidth = imageScale * mImages[mCurrentImage]->getAspectRatio();
-		//float imageWidthScale = mImages[mCurrentImage]->getWidth() / particlesImageWidth;
-		//float imageHeightScale = mImages[mCurrentImage]->getHeight() / (NUM_PARTICLES / particlesImageWidth);
-		//float halfParticlesImageWidth = particlesImageWidth * 0.5;
-		//float particlesImageHeight = NUM_PARTICLES / particlesImageWidth;
-
 	color = texture2D(image, ref);
-	//color = color + texture2D(collisionMap, position.xy);
 
 	if(change) {
 		velocity = 2.0 * (vec3(0.5) - vec3(rand(ref+time), rand(ref-time), rand(ref*time)));

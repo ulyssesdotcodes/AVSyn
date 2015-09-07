@@ -163,6 +163,7 @@ vec4 calculateVelocity(vec3 position, vec3 velocity, float prevHue) {
 
   float zoneCount = separationCount + alignmentCount + cohesionCount;
 
+  // Calculate the hue based on how it's being affected by other points
   if (alignmentCount > separationCount && alignmentCount > cohesionCount){
     selfHueVelocity = 0.33;
   }

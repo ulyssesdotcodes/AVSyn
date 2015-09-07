@@ -15,5 +15,4 @@ void main() {
 	vec3 freq = vec3(visibility);
 
 	fragColor = vec4(freq, 1.0);
-	//fragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }
