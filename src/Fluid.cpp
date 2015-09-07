@@ -23,7 +23,7 @@ void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
 
 	//Setup shaders
 	mWindowResolution = vec2(app::getWindowIndex(0)->getWidth(), app::getWindowIndex(0)->getHeight());
-	mFluidResolution = glm::floor(mWindowResolution * vec2(0.25));
+	mFluidResolution = glm::floor(mWindowResolution * vec2(0.2));
 
 	gl::GlslProg::Format updateFormat;
 	updateFormat.vertex(app::loadAsset("passthru.vert"));
