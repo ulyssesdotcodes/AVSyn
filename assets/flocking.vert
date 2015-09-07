@@ -15,13 +15,18 @@ out float pointSize;
 out vec2 oVelocity;
 
 void main() {
+	oColor = color;
+
 	vec4 mvPosition = ciModelView * vec4(position.xyz, 1.0);
 
 	float velocityLength = length(velocity);
-	vec3 normVel = normalize(velocity);
+	vec3 normVel = velocity / velocityLength;
+
+	// PointSize is relative to the model view position
 	pointSize = 100.0 * velocityLength * velocityLength / length(mvPosition.xyz);
 	gl_PointSize = pointSize * (2.0 + normVel.z);
-	oColor = color;
+
+
 	oVelocity = (ciProjectionMatrix * vec4(velocity, 0.0)).xy;
 	gl_Position = ciProjectionMatrix * mvPosition;
 }

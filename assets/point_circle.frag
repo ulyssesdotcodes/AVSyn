@@ -7,6 +7,7 @@ out vec4 fragColor;
 void main() {
   vec2 velocity = normalize(oVelocity);
   vec2 pointCoord = gl_PointCoord;
+  // Display only a straight line in the direction of travel and discard every other fragment
   pointCoord.x = pointCoord.x - 0.5 + velocity.x * 0.5;
   pointCoord.y = 1.0 - pointCoord.y;
   float dist = abs(velocity.y * pointCoord.x - velocity.x * pointCoord.y) / sqrt(dot(velocity, velocity));
