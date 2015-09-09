@@ -15,6 +15,7 @@
 #include "TreeVisualization.h"
 #include "KinectParticles.h"
 #include "Fluid.h"
+#include "Mix.h"
 
 #include "DeltaSource.h"
 
@@ -111,15 +112,20 @@ void AVSynApp::setup()
 	mVisualizations.insert(make_pair("Trees", trees));
 	mVisualizationOptions.push_back("Trees");
 
+	auto *fluid = new Fluid();
+	fluid->setup(mAudioSource, mBeatDetector);
+	mVisualizations.insert(make_pair("Fluid", fluid));
+	mVisualizationOptions.push_back("Fluid");
+
 	auto *kickChangeImage = new KinectParticles();
 	kickChangeImage->setup(mAudioSource, mBeatDetector, mVisualizations, mVisualizationOptions);
 	mVisualizations.insert(make_pair("Kick Change Image", kickChangeImage));
 	mVisualizationOptions.push_back("Kick Change Image");
 
-	auto *fluid = new Fluid();
-	fluid->setup(mAudioSource, mBeatDetector);
-	mVisualizations.insert(make_pair("Fluid", fluid));
-	mVisualizationOptions.push_back("Fluid");
+	auto *mix = new Mix();
+	mix->setup(mVisualizations, mVisualizationOptions);
+	mVisualizations.insert(make_pair("Mix", mix));
+	mVisualizationOptions.push_back("Mix");
 
 	mCurrentVisOption = mVisualizations.size() - 1;
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];

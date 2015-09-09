@@ -28,6 +28,9 @@
     <Filter Include="Shaders\Fluid">
       <UniqueIdentifier>{aeaa4c5c-d372-4014-8be3-d02cfe7873a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Mix">
+      <UniqueIdentifier>{f789bd11-8910-4f2b-8e5a-99a8dc747f10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\AVSynApp.cpp">
@@ -81,6 +84,9 @@
     <ClCompile Include="..\src\PingPongFBO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Mix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -126,6 +132,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\PingPongFBO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Mix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -195,9 +204,6 @@
     <None Include="..\assets\fluid\apply_force.frag">
       <Filter>Shaders\Fluid</Filter>
     </None>
-    <None Include="..\assets\fluid\dye_drop.frag">
-      <Filter>Shaders\Fluid</Filter>
-    </None>
     <None Include="..\assets\fluid\smoke_drop.frag">
       <Filter>Shaders\Fluid</Filter>
     </None>
@@ -208,5 +214,8 @@
       <Filter>Shaders\Fluid</Filter>
     </None>
     <None Include="..\README.md" />
+    <None Include="..\assets\mix\multiply.frag">
+      <Filter>Shaders\Mix</Filter>
+    </None>
   </ItemGroup>
 </Project>

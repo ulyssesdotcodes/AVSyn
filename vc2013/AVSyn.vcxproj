@@ -209,6 +209,7 @@
     <ClCompile Include="..\src\FlockingVisualization.cpp" />
     <ClCompile Include="..\src\Fluid.cpp" />
     <ClCompile Include="..\src\KinectParticles.cpp" />
+    <ClCompile Include="..\src\Mix.cpp" />
     <ClCompile Include="..\src\PingPongFBO.cpp" />
     <ClCompile Include="..\src\ShaderVisualization.cpp" />
     <ClCompile Include="..\src\TreeVisualization.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="..\src\FlockingVisualization.h" />
     <ClInclude Include="..\src\Fluid.h" />
     <ClInclude Include="..\src\KinectParticles.h" />
+    <ClInclude Include="..\src\Mix.h" />
     <ClInclude Include="..\src\PingPongFBO.h" />
     <ClInclude Include="..\src\ShaderVisualization.h" />
     <ClInclude Include="..\src\TreeVisualization.h" />
@@ -241,7 +243,6 @@
     <None Include="..\assets\fluid\advect.frag" />
     <None Include="..\assets\fluid\advect_maccormack.frag" />
     <None Include="..\assets\fluid\apply_force.frag" />
-    <None Include="..\assets\fluid\dye_drop.frag" />
     <None Include="..\assets\fluid\render.frag" />
     <None Include="..\assets\fluid\render.vert" />
     <None Include="..\assets\fluid\smoke_drop.frag" />
@@ -252,6 +253,7 @@
     <None Include="..\assets\fluid_update.vert" />
     <None Include="..\assets\kick_image.vert" />
     <None Include="..\assets\flocking_update.vert" />
+    <None Include="..\assets\mix\multiply.frag" />
     <None Include="..\assets\passthru.vert" />
     <None Include="..\assets\point_circle.frag" />
     <None Include="..\assets\render.frag" />

@@ -47,5 +47,5 @@ void AudioShaderVisualization::draw()
 
 	renderUniforms();
 
-	gl::drawSolidRect(app::getWindowBounds());
+	gl::drawSolidRect(app::getWindowIndex(0)->getBounds());
 }
