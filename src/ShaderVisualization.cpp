@@ -9,6 +9,8 @@ ShaderVisualization::ShaderVisualization()
 void ShaderVisualization::setup(const fs::path &fragmentShader ) 
 {
 	mShader = gl::GlslProg::create(app::loadAsset("passthru.vert"), app::loadAsset(fragmentShader));
+
+	mShader->uniform("resolution", vec3(app::getWindowIndex(0)->getWidth(), app::getWindowIndex(0)->getHeight(), 0.0f));
 }
 
 void ShaderVisualization::update()
@@ -18,7 +20,6 @@ void ShaderVisualization::update()
 void ShaderVisualization::switchCamera(CameraPersp* cam) {}
 
 void ShaderVisualization::renderUniforms() {
-	mShader->uniform("resolution", vec3(app::getWindowWidth(), app::getWindowHeight(), 0.0f));
 	mShader->uniform("time", float(app::getElapsedSeconds()));
 }
 
@@ -28,7 +29,7 @@ void ShaderVisualization::draw()
 
 	renderUniforms();
 
-	gl::drawSolidRect(app::getWindowBounds());
+	gl::drawSolidRect(app::getWindowIndex(0)->getBounds());
 }
 
 bool ShaderVisualization::perspective()

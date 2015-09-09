@@ -14,6 +14,7 @@
 #include "FlockingVisualization.h"
 #include "TreeVisualization.h"
 #include "Fluid.h"
+#include "Mix.h"
 
 #include "DeltaSource.h"
 
@@ -115,11 +116,16 @@ void AVSynApp::setup()
 	mVisualizations.insert(make_pair("Fluid", fluid));
 	mVisualizationOptions.push_back("Fluid");
 
+	auto *mix = new Mix();
+	mix->setup(mVisualizations, mVisualizationOptions);
+	mVisualizations.insert(make_pair("Mix", mix));
+	mVisualizationOptions.push_back("Mix");
+
 	mCurrentVisOption = mVisualizations.size() - 1;
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
 	
 	mVisualization->switchCamera(&mCam);
-	mVisualization->switchParams(mParams);
+	mVisualization->switchParams(mParams, "Main");
 
 	mParams->addParam("Visualizations", mVisualizationOptions, 
 		[=](int ind) {
@@ -127,7 +133,7 @@ void AVSynApp::setup()
 			mCurrentVisOption = ind;
 			mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
 			mVisualization->switchCamera(&mCam);
-			mVisualization->switchParams(mParams);
+			mVisualization->switchParams(mParams, "Main");
 		},
 		[=]() {
 			return mCurrentVisOption;

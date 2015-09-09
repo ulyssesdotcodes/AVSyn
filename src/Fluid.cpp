@@ -23,7 +23,7 @@ void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
 
 	//Setup shaders
 	mWindowResolution = vec2(app::getWindowIndex(0)->getWidth(), app::getWindowIndex(0)->getHeight());
-	mFluidResolution = glm::floor(mWindowResolution * vec2(0.25));
+	mFluidResolution = glm::floor(mWindowResolution * vec2(0.2));
 
 	gl::GlslProg::Format updateFormat;
 	updateFormat.vertex(app::loadAsset("passthru.vert"));
@@ -117,7 +117,7 @@ void Fluid::draw()
 	gl::ScopedGlslProg glsl(mRenderShader);
 	gl::context()->setDefaultShaderVars();
 
-	gl::drawSolidRect(app::getWindowBounds());
+	gl::drawSolidRect(app::getWindowIndex(0)->getBounds());
 }
 
 bool Fluid::perspective()
@@ -129,19 +129,31 @@ void Fluid::switchCamera(CameraPersp * camera)
 {
 }
 
-void Fluid::switchParams(params::InterfaceGlRef params)
+void Fluid::switchParams(params::InterfaceGlRef params, const string &group)
 {
-	addParamName("Volume");
-	params->addParam("Volume", &mVolume, "min=0.0 max=4.0 step=0.01");
+	addParamName(group + "/Volume");
+	params->addParam(group + "/Volume", &mVolume)
+		.min(0.5)
+		.max(4.0)
+		.step(0.01)
+		.group(group);
 
-	addParamName("Speed");
-	params->addParam("Speed", &mSpeed, "min=0.0 max=4.0 step=0.01");
+	addParamName(group + "/Speed");
+	params->addParam(group + "/Speed", &mSpeed)
+		.min(0.5)
+		.max(4.0)
+		.step(0.01)
+		.group(group);
 
-	addParamName("Saturation");
-	params->addParam("Saturation", &mSaturation, "min=0.0 max=1.0 step=0.01");
+	addParamName(group + "/Saturation");
+	params->addParam(group + "/Saturation", &mSaturation)
+		.min(0.0)
+		.max(1.0)
+		.step(0.01)
+		.group(group);
 
-	addParamName("Flip Velocity");
-	params->addParam("Flip Velocity", &mFlipVelocity);
+	addParamName(group + "/Flip Velocity");
+	params->addParam(group + "/Flip Velocity", &mFlipVelocity);
 }
 
 void Fluid::advectVelocity(float dt)

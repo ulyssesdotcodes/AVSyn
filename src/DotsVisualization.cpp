@@ -42,10 +42,18 @@ void DotsVisualization::renderUniforms()
 	mShader->uniform("hue", mHue);
 }
 
-void DotsVisualization::switchParams(params::InterfaceGlRef params) {
-	addParamName("Loudness");
-	params->addParam("Loudness", &mLoudness, "min=0.0 max=2.0 step=0.001");
+void DotsVisualization::switchParams(params::InterfaceGlRef params, const string &group) {
+	addParamName(group + "/Loudness");
+	params->addParam(group + "/Loudness", &mLoudness)
+		.min(0.0)
+		.max(2.0)
+		.step(0.001)
+		.group(group);
 
-	addParamName("Hue");
-	params->addParam("Hue", &mHue, "min=0.0 max=1.0 step=0.01");
+	addParamName(group + "/Hue");
+	params->addParam(group + "/Hue", &mHue)
+		.min(0.0)
+		.max(1.0)
+		.step(0.01)
+		.group(group);
 }

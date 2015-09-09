@@ -207,6 +207,7 @@
     <ClCompile Include="..\src\EQPointCloud.cpp" />
     <ClCompile Include="..\src\FlockingVisualization.cpp" />
     <ClCompile Include="..\src\Fluid.cpp" />
+    <ClCompile Include="..\src\Mix.cpp" />
     <ClCompile Include="..\src\PingPongFBO.cpp" />
     <ClCompile Include="..\src\ShaderVisualization.cpp" />
     <ClCompile Include="..\src\TreeVisualization.cpp" />
@@ -222,6 +223,7 @@
     <ClInclude Include="..\src\EQPointCloud.h" />
     <ClInclude Include="..\src\FlockingVisualization.h" />
     <ClInclude Include="..\src\Fluid.h" />
+    <ClInclude Include="..\src\Mix.h" />
     <ClInclude Include="..\src\PingPongFBO.h" />
     <ClInclude Include="..\src\ShaderVisualization.h" />
     <ClInclude Include="..\src\TreeVisualization.h" />

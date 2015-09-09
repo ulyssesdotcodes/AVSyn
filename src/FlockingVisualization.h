@@ -22,7 +22,7 @@ public:
 	//! Make sure that we have the flock in view.
 	virtual void switchCamera(CameraPersp* camera) override;
 	//! So many parameters!
-	virtual void switchParams(params::InterfaceGlRef params) override;
+	virtual void switchParams(params::InterfaceGlRef param, const string &group) override;
 
 private:
 	AudioSource* mAudioSource;

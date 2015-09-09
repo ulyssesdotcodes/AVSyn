@@ -47,15 +47,27 @@ void EQPointCloud::switchCamera(CameraPersp* cam) {
 	cam->lookAt(vec3(0.0, 0.0, 100.0), vec3(0.0));
 }
 
-void EQPointCloud::switchParams(params::InterfaceGlRef params) {
-	addParamName("Loudness");
-	params->addParam("Loudness", &mLoudness, "min=0.0 max=2.0 step=0.001");
+void EQPointCloud::switchParams(params::InterfaceGlRef params, const string &group) {
+	addParamName(group + "/Loudness");
+	params->addParam(group + "/Loudness", &mLoudness)
+		.min(0.0)
+		.max(2.0)
+		.step(0.001)
+		.group(group);
 
-	addParamName("Hue");
-	params->addParam("Hue", &mHue, "min=0.0 max=1.0 step=0.01");
+	addParamName(group + "/Hue");
+	params->addParam(group + "/Hue", &mHue)
+		.min(0.0)
+		.max(1.0)
+		.step(0.01)
+		.group(group);
 
-	addParamName("Rotation Speed");
-	params->addParam("Rotation Speed", &mRotationSpeed, "min=0.0 max=2.0 step=0.01");
+	addParamName(group + "/Rotation Speed");
+	params->addParam(group + "/Rotation Speed", &mRotationSpeed)
+		.min(0.0)
+		.max(2.0)
+		.step(0.01)
+		.group(group);
 }
 
 void EQPointCloud::update()

@@ -14,7 +14,7 @@ public:
 	//! Set the texture as a uniform and draw the shader.
 	virtual void draw() override;
 	//! Nullop
-	virtual void switchParams(params::InterfaceGlRef params) override;
+	virtual void switchParams(params::InterfaceGlRef params, const string &group) override;
 
 protected:
 	virtual void renderUniforms() override;
