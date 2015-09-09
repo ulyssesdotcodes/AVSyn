@@ -131,7 +131,7 @@ void AVSynApp::setup()
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
 	
 	mVisualization->switchCamera(&mCam);
-	mVisualization->switchParams(mParams);
+	mVisualization->switchParams(mParams, "Main");
 
 	mParams->addParam("Visualizations", mVisualizationOptions, 
 		[=](int ind) {
@@ -139,7 +139,7 @@ void AVSynApp::setup()
 			mCurrentVisOption = ind;
 			mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
 			mVisualization->switchCamera(&mCam);
-			mVisualization->switchParams(mParams);
+			mVisualization->switchParams(mParams, "Main");
 		},
 		[=]() {
 			return mCurrentVisOption;

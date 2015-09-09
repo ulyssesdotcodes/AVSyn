@@ -111,42 +111,79 @@ void FlockingVisualization::switchCamera(CameraPersp* cam)
 	cam->lookAt(vec3(0.0, 0.0, 100.0), vec3(0.0));
 }
 
-void FlockingVisualization::switchParams(params::InterfaceGlRef params) {
+void FlockingVisualization::switchParams(params::InterfaceGlRef params, const string &group) {
 	addParamName("Loudness");
-	params->addParam("Loudness", &mLoudness, "min=0.0 max=2.0 step=0.001");
+	params->addParam("Loudness", &mLoudness)
+		.min(0.0)
+		.max(2.0)
+		.step(0.001)
+		.group(group);
 
 	addParamName("Speed");
-	params->addParam("Speed", &mSpeed, "min=0.5 max=4.0 step=0.001");
+	params->addParam("Speed", &mSpeed)
+		.min(0.5)
+		.max(4.0)
+		.step(0.001)
+		.group(group);
 
-	addParamName("Beat Constant");
-	params->addParam("Beat Constant", &mBeatConstant, "min=1.1 max=1.6 step=0.001");
+	addParamName(group + "/Beat Constant");
+	params->addParam(group + "/Beat Constant", &mBeatConstant)
+		.min(1.1)
+		.max(2.0)
+		.step(0.001)
+		.group(group);
 
-	addParamName("Roaming Distance");
-	params->addParam("Roaming Distance", &mRoamingDistance, "min=20.0 max=120.0 step=1.0");
+	addParamName(group + "/Roaming Distance");
+	params->addParam(group + "/Roaming Distance", &mRoamingDistance)
+		.min(20.0)
+		.max(120.0)
+		.step(1.0)
+		.group(group);
 
-	addParamName("Hue");
-	params->addParam("Hue", &mHue, "min=0.0 max=1.0 step=0.01");
+	addParamName(group + "/Hue");
+	params->addParam(group + "/Hue", &mHue)
+		.min(0.0)
+		.max(1.0)
+		.step(0.01)
+		.group(group);
 
-	addParamName("Saturation");
-	params->addParam("Saturation", &mSaturation, "min=0.0 max=1.0 step=0.01");
+	addParamName(group + "/Saturation");
+	params->addParam(group + "/Saturation", &mSaturation)
+		.min(0.0)
+		.max(1.0)
+		.step(0.01)
+		.group(group);
 
-	addParamName("Cycle Hue Speed");
-	params->addParam("Cycle Hue Speed", &mCycleHueSpeed, "min=0.0 max=0.01667 step=0.0001");
+	addParamName(group + "/Cycle Hue Speed");
+	params->addParam(group + "/Cycle Hue Speed", &mCycleHueSpeed)
+		.min(0.0)
+		.max(0.01667)
+		.step(0.0001)
+		.group(group);
 
-	addParamName("Speed");
-	params->addParam("Speed", &mSpeed, "min=0.5 max=4.0 step=0.001");
+	addParamName(group + "/Separation Distance");
+	params->addParam(group + "/Separation Distance", &mSeparationDistance)
+		.min(0.0)
+		.max(30.0)
+		.step(1.0)
+		.group(group);
 
-	addParamName("Separation Distance");
-	params->addParam("Separation Distance", &mSeparationDistance, "min=0.0 max=30.0 step=1");
+	addParamName(group + "/Cohesion Distance");
+	params->addParam(group + "/Cohesion Distance", &mCohesionDistance)
+		.min(0.0)
+		.max(30.0)
+		.step(1.0)
+		.group(group);
 
-	addParamName("Cohesion Distance");
-	params->addParam("Cohesion Distance", &mCohesionDistance, "min=0.0 max=30.0 step=1");
+	addParamName(group + "/Alignment Distance");
+	params->addParam(group + "/Alignment Distance", &mAlignmentDistance)
+		.min(0.0)
+		.max(30.0)
+		.step(1.0)
+		.group(group);
 
-	addParamName("Alignment Distance");
-	params->addParam("Alignment Distance", &mAlignmentDistance, "min=0.0 max=30.0 step=1");
-
-	addParamName("Separate Only");
-	params->addParam("Separate Only", &mSeparateOnly);
+	addParamName(group + "/Separate Only");
+	params->addParam(group + "/Separate Only", &mSeparateOnly);
 }
 
 

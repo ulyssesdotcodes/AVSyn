@@ -17,7 +17,7 @@ public:
 	virtual void draw() override;
 	virtual bool perspective() override;
 	virtual void switchCamera(CameraPersp* camera) override;
-	virtual void switchParams(params::InterfaceGlRef params) override;
+	virtual void switchParams(params::InterfaceGlRef params, const string &group) override;
 
 private:
 	AudioSource *mAudioSource;

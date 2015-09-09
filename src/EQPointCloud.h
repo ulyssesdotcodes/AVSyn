@@ -25,7 +25,7 @@ public:
 	//! Draw the particles
 	virtual void draw();
 	virtual void switchCamera(CameraPersp* cam);
-	virtual void switchParams(params::InterfaceGlRef params) override;
+	virtual void switchParams(params::InterfaceGlRef params, const string &group) override;
 	bool perspective() override;
 
 private:

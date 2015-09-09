@@ -31,7 +31,7 @@ public:
 	//! Draw the particles and the kinect body image
 	virtual void draw();
 	virtual void switchCamera(CameraPersp* camera);
-	virtual void switchParams(params::InterfaceGlRef params);
+	virtual void switchParams(params::InterfaceGlRef params, const string &group);
 	virtual bool perspective() override;
 	virtual void mouseMove(app::MouseEvent mouseEvent);
 

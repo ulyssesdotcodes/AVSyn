@@ -114,21 +114,22 @@ void KinectParticles::switchCamera(CameraPersp* cam)
 	cam->lookAt(vec3(0, 0, 100), vec3(0, 0, 0));
 }
 
-void KinectParticles::switchParams(params::InterfaceGlRef params)
+void KinectParticles::switchParams(params::InterfaceGlRef params, const string &group)
 {
 	mParams = params;
-	addParamName("Kinect Visualizations");
-	params->addParam("Kinect Visualizations", mVisualizationOptions, 
+	addParamName(group + "/Kinect Visualizations");
+	params->addParam(group + "/Kinect Visualizations", mVisualizationOptions,
 		[=](int ind) {
 			mVisualization->resetParams(mParams);
 			mCurrentVisOption = ind;
 			mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
 			mVisualization->switchCamera(mCam);
-			mVisualization->switchParams(mParams);
+			mVisualization->switchParams(mParams, "Kinect Aux");
 		},
 			[=]() {
 			return mCurrentVisOption;
-		});
+		})
+		.group(group);
 }
 
 bool KinectParticles::perspective()

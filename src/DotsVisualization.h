@@ -18,7 +18,7 @@ protected:
 	virtual void renderUniforms() override;
 
 	//! Control hue and loudness
-	virtual void switchParams(params::InterfaceGlRef params) override;
+	virtual void switchParams(params::InterfaceGlRef params, const string &group) override;
 
 private:
 	AudioSource* mAudioSource;

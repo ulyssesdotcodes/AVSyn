@@ -12,16 +12,28 @@ void AudioShaderVisualization::setup(AudioSource* audioSource, const fs::path &f
 	mVolume = 1.0;
 }
 
-void AudioShaderVisualization::switchParams(params::InterfaceGlRef params)
+void AudioShaderVisualization::switchParams(params::InterfaceGlRef params, const string &group)
 {
-	addParamName("Hue");
-	params->addParam("Hue", &mHue, "min=0.0 max=1.0 step=0.01");
+	addParamName(group + "/Hue");
+	params->addParam(group + "/Hue", &mHue)
+		.min(0.0)
+		.max(1.0)
+		.step(0.01)
+		.group(group);
 
-	addParamName("Volume");
-	params->addParam("Volume", &mVolume, "min=0.0 max=3.0 step=0.01");
+	addParamName(group + "/Volume");
+	params->addParam(group + "/Volume", &mVolume)
+		.min(0.0)
+		.max(3.0)
+		.step(0.01)
+		.group(group);
 
-	addParamName("Cycle Hue Speed");
-	params->addParam("Cycle Hue Speed", &mCycleHueSpeed, "min=0.0 max=0.01667 step=0.0001");
+	addParamName(group + "/Cycle Hue Speed");
+	params->addParam(group + "/Cycle Hue Speed", &mCycleHueSpeed)
+		.min(0.0)
+		.max(0.01667)
+		.step(0.0001)
+		.group(group);
 }
 
 void AudioShaderVisualization::update()

@@ -217,5 +217,8 @@
     <None Include="..\assets\mix\multiply.frag">
       <Filter>Shaders\Mix</Filter>
     </None>
+    <None Include="..\assets\mix\fade.frag">
+      <Filter>Shaders\Mix</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -55,7 +55,7 @@ public:
 	//! Setup the camera.
 	void switchCamera(CameraPersp* cam) override;
 	//! Setup params
-	void switchParams(params::InterfaceGlRef params) override;
+	void switchParams(params::InterfaceGlRef params, const string &group) override;
 	bool perspective() override;
 
 private:

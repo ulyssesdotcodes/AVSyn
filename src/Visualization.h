@@ -20,7 +20,7 @@ public:
 	//! Set up the camera for this visualization when the user switches to it.
 	virtual void switchCamera(ci::CameraPersp* cam) = 0;
 	//! Set up the parameters for this visualization when the user switches to it.
-	virtual void switchParams(ci::params::InterfaceGlRef params) = 0;
+	virtual void switchParams(ci::params::InterfaceGlRef params, const string &group) = 0;
 	//! A convenience method so that parameters added in switchParams can be easily removed.
 	virtual void addParamName(const string &param);
 	//! Implemented. Removes all parameters added by addParamName when the user switches away from this visualization.

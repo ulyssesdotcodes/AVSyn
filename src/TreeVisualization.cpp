@@ -42,19 +42,35 @@ void TreeVisualization::setup(AudioSource* audioSource, BeatDetector* beatDetect
 	resetGen();
 }
 
-void TreeVisualization::switchParams(params::InterfaceGlRef params) 
+void TreeVisualization::switchParams(params::InterfaceGlRef params, const string &group) 
 {
-	addParamName("Rotation Speed");
-	params->addParam("Rotation Speed", &mRotationSpeed, "min=0.0 max=4.0 step=0.001");
+	addParamName(group + "/Rotation Speed");
+	params->addParam(group + "/Rotation Speed", &mRotationSpeed)
+		.min(0.0)
+		.max(4.0)
+		.step(0.01)
+		.group(group);
 
-	addParamName("Growth");
-	params->addParam("Growth", &mGrowth, "min=1 max=8 step=1");
+	addParamName(group + "/Growth");
+	params->addParam(group + "/Growth", &mGrowth)
+		.min(0)
+		.max(8)
+		.step(1)
+		.group(group);
 
-	addParamName("Hue");
-	params->addParam("Hue", &mHue, "min=-0.5 max=0.5 step=0.001");
+	addParamName(group + "/Hue");
+	params->addParam(group + "/Hue", &mHue)
+		.min(0.0)
+		.max(1.0)
+		.step(0.01)
+		.group(group);
 
-	addParamName("Beat Constant");
-	params->addParam("Beat Constant", &mBeatConstant, "min=1.1 max=2.1 step=0.001");
+	addParamName(group + "/Beat Constant");
+	params->addParam(group + "/Beat Constant", &mBeatConstant)
+		.min(1.1)
+		.max(2.0)
+		.step(0.001)
+		.group(group);
 }
 
 void TreeVisualization::switchCamera(CameraPersp* mCam) {
