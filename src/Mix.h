@@ -23,18 +23,16 @@ private:
 	vec2 mResolution;
 	array<gl::FboRef, 2> mVisFBO;
 
-	gl::GlslProgRef 
-		mMultiplyShader,
-		mFadeShader;
-
-	map<string, gl::GlslProgRef> mShaders;
-	vector<string> mShaderOptions;
-	int mShaderOption;
+	gl::GlslProgRef mMixShader;
 
 	float mFade;
+	float mAdd;
+	float mMultiply;
 
 	CameraPersp* mCam;
 	params::InterfaceGlRef mParams;
 
 	Visualization* getVis(int index);
+
+	void updateUniforms();
 };

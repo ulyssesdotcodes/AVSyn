@@ -214,11 +214,8 @@
       <Filter>Shaders\Fluid</Filter>
     </None>
     <None Include="..\README.md" />
-    <None Include="..\assets\mix\multiply.frag">
-      <Filter>Shaders\Mix</Filter>
-    </None>
-    <None Include="..\assets\mix\fade.frag">
-      <Filter>Shaders\Mix</Filter>
+    <None Include="..\assets\mix.frag">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

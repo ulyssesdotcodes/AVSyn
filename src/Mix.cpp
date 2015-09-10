@@ -9,6 +9,8 @@ void Mix::setup(map<string, Visualization*> visualizations, vector<string> visua
 	mVisOption[1] = 0;
 
 	mFade = 0.0;
+	mAdd = 1.0;
+	mMultiply = 0.0;
 
 	mResolution = vec2(app::getWindowIndex(0)->getWidth(), app::getWindowIndex(0)->getHeight());
 
@@ -17,20 +19,9 @@ void Mix::setup(map<string, Visualization*> visualizations, vector<string> visua
 
 	gl::GlslProg::Format shaderProg;
 	shaderProg.vertex(app::loadAsset("passthru.vert"))
-		.fragment(app::loadAsset("Mix/multiply.frag"));
-	mMultiplyShader = gl::GlslProg::create(shaderProg);
-	mMultiplyShader->uniform("resolution", mResolution);
-
-	mShaders.insert(make_pair("Multiply", mMultiplyShader));
-	mShaderOptions.push_back("Multiply");
-
-
-	shaderProg.fragment(app::loadAsset("Mix/fade.frag"));
-	mFadeShader = gl::GlslProg::create(shaderProg);
-	mFadeShader->uniform("resolution", mResolution);
-
-	mShaders.insert(make_pair("Fade", mFadeShader));
-	mShaderOptions.push_back("Fade");
+		.fragment(app::loadAsset("mix.frag"));
+	mMixShader = gl::GlslProg::create(shaderProg);
+	mMixShader->uniform("i_resolution", mResolution);
 }
 
 void Mix::update()
@@ -53,21 +44,19 @@ void Mix::update()
 		vis->draw();
 		gl::popMatrices();
 	}
-
-	mFadeShader->uniform("texMix", mFade);
 }
 
 void Mix::draw()
 {
-	gl::GlslProgRef shader = mShaders.at(mShaderOptions.at(mShaderOption));
+	updateUniforms();
 
 	gl::ScopedTextureBind A(mVisFBO[0]->getColorTexture(), 0);
-	shader->uniform("tex_A", 0);
+	mMixShader->uniform("tex_A", 0);
 
 	gl::ScopedTextureBind B(mVisFBO[1]->getColorTexture(), 1);
-	shader->uniform("tex_B", 1);
+	mMixShader->uniform("tex_B", 1);
 
-	gl::ScopedGlslProg shaderProg(shader);
+	gl::ScopedGlslProg shaderProg(mMixShader);
 	gl::context()->setDefaultShaderVars();
 
 	gl::drawSolidRect(app::getWindowIndex(0)->getBounds());
@@ -91,7 +80,21 @@ void Mix::switchParams(ci::params::InterfaceGlRef params, const string &group)
 	params->addParam(group + "/Fade", &mFade)
 		.min(0.0)
 		.max(1.0)
-		.step(0.001)
+		.step(0.01)
+		.group(group);
+
+	addParamName(group + "/Multiply");
+	params->addParam(group + "/Multiply", &mMultiply)
+		.min(0.0)
+		.max(4.0)
+		.step(0.01)
+		.group(group);
+
+	addParamName(group + "/Add");
+	params->addParam(group + "/Add", &mAdd)
+		.min(0.0)
+		.max(1.0)
+		.step(0.01)
 		.group(group);
 
 	addParamName(group + "/Visualization A");
@@ -118,15 +121,6 @@ void Mix::switchParams(ci::params::InterfaceGlRef params, const string &group)
 		})
 		.group(group);
 
-	addParamName(group + "/Combination");
-	params->addParam(group + "/Combination", mShaderOptions,
-		[=](int ind) {
-			mShaderOption = ind;
-		},
-		[=]() {
-			return mShaderOption;
-		});
-
 	getVis(mVisOption[0])->switchParams(mParams, "VisA");
 	getVis(mVisOption[1])->switchParams(mParams, "VisB");
 }
@@ -138,4 +132,11 @@ void Mix::setBaseVisualization(const string & visualization)
 Visualization* Mix::getVis(int index)
 {
 	return mVisualizations.at(mVisualizationOptions.at(index));
+}
+
+void Mix::updateUniforms()
+{
+	mMixShader->uniform("i_fade", mFade);
+	mMixShader->uniform("i_add", mAdd);
+	mMixShader->uniform("i_multiply", mMultiply);
 }
