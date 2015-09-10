@@ -196,5 +196,8 @@
       <Filter>Shaders\Fluid</Filter>
     </None>
     <None Include="..\README.md" />
+    <None Include="..\assets\mix.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

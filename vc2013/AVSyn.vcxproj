@@ -250,6 +250,7 @@
     <None Include="..\assets\fluid_update.vert" />
     <None Include="..\assets\kick_image.vert" />
     <None Include="..\assets\flocking_update.vert" />
+    <None Include="..\assets\mix.frag" />
     <None Include="..\assets\passthru.vert" />
     <None Include="..\assets\point_circle.frag" />
     <None Include="..\assets\render.frag" />
