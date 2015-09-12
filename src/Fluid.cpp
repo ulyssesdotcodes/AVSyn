@@ -134,8 +134,8 @@ void Fluid::switchParams(params::InterfaceGlRef params, const string &group)
 	addParamName(group + "/Volume");
 	params->addParam(group + "/Volume", &mVolume)
 		.min(0.5)
-		.max(4.0)
-		.step(0.01)
+		.max(4.0f)
+		.step(0.01f)
 		.group(group);
 
 	addParamName(group + "/Speed");
