@@ -16,7 +16,7 @@
 #include "KinectParticles.h"
 #include "Fluid.h"
 #include "Mix.h"
-#include "Directional.h"
+#include "Feedback.h"
 
 #include "DeltaSource.h"
 
@@ -128,10 +128,10 @@ void AVSynApp::setup()
 	//mVisualizations.insert(make_pair("Mix", mix));
 	//mVisualizationOptions.push_back("Mix");
 
-	auto *directional = new Directional();
-	directional->setup(mAudioSource);
-	mVisualizations.insert(make_pair("Directional", directional));
-	mVisualizationOptions.push_back("Directional");
+	auto *bufferVis = new Feedback();
+	bufferVis->setup(mAudioSource, "Feedback/buffer.frag");
+	mVisualizations.insert(make_pair("Buffer", bufferVis));
+	mVisualizationOptions.push_back("Buffer");
 
 	mCurrentVisOption = mVisualizations.size() - 1;
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];

@@ -1,7 +1,7 @@
-#include "Directional.h"
+#include "Feedback.h"
 #include "cinder\app\App.h"
 
-void Directional::setup(AudioSource * audioSource)
+void Feedback::setup(AudioSource* audioSource, const string &fragment)
 {
 	ShaderVisualization::setup("texture.frag");
 
@@ -18,12 +18,12 @@ void Directional::setup(AudioSource * audioSource)
 
 	gl::GlslProg::Format shaderFmt;
 	shaderFmt.vertex(app::loadAsset("passthru.vert"))
-		.fragment(app::loadAsset("directional.frag"));
+		.fragment(app::loadAsset(fragment));
 	mUpdateShader = gl::GlslProg::create(shaderFmt);
 	mUpdateShader->uniform("i_resolution", resolution);
 }
 
-void Directional::update()
+void Feedback::update()
 {
 	mAudioSource->update();
 	mTexture = mAudioSource->getMagSpectrumTexture();
@@ -40,25 +40,15 @@ void Directional::update()
 	mFbo.render(mUpdateShader);
 }
 
-void Directional::draw()
+void Feedback::draw()
 {
 	gl::ScopedTextureBind tex(mFbo.getTexture(), 0);
 	mShader->uniform("tex", 0);
 
-	//gl::ScopedTextureBind tex(mFbo.getTexture(), 0);
-	//mUpdateShader->uniform("tex_prev", 0);
-
-	//gl::ScopedTextureBind audio(mTexture, 0);
-	//mUpdateShader->uniform("tex_audio", 0);
-
-	//mUpdateShader->uniform("i_fade", mFade);
-
-	gl::ScopedGlslProg glScp(mShader);
-
-	gl::drawSolidRect(app::getWindowIndex(0)->getBounds());
+	ShaderVisualization::draw();
 }
 
-void Directional::switchParams(params::InterfaceGlRef params, const string &group)
+void Feedback::switchParams(params::InterfaceGlRef params, const string &group)
 {
 	addParamName(group + "/Fade");
 	params->addParam(group + "/Fade", &mFade)

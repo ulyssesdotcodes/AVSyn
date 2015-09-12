@@ -204,7 +204,7 @@
     <ClCompile Include="..\src\AVSynApp.cpp" />
     <ClCompile Include="..\src\BeatDetector.cpp" />
     <ClCompile Include="..\src\DeltaSource.cpp" />
-    <ClCompile Include="..\src\Directional.cpp" />
+    <ClCompile Include="..\src\Feedback.cpp" />
     <ClCompile Include="..\src\DotsVisualization.cpp" />
     <ClCompile Include="..\src\EQPointCloud.cpp" />
     <ClCompile Include="..\src\FlockingVisualization.cpp" />
@@ -223,7 +223,7 @@
     <ClInclude Include="..\src\AudioSource.h" />
     <ClInclude Include="..\src\BeatDetector.h" />
     <ClInclude Include="..\src\DeltaSource.h" />
-    <ClInclude Include="..\src\Directional.h" />
+    <ClInclude Include="..\src\Feedback.h" />
     <ClInclude Include="..\src\DotsVisualization.h" />
     <ClInclude Include="..\src\EQPointCloud.h" />
     <ClInclude Include="..\src\FlockingVisualization.h" />
@@ -238,7 +238,7 @@
   <ItemGroup>
     <None Include="..\assets\circular_fft.frag" />
     <None Include="..\assets\color.frag" />
-    <None Include="..\assets\directional.frag" />
+    <None Include="..\assets\feedback\buffer.frag" />
     <None Include="..\assets\dots.frag" />
     <None Include="..\assets\eq_pointcloud.vert" />
     <None Include="..\assets\flame.frag" />

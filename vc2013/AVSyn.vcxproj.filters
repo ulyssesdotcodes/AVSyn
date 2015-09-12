@@ -28,6 +28,9 @@
     <Filter Include="Shaders\Fluid">
       <UniqueIdentifier>{aeaa4c5c-d372-4014-8be3-d02cfe7873a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Feedback">
+      <UniqueIdentifier>{8c6fa29d-2bb8-4269-94e0-456cf424d51d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\AVSynApp.cpp">
@@ -84,7 +87,7 @@
     <ClCompile Include="..\src\Mix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Directional.cpp">
+    <ClCompile Include="..\src\Feedback.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,7 +140,7 @@
     <ClInclude Include="..\src\Mix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Directional.h">
+    <ClInclude Include="..\src\Feedback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -217,8 +220,8 @@
     <None Include="..\assets\texture.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\assets\directional.frag">
-      <Filter>Shaders</Filter>
+    <None Include="..\assets\feedback\buffer.frag">
+      <Filter>Shaders\Feedback</Filter>
     </None>
   </ItemGroup>
 </Project>

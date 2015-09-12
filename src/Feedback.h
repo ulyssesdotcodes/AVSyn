@@ -3,9 +3,9 @@
 #include "ShaderVisualization.h"
 #include "PingPongFBO.h"
 
-class Directional : public ShaderVisualization {
+class Feedback : public ShaderVisualization {
 public:
-	void setup(AudioSource* audioSource);
+	void setup(AudioSource* audioSource, const string &fragment);
 	virtual void update() override;
 	virtual void draw() override;
 	void switchParams(params::InterfaceGlRef params, const string &group);
