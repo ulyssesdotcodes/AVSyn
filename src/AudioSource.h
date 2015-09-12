@@ -15,6 +15,7 @@ public:
 	vector<float> getMagSpectrum();
 	gl::TextureRef getMagSpectrumTexture();
 	float getVolume();
+	float getHighestVolumePos();
 	vector<float> getEqs(int binCount);
 	vector<float> getEqs(int binCount, float scale);
 
@@ -23,6 +24,7 @@ private:
 	audio::MonitorSpectralNodeRef mMonitor;
 
 	vector<float>  mSpectrum;
+	audio::Buffer  mBuffer;
 
 	int mLastUpdateFrame;
 };

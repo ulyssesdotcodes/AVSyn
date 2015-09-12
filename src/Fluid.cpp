@@ -58,7 +58,7 @@ void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
 	mPressureSolveShader = gl::GlslProg::create(updateFormat);
 	mPressureSolveShader->uniform("resolution", mFluidResolution);
 
-	updateFormat.fragment(app::loadAsset("Fluid/render.frag"));
+	updateFormat.fragment(app::loadAsset("texture.frag"));
 	mRenderShader = gl::GlslProg::create(updateFormat);
 	mRenderShader->uniform("resolution", mWindowResolution);
 
@@ -112,7 +112,7 @@ void Fluid::update()
 void Fluid::draw()
 {
 	gl::ScopedTextureBind scopeSmoke(mSmokeFBO.getTexture(), SMOKE_POINTER);
-	mRenderShader->uniform("tex_smoke", SMOKE_POINTER);
+	mRenderShader->uniform("tex", SMOKE_POINTER);
 
 	gl::ScopedGlslProg glsl(mRenderShader);
 	gl::context()->setDefaultShaderVars();
@@ -134,8 +134,8 @@ void Fluid::switchParams(params::InterfaceGlRef params, const string &group)
 	addParamName(group + "/Volume");
 	params->addParam(group + "/Volume", &mVolume)
 		.min(0.5)
-		.max(4.0)
-		.step(0.01)
+		.max(4.0f)
+		.step(0.01f)
 		.group(group);
 
 	addParamName(group + "/Speed");

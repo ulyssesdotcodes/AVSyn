@@ -1,6 +1,6 @@
 precision highp float;
 
-uniform vec3 resolution;
+uniform vec2 resolution;
 uniform sampler2D audioTexture; 
 uniform float time;
 

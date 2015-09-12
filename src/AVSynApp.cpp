@@ -15,6 +15,7 @@
 #include "TreeVisualization.h"
 #include "Fluid.h"
 #include "Mix.h"
+#include "Feedback.h"
 
 #include "DeltaSource.h"
 
@@ -106,15 +107,20 @@ void AVSynApp::setup()
 	mVisualizations.insert(make_pair("EQPointCloud", eqPointCloud));
 	mVisualizationOptions.push_back("EQPointCloud");
 
-	auto *trees = new TreeVisualization();
-	trees->setup(mAudioSource, mBeatDetector);
-	mVisualizations.insert(make_pair("Trees", trees));
-	mVisualizationOptions.push_back("Trees");
+	//auto *trees = new TreeVisualization();
+	//trees->setup(mAudioSource, mBeatDetector);
+	//mVisualizations.insert(make_pair("Trees", trees));
+	//mVisualizationOptions.push_back("Trees");
 
 	auto *fluid = new Fluid();
 	fluid->setup(mAudioSource, mBeatDetector);
 	mVisualizations.insert(make_pair("Fluid", fluid));
 	mVisualizationOptions.push_back("Fluid");
+
+	auto *bufferVis = new Feedback();
+	bufferVis->setup(mAudioSource, "Feedback/buffer.frag");
+	mVisualizations.insert(make_pair("Buffer", bufferVis));
+	mVisualizationOptions.push_back("Buffer");
 
 	auto *mix = new Mix();
 	mix->setup(mVisualizations, mVisualizationOptions);

@@ -41,6 +41,7 @@ void AudioSource::update() {
 		scaledSpectrum[i] = audio::linearToDecibel(scaledSpectrum[i]) / 100.0f;
 	}
 	mSpectrum = scaledSpectrum;
+	mBuffer = mMonitor->getBuffer();
 
 	mLastUpdateFrame = frame;
 }
@@ -55,12 +56,28 @@ gl::TextureRef AudioSource::getMagSpectrumTexture() {
 
 	for (vector<float>::size_type i = 0; i < spectrumVec.size(); i++) {
 		spectrum[i * 4] = spectrumVec[i];
-		spectrum[i * 4 + 1] = 0.0f;
+		spectrum[i * 4 + 1] = mBuffer.getData()[i];
 		spectrum[i * 4 + 2] = 0.0f;
 		spectrum[i * 4 + 3] = 256.0f;
 	}
 
 	return gl::Texture::create(Surface32f(spectrum, 1024, 1, 4, SurfaceChannelOrder::RGBA));
+}
+
+float AudioSource::getHighestVolumePos() {
+	vector<float> spectrumVec = mSpectrum;
+
+	float max = 0;
+	float size = spectrumVec.size() / 3;
+
+	for (vector<float>::size_type i = 0; i < size; i++) {
+		float pos = i / size;
+		if (math<float>::pow(spectrumVec[i], 1.5 * pos) > spectrumVec[max]) {
+			max = i;
+		}
+	}
+
+	return max / size;
 }
 
 float AudioSource::getVolume() 
