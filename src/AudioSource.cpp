@@ -41,6 +41,7 @@ void AudioSource::update() {
 		scaledSpectrum[i] = audio::linearToDecibel(scaledSpectrum[i]) / 100.0f;
 	}
 	mSpectrum = scaledSpectrum;
+	mBuffer = mMonitor->getBuffer();
 
 	mLastUpdateFrame = frame;
 }
@@ -55,7 +56,7 @@ gl::TextureRef AudioSource::getMagSpectrumTexture() {
 
 	for (vector<float>::size_type i = 0; i < spectrumVec.size(); i++) {
 		spectrum[i * 4] = spectrumVec[i];
-		spectrum[i * 4 + 1] = 0.0f;
+		spectrum[i * 4 + 1] = mBuffer.getData()[i];
 		spectrum[i * 4 + 2] = 0.0f;
 		spectrum[i * 4 + 3] = 256.0f;
 	}

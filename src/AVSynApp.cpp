@@ -16,6 +16,7 @@
 #include "KinectParticles.h"
 #include "Fluid.h"
 #include "Mix.h"
+#include "Directional.h"
 
 #include "DeltaSource.h"
 
@@ -82,50 +83,55 @@ void AVSynApp::setup()
 	mBeatDetector = new BeatDetector(mAudioSource);
 	mAudioSource->setup();
 
-	AudioShaderVisualization *simpleVis = new AudioShaderVisualization();
-	simpleVis->setup(mAudioSource, "simple.frag");
-	mVisualizations.insert(make_pair("Simple", simpleVis));
-	mVisualizationOptions.push_back("Simple");
+	//AudioShaderVisualization *simpleVis = new AudioShaderVisualization();
+	//simpleVis->setup(mAudioSource, "simple.frag");
+	//mVisualizations.insert(make_pair("Simple", simpleVis));
+	//mVisualizationOptions.push_back("Simple");
 
-	AudioShaderVisualization *circularVis = new AudioShaderVisualization();
-	circularVis->setup(mAudioSource, "circular_fft.frag");
-	mVisualizations.insert(make_pair("Circular", circularVis));
-	mVisualizationOptions.push_back("Circular");
+	//AudioShaderVisualization *circularVis = new AudioShaderVisualization();
+	//circularVis->setup(mAudioSource, "circular_fft.frag");
+	//mVisualizations.insert(make_pair("Circular", circularVis));
+	//mVisualizationOptions.push_back("Circular");
 
-	auto *flocking = new FlockingVisualization();
-	flocking->setup(mAudioSource, mDeltaSource, mBeatDetector);
-	mVisualizations.insert(make_pair("Flocking", flocking));
-	mVisualizationOptions.push_back("Flocking");
+	//auto *flocking = new FlockingVisualization();
+	//flocking->setup(mAudioSource, mDeltaSource, mBeatDetector);
+	//mVisualizations.insert(make_pair("Flocking", flocking));
+	//mVisualizationOptions.push_back("Flocking");
 
-	auto *dotsVis = new DotsVisualization();
-	dotsVis->setup(mAudioSource, mBeatDetector);
-	mVisualizations.insert(make_pair("Dots", dotsVis));
-	mVisualizationOptions.push_back("Dots");
+	//auto *dotsVis = new DotsVisualization();
+	//dotsVis->setup(mAudioSource, mBeatDetector);
+	//mVisualizations.insert(make_pair("Dots", dotsVis));
+	//mVisualizationOptions.push_back("Dots");
 
-	auto *eqPointCloud = new EQPointCloud();
-	eqPointCloud->setup(mAudioSource);
-	mVisualizations.insert(make_pair("EQPointCloud", eqPointCloud));
-	mVisualizationOptions.push_back("EQPointCloud");
+	//auto *eqPointCloud = new EQPointCloud();
+	//eqPointCloud->setup(mAudioSource);
+	//mVisualizations.insert(make_pair("EQPointCloud", eqPointCloud));
+	//mVisualizationOptions.push_back("EQPointCloud");
 
-	auto *trees = new TreeVisualization();
-	trees->setup(mAudioSource, mBeatDetector);
-	mVisualizations.insert(make_pair("Trees", trees));
-	mVisualizationOptions.push_back("Trees");
+	//auto *trees = new TreeVisualization();
+	//trees->setup(mAudioSource, mBeatDetector);
+	//mVisualizations.insert(make_pair("Trees", trees));
+	//mVisualizationOptions.push_back("Trees");
 
 	auto *fluid = new Fluid();
 	fluid->setup(mAudioSource, mBeatDetector);
 	mVisualizations.insert(make_pair("Fluid", fluid));
 	mVisualizationOptions.push_back("Fluid");
 
-	auto *kickChangeImage = new KinectParticles();
-	kickChangeImage->setup(mAudioSource, mBeatDetector, mVisualizations, mVisualizationOptions);
-	mVisualizations.insert(make_pair("Kick Change Image", kickChangeImage));
-	mVisualizationOptions.push_back("Kick Change Image");
+	//auto *kickChangeImage = new KinectParticles();
+	//kickChangeImage->setup(mAudioSource, mBeatDetector, mVisualizations, mVisualizationOptions);
+	//mVisualizations.insert(make_pair("Kick Change Image", kickChangeImage));
+	//mVisualizationOptions.push_back("Kick Change Image");
 
-	auto *mix = new Mix();
-	mix->setup(mVisualizations, mVisualizationOptions);
-	mVisualizations.insert(make_pair("Mix", mix));
-	mVisualizationOptions.push_back("Mix");
+	//auto *mix = new Mix();
+	//mix->setup(mVisualizations, mVisualizationOptions);
+	//mVisualizations.insert(make_pair("Mix", mix));
+	//mVisualizationOptions.push_back("Mix");
+
+	auto *directional = new Directional();
+	directional->setup(mAudioSource);
+	mVisualizations.insert(make_pair("Directional", directional));
+	mVisualizationOptions.push_back("Directional");
 
 	mCurrentVisOption = mVisualizations.size() - 1;
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
