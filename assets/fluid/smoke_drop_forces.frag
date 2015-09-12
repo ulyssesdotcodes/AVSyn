@@ -68,7 +68,7 @@ vec4 inner(vec2 pos) {
 
 		v += (smokeVel - v - sPRel) * m;
 
-		velocity.z = 1.0 + 0.06 * beat;
+		velocity.z = 1.02 + 0.06 * beat;
 	}
 
 	// Initialize T to 1.0
@@ -76,7 +76,7 @@ vec4 inner(vec2 pos) {
 		velocity.z = 1.0;
 	}
 
-	v.y += 0.2 * (1.0 - 1 / velocity.z);
+	v.y += 0.3 * (1.0 - 1 / velocity.z);
 
 	return vec4(v, velocity.z, 1);
 }
