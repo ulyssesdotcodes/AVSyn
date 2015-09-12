@@ -64,6 +64,22 @@ gl::TextureRef AudioSource::getMagSpectrumTexture() {
 	return gl::Texture::create(Surface32f(spectrum, 1024, 1, 4, SurfaceChannelOrder::RGBA));
 }
 
+float AudioSource::getHighestVolumePos() {
+	vector<float> spectrumVec = mSpectrum;
+
+	float max = 0;
+	float size = spectrumVec.size() / 3;
+
+	for (vector<float>::size_type i = 0; i < size; i++) {
+		float pos = i / size;
+		if (math<float>::pow(spectrumVec[i], 1.5 * pos) > spectrumVec[max]) {
+			max = i;
+		}
+	}
+
+	return max / size;
+}
+
 float AudioSource::getVolume() 
 {
 	return mMonitor->getVolume();

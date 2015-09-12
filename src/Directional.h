@@ -12,6 +12,7 @@ public:
 
 private:
 	AudioSource* mAudioSource;
+	gl::TextureRef mTexture;
 
 	PingPongFBO mFbo;
 

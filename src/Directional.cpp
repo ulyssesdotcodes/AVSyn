@@ -17,23 +17,24 @@ void Directional::setup(AudioSource * audioSource)
 	mFbo = PingPongFBO(fmt, resolution, 2);
 
 	gl::GlslProg::Format shaderFmt;
-	shaderFmt.fragment(app::loadAsset("directional.frag"));
+	shaderFmt.vertex(app::loadAsset("passthru.vert"))
+		.fragment(app::loadAsset("directional.frag"));
 	mUpdateShader = gl::GlslProg::create(shaderFmt);
-	mUpdateShader->uniform("resolution", resolution);
+	mUpdateShader->uniform("i_resolution", resolution);
 }
 
 void Directional::update()
 {
-	ShaderVisualization::update();
-
 	mAudioSource->update();
+	mTexture = mAudioSource->getMagSpectrumTexture();
 
-	gl::ScopedTextureBind tex(mFbo.getTexture());
+	gl::ScopedTextureBind texPrev(mFbo.getTexture(), 0);
 	mUpdateShader->uniform("tex_prev", 0);
 
-	gl::ScopedTextureBind audio(mAudioSource->getMagSpectrumTexture(), 1);
+	gl::ScopedTextureBind audio(mTexture, 1);
 	mUpdateShader->uniform("tex_audio", 1);
 
+	mUpdateShader->uniform("i_highestVolume", mAudioSource->getHighestVolumePos());
 	mUpdateShader->uniform("i_fade", mFade);
 
 	mFbo.render(mUpdateShader);
@@ -44,7 +45,17 @@ void Directional::draw()
 	gl::ScopedTextureBind tex(mFbo.getTexture(), 0);
 	mShader->uniform("tex", 0);
 
-	ShaderVisualization::draw();
+	//gl::ScopedTextureBind tex(mFbo.getTexture(), 0);
+	//mUpdateShader->uniform("tex_prev", 0);
+
+	//gl::ScopedTextureBind audio(mTexture, 0);
+	//mUpdateShader->uniform("tex_audio", 0);
+
+	//mUpdateShader->uniform("i_fade", mFade);
+
+	gl::ScopedGlslProg glScp(mShader);
+
+	gl::drawSolidRect(app::getWindowIndex(0)->getBounds());
 }
 
 void Directional::switchParams(params::InterfaceGlRef params, const string &group)

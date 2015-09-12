@@ -88,10 +88,10 @@ void AVSynApp::setup()
 	//mVisualizations.insert(make_pair("Simple", simpleVis));
 	//mVisualizationOptions.push_back("Simple");
 
-	//AudioShaderVisualization *circularVis = new AudioShaderVisualization();
-	//circularVis->setup(mAudioSource, "circular_fft.frag");
-	//mVisualizations.insert(make_pair("Circular", circularVis));
-	//mVisualizationOptions.push_back("Circular");
+	AudioShaderVisualization *circularVis = new AudioShaderVisualization();
+	circularVis->setup(mAudioSource, "circular_fft.frag");
+	mVisualizations.insert(make_pair("Circular", circularVis));
+	mVisualizationOptions.push_back("Circular");
 
 	//auto *flocking = new FlockingVisualization();
 	//flocking->setup(mAudioSource, mDeltaSource, mBeatDetector);
@@ -113,10 +113,10 @@ void AVSynApp::setup()
 	//mVisualizations.insert(make_pair("Trees", trees));
 	//mVisualizationOptions.push_back("Trees");
 
-	auto *fluid = new Fluid();
-	fluid->setup(mAudioSource, mBeatDetector);
-	mVisualizations.insert(make_pair("Fluid", fluid));
-	mVisualizationOptions.push_back("Fluid");
+	//auto *fluid = new Fluid();
+	//fluid->setup(mAudioSource, mBeatDetector);
+	//mVisualizations.insert(make_pair("Fluid", fluid));
+	//mVisualizationOptions.push_back("Fluid");
 
 	//auto *kickChangeImage = new KinectParticles();
 	//kickChangeImage->setup(mAudioSource, mBeatDetector, mVisualizations, mVisualizationOptions);

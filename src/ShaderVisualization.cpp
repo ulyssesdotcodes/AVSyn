@@ -10,7 +10,7 @@ void ShaderVisualization::setup(const fs::path &fragmentShader )
 {
 	mShader = gl::GlslProg::create(app::loadAsset("passthru.vert"), app::loadAsset(fragmentShader));
 
-	mShader->uniform("resolution", vec3(app::getWindowIndex(0)->getWidth(), app::getWindowIndex(0)->getHeight(), 0.0f));
+	mShader->uniform("resolution", vec2(app::getWindowIndex(0)->getSize()));
 }
 
 void ShaderVisualization::update()
