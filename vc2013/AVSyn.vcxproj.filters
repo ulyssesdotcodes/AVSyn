@@ -223,5 +223,8 @@
     <None Include="..\assets\feedback\buffer.frag">
       <Filter>Shaders\Feedback</Filter>
     </None>
+    <None Include="..\assets\feedback\rotate.frag">
+      <Filter>Shaders\Feedback</Filter>
+    </None>
   </ItemGroup>
 </Project>

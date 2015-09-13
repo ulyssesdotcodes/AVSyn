@@ -8,6 +8,7 @@ void Feedback::setup(AudioSource* audioSource, const string &fragment)
 	mAudioSource = audioSource;
 
 	mFade = 0.95;
+	mLastTime = 0;
 
 	vec2 resolution = app::getWindowIndex(0)->getSize();
 
@@ -25,8 +26,18 @@ void Feedback::setup(AudioSource* audioSource, const string &fragment)
 
 void Feedback::update()
 {
+	float time = app::getElapsedSeconds();
+	float dt = time - mLastTime;
+	mLastTime = time;
+
+	mUpdateShader->uniform("i_dt", dt);
+	mUpdateShader->uniform("i_time", time);
+
 	mAudioSource->update();
 	mTexture = mAudioSource->getMagSpectrumTexture();
+
+	mUpdateShader->uniform("i_volume", mAudioSource->getVolume());
+	mUpdateShader->uniform("i_accumulatedSound", mAudioSource->getAccumulatedSound());
 
 	gl::ScopedTextureBind texPrev(mFbo.getTexture(), 0);
 	mUpdateShader->uniform("tex_prev", 0);

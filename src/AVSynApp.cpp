@@ -124,7 +124,7 @@ void AVSynApp::setup()
 	mVisualizationOptions.push_back("Kick Change Image");
 
 	auto *bufferVis = new Feedback();
-	bufferVis->setup(mAudioSource, "Feedback/buffer.frag");
+	bufferVis->setup(mAudioSource, "Feedback/rotate.frag");
 	mVisualizations.insert(make_pair("Buffer", bufferVis));
 	mVisualizationOptions.push_back("Buffer");
 
@@ -200,7 +200,6 @@ CINDER_APP(AVSynApp, RendererGl(), [&](App::Settings *settings) {
 	vector<DisplayRef> displays = Display::getDisplays();
 	settings->setFullScreen(true, options);	
 	if (displays.size() > 1) {
-		options.display(displays[1]);
 		settings->setDisplay(displays[1]);
 	}
 	settings->setFrameRate(60.0f);

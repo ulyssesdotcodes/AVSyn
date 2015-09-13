@@ -15,6 +15,8 @@ using namespace std;
  */
 
 void AudioSource::setup() {
+	mAccumulatedSound = 0.0;
+
 	auto ctx = audio::Context::master();
 
 	mInputNode = ctx->createInputDeviceNode();
@@ -44,6 +46,7 @@ void AudioSource::update() {
 	mBuffer = mMonitor->getBuffer();
 
 	mLastUpdateFrame = frame;
+	mAccumulatedSound += getVolume();
 }
 
 vector<float> AudioSource::getMagSpectrum() {
@@ -83,6 +86,11 @@ float AudioSource::getHighestVolumePos() {
 float AudioSource::getVolume() 
 {
 	return mMonitor->getVolume();
+}
+
+float AudioSource::getAccumulatedSound()
+{
+	return mAccumulatedSound;
 }
 
 vector<float> AudioSource::getEqs(int binCount) {

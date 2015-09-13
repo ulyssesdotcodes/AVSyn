@@ -241,6 +241,7 @@
     <None Include="..\assets\feedback\buffer.frag" />
     <None Include="..\assets\dots.frag" />
     <None Include="..\assets\eq_pointcloud.vert" />
+    <None Include="..\assets\feedback\rotate.frag" />
     <None Include="..\assets\flame.frag" />
     <None Include="..\assets\flocking.vert" />
     <None Include="..\assets\fluid\advect.frag" />

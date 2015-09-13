@@ -19,4 +19,5 @@ private:
 	gl::GlslProgRef mUpdateShader;
 
 	float mFade;
+	float mLastTime;
 };
