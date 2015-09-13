@@ -1,4 +1,4 @@
-uniform vec3 resolution;
+uniform vec2 resolution;
 uniform float time;
 uniform float accumulatedLoudness;
 uniform float eqs[4];
