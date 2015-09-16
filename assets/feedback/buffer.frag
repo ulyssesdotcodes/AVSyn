@@ -22,7 +22,7 @@ void main() {
 
 	vec2 audio = texture2D(tex_audio, vec2(pos.x, 0.25)).xy;
 
-	float audX = audio.y * 0.3 + 0.5;
+	float audX = audio.y * 0.4 + 0.5;
 	float clamped = clamp(20 * (0.05 - abs(pos.y - audX)), 0, 1);
 
 	fragColor = vec4(prev + hsv2rgb(vec3(i_highestVolume, 0.5, clamped)), 1);

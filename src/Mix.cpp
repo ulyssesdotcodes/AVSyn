@@ -86,14 +86,14 @@ void Mix::switchParams(ci::params::InterfaceGlRef params, const string &group)
 	addParamName(group + "/Multiply");
 	params->addParam(group + "/Multiply", &mMultiply)
 		.min(0.0)
-		.max(4.0)
+		.max(6.0)
 		.step(0.01)
 		.group(group);
 
 	addParamName(group + "/Add");
 	params->addParam(group + "/Add", &mAdd)
 		.min(0.0)
-		.max(1.0)
+		.max(2.0)
 		.step(0.01)
 		.group(group);
 

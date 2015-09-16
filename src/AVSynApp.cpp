@@ -124,9 +124,14 @@ void AVSynApp::setup()
 	mVisualizationOptions.push_back("Kick Change Image");
 
 	auto *bufferVis = new Feedback();
-	bufferVis->setup(mAudioSource, "Feedback/rotate.frag");
+	bufferVis->setup(mAudioSource, "Feedback/buffer.frag");
 	mVisualizations.insert(make_pair("Buffer", bufferVis));
 	mVisualizationOptions.push_back("Buffer");
+
+	auto *rotateVis = new Feedback();
+	rotateVis->setup(mAudioSource, "Feedback/rotate.frag");
+	mVisualizations.insert(make_pair("Rotate", rotateVis));
+	mVisualizationOptions.push_back("Rotate");
 
 	auto *mix = new Mix();
 	mix->setup(mVisualizations, mVisualizationOptions);
