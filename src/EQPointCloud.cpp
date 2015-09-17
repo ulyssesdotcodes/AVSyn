@@ -108,11 +108,11 @@ void EQPointCloud::update()
 
 void EQPointCloud::draw()
 {
-	mRenderProg->uniform("eqs", mEqVolumes);
-	mRenderProg->uniform("eq0", mEqs.at(0).pos);
-	mRenderProg->uniform("eq1", mEqs.at(1).pos);
-	mRenderProg->uniform("eq2", mEqs.at(2).pos);
-	mRenderProg->uniform("hue", mHue);
+	mRenderProg->uniform("i_eqs", mEqVolumes);
+	mRenderProg->uniform("i_eq0", mEqs.at(0).pos);
+	mRenderProg->uniform("i_eq1", mEqs.at(1).pos);
+	mRenderProg->uniform("i_eq2", mEqs.at(2).pos);
+	mRenderProg->uniform("i_hue", mHue);
 
 	gl::rotate(mRotation);
 	mBatch->draw();

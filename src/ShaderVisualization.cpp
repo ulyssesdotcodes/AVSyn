@@ -10,7 +10,7 @@ void ShaderVisualization::setup(const fs::path &fragmentShader )
 {
 	mShader = gl::GlslProg::create(app::loadAsset("passthru.vert"), app::loadAsset(fragmentShader));
 
-	mShader->uniform("resolution", vec2(app::getWindowIndex(0)->getSize()));
+	mShader->uniform("i_resolution", vec2(app::getWindowIndex(0)->getSize()));
 }
 
 void ShaderVisualization::update()
@@ -20,7 +20,7 @@ void ShaderVisualization::update()
 void ShaderVisualization::switchCamera(CameraPersp* cam) {}
 
 void ShaderVisualization::renderUniforms() {
-	mShader->uniform("time", float(app::getElapsedSeconds()));
+	mShader->uniform("i_time", float(app::getElapsedSeconds()));
 }
 
 void ShaderVisualization::draw()

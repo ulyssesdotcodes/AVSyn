@@ -37,9 +37,9 @@ void DotsVisualization::renderUniforms()
 	}
 
 
-	mShader->uniform("eqs", &mEqs[0], BIN_COUNT);
-	mShader->uniform("accumulatedLoudness", mAccumulatedLoudness);
-	mShader->uniform("hue", mHue);
+	mShader->uniform("i_eqs", &mEqs[0], BIN_COUNT);
+	mShader->uniform("i_accumulatedLoudness", mAccumulatedLoudness);
+	mShader->uniform("i_hue", mHue);
 }
 
 void DotsVisualization::switchParams(params::InterfaceGlRef params, const string &group) {

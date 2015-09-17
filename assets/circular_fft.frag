@@ -1,8 +1,8 @@
-uniform vec2 resolution;
-uniform sampler2D audioTexture; 
-uniform float time;
-uniform float hue;
-uniform float volume;
+uniform vec2 i_resolution;
+uniform sampler2D tex_audio; 
+uniform float i_time;
+uniform float i_hue;
+uniform float i_volume;
 
 out vec4 fragColor;
 
@@ -35,7 +35,7 @@ vec4 fromPos(vec2 uv, vec3 te) {
     vec2 cuv = toPolar(uv, te.xy);
 
     // FFT
-    float fft = texture2D(audioTexture, vec2(cuv.y * 0.33, 0.25)).x * volume;
+    float fft = texture2D(tex_audio, vec2(cuv.y * 0.33, 0.25)).x * i_volume;
 
     // Rotating colors
     float fftSin = (0.5 + 0.3 * sin(cuv.y * 64.0 * 3.1415)) * fft * fft;
@@ -45,13 +45,13 @@ vec4 fromPos(vec2 uv, vec3 te) {
 
 void main(void)
 {
-    vec2 uv = (gl_FragCoord.xy / resolution.xy - vec2(0.5)) * vec2(resolution.x/resolution.y, 1.0);
+    vec2 uv = (gl_FragCoord.xy / i_resolution.xy - vec2(0.5)) * vec2(i_resolution.x/i_resolution.y, 1.0);
 
     vec3 color = vec4(fromPos(uv, vec3(0.0)).rbg, 1.0).xyz;
 
 	color = rgb2hsv(color);
 
-	color.r = fract(color.r + hue);
+	color.r = fract(color.r + i_hue);
 
 	color = hsv2rgb(color);
 

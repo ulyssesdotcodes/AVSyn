@@ -46,9 +46,9 @@ void AudioShaderVisualization::update()
 
 void AudioShaderVisualization::renderUniforms()
 {
-	mShader->uniform("audioTexture", 0);
-	mShader->uniform("hue", mHue);
-	mShader->uniform("volume", mVolume);
+	mShader->uniform("tex_audio", 0);
+	mShader->uniform("i_hue", mHue);
+	mShader->uniform("i_volume", mVolume);
 	ShaderVisualization::renderUniforms();
 }
 

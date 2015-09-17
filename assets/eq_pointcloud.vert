@@ -1,9 +1,9 @@
 uniform mat4 ciModelViewProjection;
-uniform vec3 eqs;
-uniform vec3 eq0;
-uniform vec3 eq1;
-uniform vec3 eq2;
-uniform float hue;
+uniform vec3 i_eqs;
+uniform vec3 i_eq0;
+uniform vec3 i_eq1;
+uniform vec3 i_eq2;
+uniform float i_hue;
 
 in vec4 ciPosition;
 
@@ -30,12 +30,12 @@ void main() {
   float power = 1.2;
   float loudness = 128.0;
 
-  float r = eqs.r * loudness / pow(length(ciPosition.xyz - eq0), power);
-  float g = eqs.g * loudness / pow(length(ciPosition.xyz - eq1), power);
-  float b = eqs.b * loudness / pow(length(ciPosition.xyz - eq2), power);
+  float r = i_eqs.r * loudness / pow(length(ciPosition.xyz - i_eq0), power);
+  float g = i_eqs.g * loudness / pow(length(ciPosition.xyz - i_eq1), power);
+  float b = i_eqs.b * loudness / pow(length(ciPosition.xyz - i_eq2), power);
 
   vec3 hsv = rgb2hsv(vec3(r, g, b)); 
-  hsv.x = fract(hsv.x + hue);
+  hsv.x = fract(hsv.x + i_hue);
   hsv.x = fract(hsv.x * 2.0);
   hsv.z = fract(hsv.z * 2.0);
   vColor = hsv2rgb(hsv);
