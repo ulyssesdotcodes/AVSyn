@@ -21,6 +21,8 @@
 #include "Video.h"
 #include "Visualization.h"
 
+#include "PingPongFBO.h"
+
 #include "DeltaSource.h"
 
 // Unused for now
@@ -38,6 +40,9 @@ public:
 	void drawRender();
 	void drawParams() ;
 
+	void mouseDown( MouseEvent event ) override;
+	void mouseDrag( MouseEvent event ) override;
+
 private:
 	World mWorld;
 
@@ -45,6 +50,17 @@ private:
 	params::InterfaceGlRef mParams;
 
 	std::unique_ptr<ChoiceVisualization> mMainVisualization;
+
+	std::vector<vec3> mVertices;
+	vec3* mSelectedVertex;
+
+	gl::VboRef mVbo;
+	gl::VboMeshRef mVboMesh;
+
+	gl::BatchRef mDrawVertex;
+	gl::BatchRef mDrawRect;
+
+	gl::FboRef mFbo;
 };
 
 void AVSynApp::setup()
@@ -123,6 +139,36 @@ void AVSynApp::setup()
 	mMainVisualization->switchParams(mParams, "Main");
 
 	// Setup rendering!
+	vec2 resolution = getWindowIndex(0)->getSize();
+	mVertices.push_back(vec3(0, 0, 0));
+	mVertices.push_back(vec3(0, resolution.y * 0.5, 0));
+	mVertices.push_back(vec3(resolution.x * 0.5, resolution.y * 0.5, 0));
+	mVertices.push_back(vec3(resolution.x * 0.5, 0, 0));
+
+	mDrawVertex = gl::Batch::create(geom::Circle().radius(16), gl::getStockShader(gl::ShaderDef().color()));
+
+	geom::BufferLayout layout = geom::BufferLayout();
+	layout.append(geom::POSITION, 3, sizeof(vec3), 0);
+
+	mVbo = gl::Vbo::create(GL_ARRAY_BUFFER, mVertices.size() * sizeof(vec3), mVertices.data(), GL_DYNAMIC_DRAW);
+
+	geom::BufferLayout texCoordsLayout = geom::BufferLayout();
+	texCoordsLayout.append(geom::TEX_COORD_0, 2, sizeof(vec2), 0);
+
+	std::vector<vec2> texCoordsVertices;
+	texCoordsVertices.push_back(vec2(0, 1));
+	texCoordsVertices.push_back(vec2(0, 0));
+	texCoordsVertices.push_back(vec2(1, 0));
+	texCoordsVertices.push_back(vec2(1, 1));
+
+	gl::VboRef texCoords = gl::Vbo::create(GL_ARRAY_BUFFER, texCoordsVertices.size() * sizeof(vec2), texCoordsVertices.data());
+
+	mVboMesh = gl::VboMesh::create(mVertices.size(), GL_TRIANGLE_FAN, { { layout, mVbo }, { texCoordsLayout, texCoords } });
+
+	mDrawRect = gl::Batch::create(mVboMesh, gl::getStockShader(gl::ShaderDef().texture()));
+
+	mFbo = gl::Fbo::create(resolution.x, resolution.y);
+
 	getWindowIndex(0)->getSignalDraw().connect([=]() { drawRender(); });
 }
 
@@ -132,18 +178,65 @@ void AVSynApp::keyDown(KeyEvent event) {
 	}
 }
 
+void AVSynApp::mouseDown( MouseEvent event )
+{
+	float dist = glm::length(vec3(event.getPos(), 0) - mVertices[0]);
+	float distIndex = 0;
+
+	// Calculate the closest point
+	for (int i = 1; i < mVertices.size(); ++i) {
+		float newDist = glm::length(vec3(event.getPos(), 0) - mVertices[i]);
+		if (newDist < dist) {
+			dist = newDist;
+			distIndex = i;
+		}
+	}
+
+	mSelectedVertex = &mVertices[distIndex];
+}
+
+void AVSynApp::mouseDrag(MouseEvent event)
+{
+	*mSelectedVertex = vec3(event.getPos(), 0);
+}
+
 void AVSynApp::update()
 {
 	getWindowIndex(0)->getRenderer()->makeCurrentContext();
 	mWorld.deltaSource->update();
 	mMainVisualization->update(mWorld);
+
+	gl::ScopedFramebuffer scpfbo(mFbo);
+
+	gl::clear( Color( 0, 0, 0 ) ); 
+
+	mMainVisualization->draw(mWorld);
 }
 
 void AVSynApp::drawRender()
 {
+	mVbo->bufferSubData(0, mVertices.size() * sizeof(vec3), mVertices.data());
+
+	getWindowIndex(0)->getRenderer()->makeCurrentContext();
 	gl::clear( Color( 0, 0, 0 ) ); 
 
-	mMainVisualization->draw(mWorld);
+	// Draw the rectangle
+	gl::ScopedViewport vp(ivec2(0), mFbo->getSize());
+	gl::ScopedTextureBind texScope(mFbo->getColorTexture());
+	gl::pushMatrices();
+	gl::setMatricesWindow(mFbo->getSize());
+	mDrawRect->draw();
+
+	// Draw the vertices
+	gl::ScopedColor color(1, 0, 0);
+
+	for (int i = 0; i < mVertices.size(); ++i) {
+		gl::ScopedModelMatrix scpModelMatrix;
+		gl::translate(mVertices[i]);
+		mDrawVertex->draw();
+	}
+
+	gl::popMatrices();
 }
 
 void AVSynApp::drawParams()
