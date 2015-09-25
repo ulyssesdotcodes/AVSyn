@@ -60,7 +60,7 @@ void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
 
 	updateFormat.fragment(app::loadAsset("texture.frag"));
 	mRenderShader = gl::GlslProg::create(updateFormat);
-	mRenderShader->uniform("resolution", mWindowResolution);
+	mRenderShader->uniform("i_resolution", mWindowResolution);
 
 	gl::Texture2d::Format texFmt;
 	texFmt.setInternalFormat(GL_RGBA16F);
