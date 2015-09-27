@@ -51,6 +51,11 @@ private:
 
 	std::unique_ptr<ChoiceVisualization> mMainVisualization;
 
+
+	//////////////////////
+	// Projection mapping variables
+
+	bool mRenderVertices;
 	std::vector<vec3> mVertices;
 	vec3* mSelectedVertex;
 
@@ -84,7 +89,6 @@ void AVSynApp::setup()
 	mParamWindow = createWindow(format);
 	mParamWindow->getSignalDraw().connect([=]() { drawParams(); });
 	mParams = params::InterfaceGl::create(getWindow(), "Options", paramsSize);
-
 
 	// Reset to the regular window instead of params
 	getWindowIndex(0)->getRenderer()->makeCurrentContext();
@@ -228,15 +232,17 @@ void AVSynApp::drawRender()
 	mDrawRect->draw();
 
 	// Draw the vertices
-	gl::ScopedColor color(1, 0, 0);
+	if(mRenderVertices) {
+		gl::ScopedColor color(1, 0, 0);
 
-	for (int i = 0; i < mVertices.size(); ++i) {
-		gl::ScopedModelMatrix scpModelMatrix;
-		gl::translate(mVertices[i]);
-		mDrawVertex->draw();
+		for (int i = 0; i < mVertices.size(); ++i) {
+			gl::ScopedModelMatrix scpModelMatrix;
+			gl::translate(mVertices[i]);
+			mDrawVertex->draw();
+		}
+
+		gl::popMatrices();
 	}
-
-	gl::popMatrices();
 }
 
 void AVSynApp::drawParams()
