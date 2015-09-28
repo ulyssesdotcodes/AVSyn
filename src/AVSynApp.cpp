@@ -1,6 +1,7 @@
 #include "boost\range\adaptor\map.hpp"
 
 #include "cinder/app/App.h"
+#include "cinder/GeomIo.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/Camera.h"
 #include "cinder/Display.h"
@@ -58,6 +59,8 @@ private:
 	bool mRenderVertices;
 	std::vector<vec3> mVertices;
 	vec3* mSelectedVertex;
+	std::vector<vec3> mPlaneVertices;
+	int mWidth;
 
 	gl::VboRef mVbo;
 	gl::VboMeshRef mVboMesh;
@@ -144,30 +147,50 @@ void AVSynApp::setup()
 
 	// Setup rendering!
 	vec2 resolution = getWindowIndex(0)->getSize();
+
+	std::vector<vec2> texCoordsVertices;
 	mVertices.push_back(vec3(0, 0, 0));
-	mVertices.push_back(vec3(0, resolution.y * 0.5, 0));
-	mVertices.push_back(vec3(resolution.x * 0.5, resolution.y * 0.5, 0));
+	texCoordsVertices.push_back(vec2(0, 1));
 	mVertices.push_back(vec3(resolution.x * 0.5, 0, 0));
+	texCoordsVertices.push_back(vec2(1, 1));
+	mVertices.push_back(vec3(0, resolution.y * 0.5, 0));
+	texCoordsVertices.push_back(vec2(0, 0));
+	mVertices.push_back(vec3(resolution.x * 0.5, resolution.y * 0.5, 0));
+	texCoordsVertices.push_back(vec2(1, 0));
 
 	mDrawVertex = gl::Batch::create(geom::Circle().radius(16), gl::getStockShader(gl::ShaderDef().color()));
 
-	geom::BufferLayout layout = geom::BufferLayout();
-	layout.append(geom::POSITION, 3, sizeof(vec3), 0);
+	//geom::BufferLayout layout = geom::BufferLayout();
+	//layout.append(geom::POSITION, 3, sizeof(vec3), 0);
 
-	mVbo = gl::Vbo::create(GL_ARRAY_BUFFER, mVertices.size() * sizeof(vec3), mVertices.data(), GL_DYNAMIC_DRAW);
+	//mVbo = gl::Vbo::create(GL_ARRAY_BUFFER, mVertices.size() * sizeof(vec3), mVertices.data(), GL_DYNAMIC_DRAW);
 
-	geom::BufferLayout texCoordsLayout = geom::BufferLayout();
-	texCoordsLayout.append(geom::TEX_COORD_0, 2, sizeof(vec2), 0);
+	//geom::BufferLayout texCoordsLayout = geom::BufferLayout();
+	//texCoordsLayout.append(geom::TEX_COORD_0, 2, sizeof(vec2), 0);
 
-	std::vector<vec2> texCoordsVertices;
-	texCoordsVertices.push_back(vec2(0, 1));
-	texCoordsVertices.push_back(vec2(0, 0));
-	texCoordsVertices.push_back(vec2(1, 0));
-	texCoordsVertices.push_back(vec2(1, 1));
+	mWidth = 32;
 
-	gl::VboRef texCoords = gl::Vbo::create(GL_ARRAY_BUFFER, texCoordsVertices.size() * sizeof(vec2), texCoordsVertices.data());
+	auto plane = 
+		geom::Plane()
+			.size(vec2(resolution.x * 0.5, resolution.y * 0.5))
+			.subdivisions(ivec2(mWidth, mWidth))
+			.normal(vec3(0,0,1))
+			.origin(vec3(resolution.x * 0.25, resolution.y * 0.25, 0));
 
-	mVboMesh = gl::VboMesh::create(mVertices.size(), GL_TRIANGLE_FAN, { { layout, mVbo }, { texCoordsLayout, texCoords } });
+	std::vector<gl::VboMesh::Layout> bufferLayout = {
+		gl::VboMesh::Layout().usage(GL_DYNAMIC_DRAW).attrib(geom::Attrib::POSITION, 3),
+		gl::VboMesh::Layout().usage(GL_STATIC_DRAW).attrib(geom::Attrib::TEX_COORD_0, 2)
+	};
+
+	mVboMesh = gl::VboMesh::create(plane, bufferLayout);
+
+	auto mappedPosAttrib = mVboMesh->mapAttrib3f( geom::Attrib::POSITION, false );
+	for( int i = 0; i < mVboMesh->getNumVertices(); i++ ) {
+		vec3 &pos = *mappedPosAttrib;
+		mPlaneVertices.push_back(vec3(pos));
+		++mappedPosAttrib;
+	}
+	mappedPosAttrib.unmap();
 
 	mDrawRect = gl::Batch::create(mVboMesh, gl::getStockShader(gl::ShaderDef().texture()));
 
@@ -215,11 +238,40 @@ void AVSynApp::update()
 	gl::clear( Color( 0, 0, 0 ) ); 
 
 	mMainVisualization->draw(mWorld);
+
+	float offset = getElapsedSeconds() * 4.0f;
+
+	for (int i = 0; i < mPlaneVertices.size(); i++) {
+		int x = i / (mWidth + 1);
+		int y = mWidth - i % (mWidth + 1);
+
+		float px = (float)x / mWidth;
+		float py = (float)y / mWidth;
+
+		float startX = glm::mix(mVertices[0].x, mVertices[2].x, py);
+		float endX = glm::mix(mVertices[1].x, mVertices[3].x, py);
+		float newX = glm::mix(startX, endX, px);
+
+		float startY = glm::mix(mVertices[0].y, mVertices[1].y, px);
+		float endY = glm::mix(mVertices[2].y, mVertices[3].y, px);
+		float newY = glm::mix(startY, endY, py);
+
+
+		vec3* pos = &mPlaneVertices[i];
+		pos->x = newX;
+		pos->y = newY;
+
+		//app::console() << "x: " << pos->x << " y: " << pos->y << endl;
+		//app::console() << "x: " << x << " y: " << y << endl;
+		//app::console() << "x: " << newX << " y: " << newY << endl;
+	}
+
+	mVboMesh->bufferAttrib(geom::POSITION, mPlaneVertices);
 }
 
 void AVSynApp::drawRender()
 {
-	mVbo->bufferSubData(0, mVertices.size() * sizeof(vec3), mVertices.data());
+	//mVbo->bufferSubData(0, mVertices.size() * sizeof(vec3), mVertices.data());
 
 	getWindowIndex(0)->getRenderer()->makeCurrentContext();
 	gl::clear( Color( 0, 0, 0 ) ); 
