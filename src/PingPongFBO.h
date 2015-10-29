@@ -13,6 +13,7 @@ public:
 	gl::TextureRef getTexture();
 	vector<gl::TextureRef> getTextures();
 	void render(gl::GlslProgRef shader);
+	void render(gl::BatchRef batch, vec2 translate = vec2(0), Colorf color = Colorf::white());
 
 private:
 	vector<gl::FboRef> mFBOs;

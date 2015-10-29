@@ -12,11 +12,13 @@
 #include "DotsVisualization.h"
 #include "EQPointCloud.h"
 #include "FlockingVisualization.h"
-#include "TreeVisualization.h"
-#include "KinectParticles.h"
+//#include "TreeVisualization.h"
+//#include "KinectParticles.h"
 #include "Fluid.h"
 #include "Mix.h"
 #include "Feedback.h"
+//#include "Video.h"
+#include "Lights.h"
 
 #include "DeltaSource.h"
 
@@ -118,10 +120,10 @@ void AVSynApp::setup()
 	mVisualizations.insert(make_pair("Fluid", fluid));
 	mVisualizationOptions.push_back("Fluid");
 
-	auto *kickChangeImage = new KinectParticles();
-	kickChangeImage->setup(mAudioSource, mBeatDetector, mVisualizations, mVisualizationOptions);
-	mVisualizations.insert(make_pair("Kick Change Image", kickChangeImage));
-	mVisualizationOptions.push_back("Kick Change Image");
+	//auto *kickChangeImage = new KinectParticles();
+	//kickChangeImage->setup(mAudioSource, mBeatDetector, mVisualizations, mVisualizationOptions);
+	//mVisualizations.insert(make_pair("Kick Change Image", kickChangeImage));
+	//mVisualizationOptions.push_back("Kick Change Image");
 
 	auto *bufferVis = new Feedback();
 	bufferVis->setup(mAudioSource, "Feedback/buffer.frag");
@@ -137,6 +139,16 @@ void AVSynApp::setup()
 	mix->setup(mVisualizations, mVisualizationOptions);
 	mVisualizations.insert(make_pair("Mix", mix));
 	mVisualizationOptions.push_back("Mix");
+
+	//auto *wheatFields = new Video();
+	//wheatFields->setup("assets/Wheat-field.m2ts");
+	//mVisualizations.insert(make_pair("Wheat Fields", wheatFields));
+	//mVisualizationOptions.push_back("Wheat Fields");
+
+	auto *lightsVis = new Lights();
+	lightsVis->setup(mAudioSource);
+	mVisualizations.insert(make_pair("Lights", lightsVis));
+	mVisualizationOptions.push_back("Lights");
 
 	mCurrentVisOption = mVisualizations.size() - 1;
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];

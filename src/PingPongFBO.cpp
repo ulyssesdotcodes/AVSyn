@@ -48,3 +48,21 @@ void PingPongFBO::render(gl::GlslProgRef shader)
 	// Increment mIteration here so that `getTexture()` always points to the latest
 	++mIteration;
 }
+
+void PingPongFBO::render(gl::BatchRef batch, vec2 translate, Colorf color)
+{
+	gl::FboRef target = mFBOs.at((mIteration + 1) % mFBOs.size());
+	gl::ScopedFramebuffer fbo(target);
+
+	gl::ScopedViewport vp(ivec2(0), target->getSize());
+	gl::pushMatrices();
+	gl::setMatricesWindow(target->getSize());
+
+	gl::color(color);
+	gl::translate(translate);
+
+	batch->draw();
+
+	// Increment mIteration here so that `getTexture()` always points to the latest
+	++mIteration;
+}
