@@ -29,6 +29,7 @@ public:
 	virtual void switchCamera(ci::CameraPersp* cam);
 	//! Set up the parameters for this visualization when the user switches to it.
 	virtual void switchParams(ci::params::InterfaceGlRef params, const string &group);
+	virtual void resetParams(ci::params::InterfaceGlRef params);
 
 private:
 	gl::TextureRef			mFrameTexture;
