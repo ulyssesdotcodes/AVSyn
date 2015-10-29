@@ -36,7 +36,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
@@ -107,7 +107,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\include;"..\..\Cinder\include"</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\Cinder\include;..\..\Cinder\blocks\QuickTime\include\msw;..\..\Cinder\blocks\QuickTime\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -121,7 +121,7 @@
       <AdditionalIncludeDirectories>"..\..\Cinder\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset)_d.lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset)_d.lib;%(AdditionalDependencies);..\..\Cinder\blocks\QuickTime\lib\msw\$(PlatformTarget)\CVClient.lib;..\..\Cinder\blocks\QuickTime\lib\msw\$(PlatformTarget)\QTMLClient.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>"..\..\Cinder\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -133,7 +133,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;..\..\Cinder\include;%(AdditionalIncludeDirectories);..\..\Cinder\blocks\QuickTime\include\msw;..\..\Cinder\blocks\QuickTime\include;..\blocks\Cinder-KCB2\src;..\blocks\Cinder-KCB2\lib;$(KINECTSDK20_DIR)\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\Cinder\include;%(AdditionalIncludeDirectories);..\blocks\Cinder-KCB2\src;..\blocks\Cinder-KCB2\lib;$(KINECTSDK20_DIR)\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
@@ -148,7 +148,7 @@
       <AdditionalIncludeDirectories>"..\..\Cinder\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset).lib;OpenGL32.lib;%(AdditionalDependencies);..\blocks\Cinder-KCB2\lib\$(PlatformTarget)\KCBv2.lib;$(KINECTSDK20_DIR)\lib\$(PlatformTarget)\kinect20.lib;$(KINECTSDK20_DIR)\lib\$(PlatformTarget)\Kinect20.Face.lib;..\..\Cinder\blocks\QuickTime\lib\msw\x86\CVClient.lib;..\..\Cinder\blocks\QuickTime\lib\msw\x86\QTMLClient.lib</AdditionalDependencies>
+      <AdditionalDependencies>cinder-$(PlatformToolset).lib;OpenGL32.lib;%(AdditionalDependencies);..\blocks\Cinder-KCB2\lib\$(PlatformTarget)\KCBv2.lib;$(KINECTSDK20_DIR)\lib\$(PlatformTarget)\kinect20.lib;$(KINECTSDK20_DIR)\lib\$(PlatformTarget)\Kinect20.Face.lib;..\..\Cinder\blocks\FFmpeg\build\lib\msw\avcodec.lib;..\..\Cinder\blocks\FFmpeg\build\lib\msw\avformat.lib;..\..\Cinder\blocks\FFmpeg\build\lib\msw\avutil.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>"..\..\Cinder\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
@@ -165,7 +165,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\include;"..\..\Development\Cinder\include"</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\include;..\..\Cinder\include;..\..\Cinder\blocks\QuickTime\include\msw;..\..\Cinder\blocks\QuickTime\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NOMINMAX;_WIN32_WINNT=0x0502;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>
@@ -178,11 +178,11 @@
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>"..\..\Development\Cinder\include";..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>"..\..\Cinder\include";..\include</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cinder-$(PlatformToolset).lib;OpenGL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>"..\..\Development\Cinder\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cinder-$(PlatformToolset).lib;OpenGL32.lib;%(AdditionalDependencies);..\..\Cinder\blocks\QuickTime\lib\msw\x86\CVClient.lib;..\..\Cinder\blocks\QuickTime\lib\msw\x86\QTMLClient.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>"..\..\Cinder\lib\msw\$(PlatformTarget)"</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <SubSystem>Windows</SubSystem>
@@ -198,7 +198,6 @@
     <ResourceCompile Include="Resources.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\blocks\Cinder-KCB2\src\Kinect2.cpp" />
     <ClCompile Include="..\src\AudioShaderVisualization.cpp" />
     <ClCompile Include="..\src\AudioSource.cpp" />
     <ClCompile Include="..\src\AVSynApp.cpp" />
@@ -209,7 +208,6 @@
     <ClCompile Include="..\src\EQPointCloud.cpp" />
     <ClCompile Include="..\src\FlockingVisualization.cpp" />
     <ClCompile Include="..\src\Fluid.cpp" />
-    <ClCompile Include="..\src\KinectParticles.cpp" />
     <ClCompile Include="..\src\Lights.cpp" />
     <ClCompile Include="..\src\Mix.cpp" />
     <ClCompile Include="..\src\PingPongFBO.cpp" />
@@ -219,7 +217,6 @@
     <ClCompile Include="..\src\Visualization.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\blocks\Cinder-KCB2\src\Kinect2.h" />
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\src\AudioShaderVisualization.h" />
     <ClInclude Include="..\src\AudioSource.h" />
@@ -230,7 +227,6 @@
     <ClInclude Include="..\src\EQPointCloud.h" />
     <ClInclude Include="..\src\FlockingVisualization.h" />
     <ClInclude Include="..\src\Fluid.h" />
-    <ClInclude Include="..\src\KinectParticles.h" />
     <ClInclude Include="..\src\Lights.h" />
     <ClInclude Include="..\src\Mix.h" />
     <ClInclude Include="..\src\PingPongFBO.h" />
@@ -268,6 +264,9 @@
     <None Include="..\assets\texture.frag" />
     <None Include="..\assets\velocity.frag" />
     <None Include="..\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\assets\Wheat Field.mov" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

@@ -17,7 +17,7 @@
 #include "Fluid.h"
 #include "Mix.h"
 #include "Feedback.h"
-//#include "Video.h"
+#include "Video.h"
 #include "Lights.h"
 
 #include "DeltaSource.h"
@@ -135,20 +135,20 @@ void AVSynApp::setup()
 	mVisualizations.insert(make_pair("Rotate", rotateVis));
 	mVisualizationOptions.push_back("Rotate");
 
-	auto *mix = new Mix();
-	mix->setup(mVisualizations, mVisualizationOptions);
-	mVisualizations.insert(make_pair("Mix", mix));
-	mVisualizationOptions.push_back("Mix");
-
-	//auto *wheatFields = new Video();
-	//wheatFields->setup("assets/Wheat-field.m2ts");
-	//mVisualizations.insert(make_pair("Wheat Fields", wheatFields));
-	//mVisualizationOptions.push_back("Wheat Fields");
-
 	auto *lightsVis = new Lights();
 	lightsVis->setup(mAudioSource);
 	mVisualizations.insert(make_pair("Lights", lightsVis));
 	mVisualizationOptions.push_back("Lights");
+
+	auto *wheatFields = new Video();
+	wheatFields->setup("Wheat Field.mov");
+	mVisualizations.insert(make_pair("Wheat Fields", wheatFields));
+	mVisualizationOptions.push_back("Wheat Fields");
+
+	auto *mix = new Mix();
+	mix->setup(mVisualizations, mVisualizationOptions);
+	mVisualizations.insert(make_pair("Mix", mix));
+	mVisualizationOptions.push_back("Mix");
 
 	mCurrentVisOption = mVisualizations.size() - 1;
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];

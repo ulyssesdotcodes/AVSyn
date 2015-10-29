@@ -7,7 +7,7 @@
 #include "cinder/Filesystem.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
-#include "cinder/qtime/QuickTimeGl.h"
+#include "cinder\qtime\QuickTimeGl.h"
 
 #include "Visualization.h"
 
@@ -17,7 +17,7 @@ class Video : public Visualization
 {
 public: 
 	//! Setup the video
-	void setup(const fs::path &fragmentShader);
+	void setup(const fs::path &moviePath);
 
 	//! Perform all computations for the visualization.
 	virtual void update();
@@ -32,5 +32,5 @@ public:
 
 private:
 	gl::TextureRef			mFrameTexture;
-	//qtime::MovieGlRef		mMovie;
+	qtime::MovieGlRef		mMovie;
 };
