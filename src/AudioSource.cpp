@@ -57,10 +57,12 @@ vector<float> AudioSource::getMagSpectrum() {
 gl::TextureRef AudioSource::getMagSpectrumTexture() {
 	float spectrum[1024 * 4];
 	vector<float> spectrumVec = getMagSpectrum();
+	audio::Buffer buffer = mMonitor->getBuffer();
+
 
 	for (vector<float>::size_type i = 0; i < spectrumVec.size(); i++) {
 		spectrum[i * 4] = spectrumVec[i];
-		spectrum[i * 4 + 1] = mBuffer.getData()[i];
+		spectrum[i * 4 + 1] = buffer.getData()[i];
 		spectrum[i * 4 + 2] = 0.0f;
 		spectrum[i * 4 + 3] = 256.0f;
 	}

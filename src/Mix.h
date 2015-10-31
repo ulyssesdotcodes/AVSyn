@@ -7,14 +7,14 @@ using namespace ci;
 
 class Mix : public Visualization {
 public:
-	void setup(map<string, Visualization*> visualizations, vector<string> visualizationOptions);
+	void setup(map<string, shared_ptr<Visualization>> visualizations);
 	virtual void update(const World& world) override;
 	virtual void draw(const World& world) override;
 	virtual void switchParams(ci::params::InterfaceGlRef params, const string &group) override;
 	virtual void setBaseVisualization(const string &visualization);
 
 private:
-	map<string, Visualization*> mVisualizations;
+	map<string, shared_ptr<Visualization>> mVisualizations;
 	vector<string> mVisualizationOptions;
 	array<int, 2> mVisOption;
 
@@ -30,7 +30,7 @@ private:
 	CameraPersp* mCam;
 	params::InterfaceGlRef mParams;
 
-	Visualization* getVis(int index);
+	shared_ptr<Visualization> getVis(int index);
 
 	void updateUniforms();
 };

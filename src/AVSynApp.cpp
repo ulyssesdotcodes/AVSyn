@@ -1,26 +1,30 @@
-#include "cinder/app/App.h"
-#include "cinder/app/RendererGl.h"
-#include "cinder/gl/gl.h"
-#include "cinder\params\Params.h"
-#include "cinder\Camera.h"
-#include "cinder\Display.h"
 #include "boost\range\adaptor\map.hpp"
 
-#include "Visualization.h"
+#include "cinder/app/App.h"
+#include "cinder/app/RendererGl.h"
+#include "cinder/Camera.h"
+#include "cinder/Display.h"
+#include "cinder/gl/gl.h"
+#include "cinder/params/Params.h"
+
 #include "AudioShaderVisualization.h"
-#include "ShaderVisualization.h"
+#include "ChoiceVisualization.h"
 #include "DotsVisualization.h"
 #include "EQPointCloud.h"
-#include "FlockingVisualization.h"
-//#include "TreeVisualization.h"
-//#include "KinectParticles.h"
-#include "Fluid.h"
-#include "Mix.h"
 #include "Feedback.h"
-#include "Video.h"
+#include "FlockingVisualization.h"
+#include "Fluid.h"
 #include "Lights.h"
+#include "Mix.h"
+#include "ShaderVisualization.h"
+#include "Video.h"
+#include "Visualization.h"
 
 #include "DeltaSource.h"
+
+// Unused for now
+//#include "TreeVisualization.h"
+//#include "KinectParticles.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -39,40 +43,16 @@ private:
 
 	WindowRef mParamWindow;
 	params::InterfaceGlRef mParams;
-	quat mSceneRotation;
-	bool mSaveFrames;
 
-	Visualization *mVisualization;
-
-	map<string, Visualization*> mVisualizations;
-	vector<string> mVisualizationOptions;
-	int mCurrentVisOption;
+	ChoiceVisualization mMainVisualization;
 };
 
 void AVSynApp::setup()
 {
-	vector<DisplayRef> displays = Display::getDisplays();
-
-	
+	// Set up world
 	mWorld.camera = unique_ptr<CameraPersp>(new CameraPersp(getWindowWidth(), getWindowHeight(), 50));
 	mWorld.camera->setPerspective(60.0f, getWindowAspectRatio(), 1.0f, 3000.0f);
 	mWorld.camera->lookAt(vec3(0.0, 0.0, 100.0f), vec3(0));
-
-	vec2 paramsSize = vec2(255, 512);
-	mCurrentVisOption = 0;
-	auto format = Window::Format();
-	format.setSize(paramsSize + vec2(40, 40));
-	format.setPos(ivec2(100, 100));
-	mParamWindow = createWindow(format);
-	mParamWindow->getSignalDraw().connect([=]() { drawParams(); });
-	mParams = params::InterfaceGl::create(getWindow(), "Options", paramsSize);
-
-	mParams->addParam("Rotation", &mSceneRotation);
-	mSaveFrames = false;
-	mParams->addParam("Record", &mSaveFrames);
-
-	getWindowIndex(0)->getRenderer()->makeCurrentContext();
-
 	mWorld.audioSource = unique_ptr<AudioSource>(new AudioSource());
 	mWorld.deltaSource = unique_ptr<DeltaSource>(new DeltaSource());
 	mWorld.beatDetector = unique_ptr<BeatDetector>(new BeatDetector());
@@ -80,88 +60,81 @@ void AVSynApp::setup()
 	mWorld.windowSize = getWindowIndex(0)->getSize();
 	mWorld.bounds = getWindowIndex(0)->getBounds();
 
-	AudioShaderVisualization *simpleVis = new AudioShaderVisualization();
+	// Set up params
+	vec2 paramsSize = vec2(255, 512);
+	auto format = Window::Format();
+	format.setSize(paramsSize + vec2(40, 40));
+	format.setPos(ivec2(100, 100));
+	mParamWindow = createWindow(format);
+	mParamWindow->getSignalDraw().connect([=]() { drawParams(); });
+	mParams = params::InterfaceGl::create(getWindow(), "Options", paramsSize);
+
+
+	// Reset to the regular window instead of params
+	getWindowIndex(0)->getRenderer()->makeCurrentContext();
+
+	// Create visualizations list
+	map<string, shared_ptr<Visualization>> visualizations;
+
+	auto simpleVis = make_shared<AudioShaderVisualization>();
 	simpleVis->setup("simple.frag");
-	mVisualizations.insert(make_pair("Simple", simpleVis));
-	mVisualizationOptions.push_back("Simple");
+	visualizations.insert(make_pair("Simple", simpleVis));
 
-	AudioShaderVisualization *circularVis = new AudioShaderVisualization();
+	auto circularVis = make_shared<AudioShaderVisualization>();
 	circularVis->setup("circular_fft.frag");
-	mVisualizations.insert(make_pair("Circular", circularVis));
-	mVisualizationOptions.push_back("Circular");
+	visualizations.insert(make_pair("Circular", circularVis));
 
-	auto *flocking = new FlockingVisualization();
+	auto flocking = make_shared<FlockingVisualization>();
 	flocking->setup();
-	mVisualizations.insert(make_pair("Flocking", flocking));
-	mVisualizationOptions.push_back("Flocking");
+	visualizations.insert(make_pair("Flocking", flocking));
 
-	auto *dotsVis = new DotsVisualization();
+	auto dotsVis = make_shared<DotsVisualization>();
 	dotsVis->setup();
-	mVisualizations.insert(make_pair("Dots", dotsVis));
-	mVisualizationOptions.push_back("Dots");
+	visualizations.insert(make_pair("Dots", dotsVis));
 
-	auto *eqPointCloud = new EQPointCloud();
+	auto eqPointCloud = make_shared<EQPointCloud>();
 	eqPointCloud->setup();
-	mVisualizations.insert(make_pair("EQPointCloud", eqPointCloud));
-	mVisualizationOptions.push_back("EQPointCloud");
+	visualizations.insert(make_pair("EQPointCloud", eqPointCloud));
 
 	//auto *trees = new TreeVisualization();
 	//trees->setup(mAudioSource, mBeatDetector);
 	//mVisualizations.insert(make_pair("Trees", trees));
 	//mVisualizationOptions.push_back("Trees");
 
-	auto *fluid = new Fluid();
+	auto fluid = make_shared<Fluid>();
 	fluid->setup();
-	mVisualizations.insert(make_pair("Fluid", fluid));
-	mVisualizationOptions.push_back("Fluid");
+	visualizations.insert(make_pair("Fluid", fluid));
 
 	//auto *kickChangeImage = new KinectParticles();
 	//kickChangeImage->setup(mAudioSource, mBeatDetector, mVisualizations, mVisualizationOptions);
 	//mVisualizations.insert(make_pair("Kick Change Image", kickChangeImage));
 	//mVisualizationOptions.push_back("Kick Change Image");
 
-	auto *bufferVis = new Feedback();
+	auto bufferVis = make_shared<Feedback>();
 	bufferVis->setup("Feedback/buffer.frag");
-	mVisualizations.insert(make_pair("Buffer", bufferVis));
-	mVisualizationOptions.push_back("Buffer");
+	visualizations.insert(make_pair("Buffer", bufferVis));
 
-	auto *rotateVis = new Feedback();
+	auto rotateVis = make_shared<Feedback>();
 	rotateVis->setup("Feedback/rotate.frag");
-	mVisualizations.insert(make_pair("Rotate", rotateVis));
-	mVisualizationOptions.push_back("Rotate");
+	visualizations.insert(make_pair("Rotate", rotateVis));
 
-	auto *lightsVis = new Lights();
+	auto lightsVis = make_shared<Lights>();
 	lightsVis->setup();
-	mVisualizations.insert(make_pair("Lights", lightsVis));
-	mVisualizationOptions.push_back("Lights");
+	visualizations.insert(make_pair("Lights", lightsVis));
 
-	auto *wheatFields = new Video();
+	auto wheatFields = make_shared<Video>();
 	wheatFields->setup("Wheat Field.mov");
-	mVisualizations.insert(make_pair("Wheat Fields", wheatFields));
-	mVisualizationOptions.push_back("Wheat Fields");
+	visualizations.insert(make_pair("Wheat Fields", wheatFields));
 
-	auto *mix = new Mix();
-	mix->setup(mVisualizations, mVisualizationOptions);
-	mVisualizations.insert(make_pair("Mix", mix));
-	mVisualizationOptions.push_back("Mix");
+	auto mix = make_shared<Mix>();
+	mix->setup(visualizations);
+	visualizations.insert(make_pair("Mix", mix));
 
-	mCurrentVisOption = mVisualizations.size() - 1;
-	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
+	mMainVisualization = ChoiceVisualization();
+	mMainVisualization.setup(visualizations);
+	mMainVisualization.switchParams(mParams, "Main");
 	
-	mVisualization->switchParams(mParams, "Main");
-
-	mParams->addParam("Visualizations", mVisualizationOptions, 
-		[=](int ind) {
-			mVisualization->resetParams(mParams);
-			mCurrentVisOption = ind;
-			mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
-			mVisualization->switchParams(mParams, "Main");
-		},
-		[=]() {
-			return mCurrentVisOption;
-		}
-		);
-
+	// Setup rendering!
 	getWindowIndex(0)->getSignalDraw().connect([=]() { drawRender(); });
 }
 
@@ -175,18 +148,14 @@ void AVSynApp::update()
 {
 	getWindowIndex(0)->getRenderer()->makeCurrentContext();
 	mWorld.deltaSource->update();
-	mVisualization->update(mWorld);
+	mMainVisualization.update(mWorld);
 }
 
 void AVSynApp::drawRender()
 {
 	gl::clear( Color( 0, 0, 0 ) ); 
 
-	mVisualization->draw(mWorld);
-
-	if (mSaveFrames) {
-		writeImage(app::getAppPath().generic_string() + "\\save scene\\image_" + to_string(app::getElapsedFrames()) + ".png", copyWindowSurface());
-	}
+	mMainVisualization.draw(mWorld);
 }
 
 void AVSynApp::drawParams()

@@ -1,10 +1,12 @@
 #include "Mix.h"
 #include "cinder\app\App.h"
 
-void Mix::setup(map<string, Visualization*> visualizations, vector<string> visualizationOptions)
+void Mix::setup(map<string, shared_ptr<Visualization>> visualizations)
 {
-	mVisualizationOptions = visualizationOptions;
 	mVisualizations = visualizations;
+	for (map<string, shared_ptr<Visualization>>::iterator it = mVisualizations.begin(); it != mVisualizations.end(); ++it) {
+		mVisualizationOptions.push_back(it->first);
+	}
 	mVisOption[0] = 1;
 	mVisOption[1] = 0;
 
@@ -27,7 +29,7 @@ void Mix::setup(map<string, Visualization*> visualizations, vector<string> visua
 void Mix::update(const World& world)
 {
 	for (int i = 0; i < 2; ++i) {
-		Visualization* vis = getVis(mVisOption[i]);
+		shared_ptr<Visualization> vis = getVis(mVisOption[i]);
 		vis->update(world);
 		gl::ScopedFramebuffer fbo(mVisFBO[i]);
 		gl::clear(Color(0, 0, 0));
@@ -111,7 +113,7 @@ void Mix::setBaseVisualization(const string & visualization)
 {
 }
 
-Visualization* Mix::getVis(int index)
+shared_ptr<Visualization> Mix::getVis(int index)
 {
 	return mVisualizations.at(mVisualizationOptions.at(index));
 }
