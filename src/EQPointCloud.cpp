@@ -14,11 +14,10 @@ const int SIZE = 64;
 const float DAMPING = 0.1;
 const float ROTATION_DAMP = 0.1;
 
-void EQPointCloud::setup(AudioSource* audioSource)
+void EQPointCloud::setup()
 {
 	mLoudness = 0.25;
 	mRotationSpeed = 1.0;
-	mAudioSource = audioSource;
 	mHue = 0.0;
 
 	for (int i = 0; i < NUM_PARTICLES; i++) {
@@ -41,10 +40,6 @@ void EQPointCloud::setup(AudioSource* audioSource)
 	mEqs.push_back({ mParticles.at(0), Rand::randVec3()});
 	mEqs.push_back({ mParticles.at(1), Rand::randVec3()});
 	mEqs.push_back({ mParticles.at(2), Rand::randVec3()});
-}
-
-void EQPointCloud::switchCamera(CameraPersp* cam) {
-	cam->lookAt(vec3(0.0, 0.0, 100.0), vec3(0.0));
 }
 
 void EQPointCloud::switchParams(params::InterfaceGlRef params, const string &group) {
@@ -70,7 +65,7 @@ void EQPointCloud::switchParams(params::InterfaceGlRef params, const string &gro
 		.group(group);
 }
 
-void EQPointCloud::update()
+void EQPointCloud::update(const World& world)
 {
 	for (vector<EQ>::iterator it = mEqs.begin(); it != mEqs.end(); ++it) {
 		it->pos += it->velocity;
@@ -93,21 +88,27 @@ void EQPointCloud::update()
 
 	mParticleBuffer[0]->copyData(mParticles.size() * sizeof(vec3), mParticles.data());
 
-	mAudioSource->update();
-	float volume = mAudioSource->getVolume();
+	world.audioSource->update();
+	float volume = world.audioSource->getVolume();
 	volume = math<float>::max(volume, mLastVolume * 0.95);
 	mLastVolume = volume;
 	float rotation = volume * mRotationSpeed * ROTATION_DAMP;
 	mRotation = glm::rotate(mRotation, rotation, vec3(1.0, 0.0, 0.0));
 	mRotation = glm::rotate(mRotation, rotation * 0.5f, vec3(0.0, 1.0, 0.0));
-	auto eqVolumes = mAudioSource->getEqs(3);
+	auto eqVolumes = world.audioSource->getEqs(3);
 	for (int i = 0; i < 3; ++i) {
 		mEqVolumes[i] = eqVolumes[i] > mEqVolumes[i] ? eqVolumes[i] * mLoudness : mEqVolumes[i] - (mEqVolumes[i] - eqVolumes[i]) * DAMPING;
 	}
 }
 
-void EQPointCloud::draw()
+void EQPointCloud::draw(const World& world)
 {
+	world.camera->lookAt(vec3(0.0, 0.0, 100.0), vec3(0.0));
+
+	gl::setMatrices(*world.camera);
+	gl::enableDepthRead();
+	gl::enableDepthWrite();
+
 	mRenderProg->uniform("i_eqs", mEqVolumes);
 	mRenderProg->uniform("i_eq0", mEqs.at(0).pos);
 	mRenderProg->uniform("i_eq1", mEqs.at(1).pos);
@@ -116,9 +117,4 @@ void EQPointCloud::draw()
 
 	gl::rotate(mRotation);
 	mBatch->draw();
-}
-
-bool EQPointCloud::perspective()
-{
-	return true;
 }

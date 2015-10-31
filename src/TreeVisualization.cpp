@@ -2,10 +2,8 @@
 
 #include "cinder\Rand.h"
 
-void TreeVisualization::setup(AudioSource* audioSource, BeatDetector* beatDetector)
+void TreeVisualization::setup()
 {
-	mAudioSource = audioSource;
-	mBeatDetector = beatDetector;
 	mRotationSpeed = 1.0;
 	mGrowth = 3;
 	mHue = 0.0;
@@ -71,15 +69,6 @@ void TreeVisualization::switchParams(params::InterfaceGlRef params, const string
 		.max(2.0)
 		.step(0.001)
 		.group(group);
-}
-
-void TreeVisualization::switchCamera(CameraPersp* mCam) {
-	mCam->lookAt(vec3(0.0, 0.0, 30.0), vec3(0.0));
-}
-
-bool TreeVisualization::perspective() 
-{
-	return true;
 }
 
 void TreeVisualization::runCommand(char rule, Gen* gen) 
@@ -174,21 +163,21 @@ void TreeVisualization::lstep()
 	}
 }
 
-void TreeVisualization::update()
+void TreeVisualization::update(const World& world)
 {
 	// Audio
-	mAudioSource->update();
-	mBeatDetector->update(mBeatConstant);
-	float beat = mBeatDetector->getBeat();
+	world.audioSource->update();
+	world.beatDetector->update(world, mBeatConstant);
+	float beat = world.beatDetector->getBeat();
 
 	//Rotation
 	mRotation = glm::rotate(mRotation, mRotationSpeed * ROTATION_DAMP, normalize(vec3(1.0, 0.5, 0)));
 
 	// Quit if there's no audio
-	if (mAudioSource->getVolume() < 0.2) return;
+	if (world.audioSource->getVolume() < 0.2) return;
 
 	// Set the current vertex color
-	auto eqs = mAudioSource->getEqs(3);
+	auto eqs = world.audioSource->getEqs(3);
 	auto rgb = ColorA(vec4(glm::normalize(vec3(eqs[0], eqs[1], eqs[2])), 1.0));
 	auto hsv = rgbToHsv(rgb);
 	hsv.x = fmod(1.0 + hsv.x + mHue, 1.);
@@ -240,8 +229,12 @@ void TreeVisualization::update()
 	mMesh->bufferAttrib(geom::COLOR, sizeof(vec4) * MAX_LINE_VERTICES, &mColors[0]);
 }
 
-void TreeVisualization::draw()
+void TreeVisualization::draw(const World& world)
 {
+	gl::setMatrices(*world.camera);
+	gl::enableDepthRead();
+	gl::enableDepthWrite();
+	world.camera->lookAt(vec3(0.0, 0.0, 30.0), vec3(0.0));
 	gl::lineWidth(4.0f);
 	gl::rotate(mRotation);
 	mBatch->draw();

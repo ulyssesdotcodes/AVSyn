@@ -19,22 +19,18 @@ class EQPointCloud : public Visualization {
 
 public:
 	//! Create the particle buffer and shader program
-	virtual void setup(AudioSource* audioSource);
+	virtual void setup();
 	//! Update the three eq particles and the uniforms associated with eqs.
-	virtual void update();
+	virtual void update(const World& world);
 	//! Draw the particles
-	virtual void draw();
-	virtual void switchCamera(CameraPersp* cam);
+	virtual void draw(const World& world);
 	virtual void switchParams(params::InterfaceGlRef params, const string &group) override;
-	bool perspective() override;
 
 private:
 	vector<vec3> mParticles;
 	gl::GlslProgRef mRenderProg;
 	gl::VboRef		mParticleBuffer[1];
 	gl::BatchRef mBatch;
-
-	AudioSource* mAudioSource;
 
 	vector<EQ> mEqs;
 	vec3 mEqVolumes;

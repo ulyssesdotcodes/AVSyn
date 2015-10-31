@@ -7,7 +7,7 @@ void Video::setup(const fs::path &moviePath)
 	mFrameTexture.reset();
 }
 
-void Video::update()
+void Video::update(const World& world)
 {
 	if (mMovie) {
 		if (!mMovie->isPlaying()) {
@@ -18,22 +18,14 @@ void Video::update()
 	}
 }
 
-void Video::draw()
+void Video::draw(const World& world)
 {
+	gl::setMatricesWindow(world.windowSize);
+
 	if (mFrameTexture) {
 		Rectf centeredRect = Rectf( mFrameTexture->getBounds() ).getCenteredFit( app::getWindowIndex(0)->getBounds(), true );
 		gl::draw( mFrameTexture, centeredRect );
 	}
-}
-
-bool Video::perspective()
-{
-	return false;
-}
-
-void Video::switchCamera(ci::CameraPersp * cam)
-{
-	mMovie->play();
 }
 
 void Video::switchParams(ci::params::InterfaceGlRef params, const string & group)

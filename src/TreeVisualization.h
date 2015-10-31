@@ -47,16 +47,13 @@ struct Gen {
 class TreeVisualization: public Visualization {
 public:
 	//! Setup the sources and the transforms needed for displaying the L systems.
-	void setup(AudioSource* audioSource, BeatDetector* beatDetector);
+	void setup();
 	//! Run a number of commands based on growth and beat
-	void update() override;
+	void update(const World& world) override;
 	//! Draw mPositions with mColors
-	void draw() override;
-	//! Setup the camera.
-	void switchCamera(CameraPersp* cam) override;
+	void draw(const World& world) override;
 	//! Setup params
 	void switchParams(params::InterfaceGlRef params, const string &group) override;
-	bool perspective() override;
 
 private:
 	//! Generate the final L system strings and store them in mGen
@@ -65,9 +62,6 @@ private:
 	void lstep();
 	//! Perform one command - moving forward or turning. Modifies mGen and mPositions.
 	void runCommand(char rule, Gen* gen);
-
-	AudioSource* mAudioSource;
-	BeatDetector* mBeatDetector;
 
 	array<vec3, MAX_LINE_VERTICES> mPositions;
 	array<vec4, MAX_LINE_VERTICES> mColors;

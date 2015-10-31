@@ -16,17 +16,12 @@ public:
 	void setup(const fs::path &fragmentShader);
 
 	//! Nullops
-	virtual void update() override;
-	virtual void switchCamera(CameraPersp* cam) override;
-
+	virtual void update(const World& world) override;
 	//! Draw the fragment shader to the screen. Sets resolution and time uniforms.
-	virtual void draw() override;
-
-	//! Returns false
-	bool perspective() override;
+	virtual void draw(const World& world) override;
 
 protected:
 	//! Convenience method for child classes to override to add uniforms to the shader program.
-	virtual void renderUniforms();
+	virtual void renderUniforms(const World& world);
 	gl::GlslProgRef mShader;
 };

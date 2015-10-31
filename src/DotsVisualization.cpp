@@ -6,26 +6,25 @@ using namespace std;
 
 const float DAMPING = 0.1;
 
-void DotsVisualization::setup(AudioSource* audioSource, BeatDetector* beatDetector)
+void DotsVisualization::setup()
 {
 	ShaderVisualization::setup("dots.frag");
 
 	mLoudness = 1.0;
 	mHue = 0.0;
 	mAccumulatedLoudness = 0.0f;
-	mAudioSource = audioSource;
-	mBeatDetector = beatDetector;
 }
 
-void DotsVisualization::renderUniforms()
+void DotsVisualization::renderUniforms(const World& world)
 {
-	ShaderVisualization::renderUniforms();
+	ShaderVisualization::renderUniforms(world);
 
-	mAudioSource->update();
-	mBeatDetector->update(1.5);
-	mAccumulatedLoudness += mBeatDetector->getBeat() + mAudioSource->getVolume() * mLoudness;
+	world.audioSource->update();
+	world.beatDetector->update(world, 1.4);
 
-	vector<float> eqs = mAudioSource->getEqs(BIN_COUNT);
+	mAccumulatedLoudness += world.beatDetector->getBeat() + world.audioSource->getVolume() * mLoudness;
+
+	vector<float> eqs = world.audioSource->getEqs(BIN_COUNT);
 
 	for (int i = 0; i < BIN_COUNT; ++i) {
 		if (eqs[i] > mEqs[i]) {

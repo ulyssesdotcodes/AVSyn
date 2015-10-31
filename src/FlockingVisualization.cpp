@@ -32,12 +32,8 @@ FlockingVisualization::FlockingVisualization()
 	mSeparateOnly = false;
 }
 
-void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSource, BeatDetector* beatDetector)
+void FlockingVisualization::setup()
 {
-	mAudioSource = audioSource;
-	mDeltaSource = deltaSource;
-	mBeatDetector = beatDetector;
-
 	mStep = true;
 	mIteratonIndex = 0;
 
@@ -104,11 +100,6 @@ void FlockingVisualization::setup(AudioSource* audioSource, DeltaSource* deltaSo
 	mPositionBufTex[1] = gl::BufferTexture::create(mPositions[1], GL_RGB32F);
 	mVelocityBufTex[0] = gl::BufferTexture::create(mVelocities[0], GL_RGB32F);
 	mVelocityBufTex[1] = gl::BufferTexture::create(mVelocities[1], GL_RGB32F);
-}
-
-void FlockingVisualization::switchCamera(CameraPersp* cam) 
-{
-	cam->lookAt(vec3(0.0, 0.0, 100.0), vec3(0.0));
 }
 
 void FlockingVisualization::switchParams(params::InterfaceGlRef params, const string &group) {
@@ -187,27 +178,27 @@ void FlockingVisualization::switchParams(params::InterfaceGlRef params, const st
 }
 
 
-void FlockingVisualization::update()
+void FlockingVisualization::update(const World& world)
 {
-	mAudioSource->update();
-	mBeatDetector->update(mBeatConstant);
-	float loudness = audio::linearToDecibel(mAudioSource->getVolume()) * 0.01f * mLoudness;;
+	world.audioSource->update();
+	world.beatDetector->update(world, mBeatConstant);
+	float loudness = audio::linearToDecibel(world.audioSource->getVolume()) * 0.01f * mLoudness;;
 	mAccumulatedLoudness += loudness;
 
 	mHue = glm::fract(mHue + mCycleHueSpeed);
 
-	mUpdateShader->uniform("delta", mDeltaSource->delta());
+	mUpdateShader->uniform("delta", world.deltaSource->delta());
 	mUpdateShader->uniform("separationDistance", mSeparationDistance);
 	mUpdateShader->uniform("alignmentDistance", mAlignmentDistance);
 	mUpdateShader->uniform("cohesionDistance", mCohesionDistance);
 	mUpdateShader->uniform("loudness", loudness);
 	mUpdateShader->uniform("accumulatedLoudness", mAccumulatedLoudness);
-	mUpdateShader->uniform("beat", mBeatDetector->getBeat());
+	mUpdateShader->uniform("beat", world.beatDetector->getBeat());
 	mUpdateShader->uniform("roamingDistance", mRoamingDistance);
 	mUpdateShader->uniform("speed", mSpeed);
 	mUpdateShader->uniform("hue", mHue);
 	mUpdateShader->uniform("saturation", mSaturation);
-	mUpdateShader->uniform("eqs", &(mAudioSource->getEqs(3, mLoudness))[0], 3);
+	mUpdateShader->uniform("eqs", &(world.audioSource->getEqs(3, mLoudness))[0], 3);
 	mUpdateShader->uniform("separateOnly", mSeparateOnly);
 
 
@@ -233,17 +224,18 @@ void FlockingVisualization::update()
 	gl::endTransformFeedback();
 }
 
-void FlockingVisualization::draw()
+void FlockingVisualization::draw(const World& world)
 {
+	world.camera->lookAt(vec3(0.0, 0.0, 100.0), vec3(0.0));
+
+	gl::setMatrices(*world.camera);
+	gl::enableDepthRead();
+	gl::enableDepthWrite();
+
 	gl::ScopedGlslProg glsl(mRenderShader);
 	gl::ScopedVao scopedVao(mVaos[mIteratonIndex & 1]);
 	gl::context()->setDefaultShaderVars();
 
 	gl::ScopedState pointSize(GL_PROGRAM_POINT_SIZE, true);
 	gl::drawArrays(GL_POINTS, 0, NUM_PARTICLES);
-}
-
-bool FlockingVisualization::perspective()
-{
-	return true;
 }

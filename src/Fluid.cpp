@@ -7,10 +7,8 @@ const int PRESSURE_POINTER = 1;
 const int SMOKE_POINTER = 2;
 const int ADVECT_POINTER = 3;
 
-void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
+void Fluid::setup()
 {
-	mAudioSource = audioSource;
-	mBeatDetector = beatDetector;
 	mLastTime = 0;
 	mSmokePos = vec2(0.2, 0.8);
 	mAudioVel = vec2(0);
@@ -85,48 +83,44 @@ void Fluid::setup(AudioSource *audioSource, BeatDetector *beatDetector)
 	mPressureFBO = PingPongFBO(fmtRG, mFluidResolution, 2);
 }
 
-void Fluid::update()
+void Fluid::update(const World& world)
 {
 	float time = app::getElapsedSeconds();
 	float dt = time - mLastTime;
 	mLastTime = time;
 
+	world.audioSource->update();
+	world.beatDetector->update(world, 1.6);
+
 	if (dt > 1.0) {
 		dt = 1.0;
 	}
 
-	updateSmokePos(time, dt);
+	updateSmokePos(world, time, dt);
 
 
 	advectVelocity(dt);
 
-	applyForce(dt);
+	applyForce(world, dt);
 
 	computeDivergence();
 	solvePressure();
 	subtractPressure();
 
-	advectSmoke(dt, time);
+	advectSmoke(world, dt, time);
 }
 
-void Fluid::draw()
+void Fluid::draw(const World& world)
 {
+	gl::setMatricesWindow(world.windowSize);
+
 	gl::ScopedTextureBind scopeSmoke(mSmokeFBO.getTexture(), SMOKE_POINTER);
 	mRenderShader->uniform("tex", SMOKE_POINTER);
 
 	gl::ScopedGlslProg glsl(mRenderShader);
 	gl::context()->setDefaultShaderVars();
 
-	gl::drawSolidRect(app::getWindowIndex(0)->getBounds());
-}
-
-bool Fluid::perspective()
-{
-	return false;
-}
-
-void Fluid::switchCamera(CameraPersp * camera)
-{
+	gl::drawSolidRect(world.bounds);
 }
 
 void Fluid::switchParams(params::InterfaceGlRef params, const string &group)
@@ -167,14 +161,12 @@ void Fluid::advectVelocity(float dt)
 	advect(dt, &mVelocityFBO, &mVelocityFBO);
 }
 
-void Fluid::advectSmoke(float dt, float time) 
+void Fluid::advectSmoke(const World& world, float dt, float time) 
 {
 	// Create new smoke
-	mAudioSource->update();
-	mBeatDetector->update(1.6);
 	{
-		mSmokeDropShader->uniform("beat", mBeatDetector->getBeat());
-		mSmokeDropShader->uniform("volume", mAudioSource->getVolume() * mVolume);
+		mSmokeDropShader->uniform("beat", world.beatDetector->getBeat());
+		mSmokeDropShader->uniform("volume", world.audioSource->getVolume() * mVolume);
 		mSmokeDropShader->uniform("dt", dt);
 
 		gl::ScopedTextureBind scopeSmokeDrop(mSmokeFBO.getTexture(), SMOKE_POINTER);
@@ -232,12 +224,11 @@ void Fluid::advect(float dt, PingPongFBO *velocity, PingPongFBO *target) {
 	}
 }
 
-void Fluid::applyForce(float dt)
+void Fluid::applyForce(const World& world, float dt)
 {
-	mBeatDetector->update(1.6);
 	mForcesShader->uniform("dt", dt);
 	mForcesShader->uniform("time", mLastTime);
-	mForcesShader->uniform("beat", mBeatDetector->getBeat());
+	mForcesShader->uniform("beat", world.beatDetector->getBeat());
 
 	gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
 	mForcesShader->uniform("tex_velocity", VELOCITY_POINTER);
@@ -274,11 +265,10 @@ void Fluid::subtractPressure()
 	mVelocityFBO.render(mSubtractPressureShader);
 }
 
-void Fluid::updateSmokePos(float time, float dt) {
-	mAudioSource->update();
-	vector<float> audiovel = mAudioSource->getEqs(4);
+void Fluid::updateSmokePos(const World& world, float time, float dt) {
+	vector<float> audiovel = world.audioSource->getEqs(4);
 	vec2 newVel = vec2(pow(audiovel[0], 1.5) - pow(audiovel[2], 1), pow(audiovel[1], 1.2) - pow(audiovel[3], 0.8));
-	newVel = newVel * vec2(0.5) + vec2(0.5) * newVel * mBeatDetector->getBeat();
+	newVel = newVel * vec2(0.5) + vec2(0.5) * newVel * world.beatDetector->getBeat();
 
 	if (mFlipVelocity) {
 		newVel = vec2(newVel.y, newVel.x);

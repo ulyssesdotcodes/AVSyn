@@ -13,26 +13,21 @@ void ShaderVisualization::setup(const fs::path &fragmentShader )
 	mShader->uniform("i_resolution", vec2(app::getWindowIndex(0)->getSize()));
 }
 
-void ShaderVisualization::update()
+void ShaderVisualization::update(const World& world)
 {
 }
 
-void ShaderVisualization::switchCamera(CameraPersp* cam) {}
-
-void ShaderVisualization::renderUniforms() {
+void ShaderVisualization::renderUniforms(const World& world) {
 	mShader->uniform("i_time", float(app::getElapsedSeconds()));
 }
 
-void ShaderVisualization::draw()
+void ShaderVisualization::draw(const World& world)
 {
+	gl::setMatricesWindow(world.windowSize);
+
 	gl::ScopedGlslProg glScp(mShader);
 
-	renderUniforms();
+	renderUniforms(world);
 
-	gl::drawSolidRect(app::getWindowIndex(0)->getBounds());
-}
-
-bool ShaderVisualization::perspective()
-{
-	return false;
+	gl::drawSolidRect(world.bounds);
 }

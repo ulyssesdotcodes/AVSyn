@@ -24,29 +24,21 @@ void Mix::setup(map<string, Visualization*> visualizations, vector<string> visua
 	mMixShader->uniform("i_resolution", mResolution);
 }
 
-void Mix::update()
+void Mix::update(const World& world)
 {
 	for (int i = 0; i < 2; ++i) {
 		Visualization* vis = getVis(mVisOption[i]);
-		vis->update();
+		vis->update(world);
 		gl::ScopedFramebuffer fbo(mVisFBO[i]);
 		gl::clear(Color(0, 0, 0));
 		gl::ScopedViewport scpVp(mVisFBO[i]->getSize());
 		gl::pushMatrices();
-		if (vis->perspective()) {
-			vis->switchCamera(mCam);
-			gl::setMatrices(*mCam);
-			switchCamera(mCam);
-		}
-		else {
-			gl::setMatricesWindow(mVisFBO[i]->getSize());
-		}
-		vis->draw();
+		vis->draw(world);
 		gl::popMatrices();
 	}
 }
 
-void Mix::draw()
+void Mix::draw(const World& world)
 {
 	updateUniforms();
 
@@ -60,16 +52,6 @@ void Mix::draw()
 	gl::context()->setDefaultShaderVars();
 
 	gl::drawSolidRect(app::getWindowIndex(0)->getBounds());
-}
-
-bool Mix::perspective()
-{
-	return false;
-}
-
-void Mix::switchCamera(ci::CameraPersp * cam)
-{
-	mCam = cam;
 }
 
 void Mix::switchParams(ci::params::InterfaceGlRef params, const string &group)

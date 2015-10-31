@@ -3,11 +3,10 @@
 #include "cinder\Rand.h"
 #include "cinder\app\App.h"
 
-void Lights::setup(AudioSource* audioSource)
+void Lights::setup()
 {
 	ShaderVisualization::setup("texture.frag");
 
-	mAudioSource = audioSource;
 	mFade = 0.9;
 
 	mResolution = app::getWindowIndex(0)->getSize();
@@ -27,7 +26,7 @@ void Lights::setup(AudioSource* audioSource)
 	mNewLight = gl::Batch::create(geom::Circle().radius(100.0), newLightShader);
 }
 
-void Lights::update()
+void Lights::update(const World& world)
 {
 	mFadeShader->uniform("i_fade", mFade);
 
@@ -36,7 +35,7 @@ void Lights::update()
 
 	mFbo.render(mFadeShader);
 
-	float volume = mAudioSource->getVolume();
+	float volume = world.audioSource->getVolume();
 	float rand = Rand::randFloat();
 
 	// Base the chance for a new light on the volume
@@ -50,12 +49,12 @@ void Lights::update()
 	gl::popMatrices();
 }
 
-void Lights::draw()
+void Lights::draw(const World& world)
 {
 	gl::ScopedTextureBind tex(mFbo.getTexture(), 0);
 	mShader->uniform("tex", 0);
 
-	ShaderVisualization::draw();
+	ShaderVisualization::draw(world);
 }
 
 void Lights::switchParams(params::InterfaceGlRef params, const string & group)

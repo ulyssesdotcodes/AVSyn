@@ -1,23 +1,23 @@
 #pragma once
 
 #include "AudioSource.h"
-#include <vector>
+#include "World.h"
 
 const int HISTORY = 43;
 const int BUCKETS = 20;
 
+struct World;
+
 class BeatDetector {
 public:
-	BeatDetector(AudioSource* audioSource);
-	void update(float c);
+	BeatDetector();
+	void update(const World& world, float c);
 	float getBeat();
 
 private:
-	AudioSource* mAudioSource;
-
-	array<array<float, HISTORY>, BUCKETS> mEnergyHistory;
+	std::array<std::array<float, HISTORY>, BUCKETS> mEnergyHistory;
 	int mEnergyIndex;
-	array<float, BUCKETS> mAverageEnergy;
+	std::array<float, BUCKETS> mAverageEnergy;
 	float mBeat;
 	float mDeterioration;
 	int mLastUpdate;

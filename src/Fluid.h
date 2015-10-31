@@ -12,17 +12,12 @@ using namespace ci;
 
 class Fluid : public Visualization {
 public:
-	virtual void setup(AudioSource *audioSource, BeatDetector *beatDetector);
-	virtual void update() override;
-	virtual void draw() override;
-	virtual bool perspective() override;
-	virtual void switchCamera(CameraPersp* camera) override;
+	virtual void setup();
+	virtual void update(const World& world) override;
+	virtual void draw(const World& world) override;
 	virtual void switchParams(params::InterfaceGlRef params, const string &group) override;
 
 private:
-	AudioSource *mAudioSource;
-	BeatDetector *mBeatDetector;
-
 	vec2 mWindowResolution;
 	vec2 mFluidResolution;
 
@@ -49,11 +44,11 @@ private:
 	bool mFlipVelocity;
 
 	void advectVelocity(float dt);
-	void advectSmoke(float dt, float time);
+	void advectSmoke(const World& world, float dt, float time);
 	void advect(float dt, PingPongFBO *velocity, PingPongFBO *target);
-	void applyForce(float dt);
+	void applyForce(const World& world, float dt);
 	void computeDivergence();
 	void solvePressure();
 	void subtractPressure();
-	void updateSmokePos(float time, float dt);
+	void updateSmokePos(const World& world, float time, float dt);
 };

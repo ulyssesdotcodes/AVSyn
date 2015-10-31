@@ -1,11 +1,9 @@
 #include "Feedback.h"
 #include "cinder\app\App.h"
 
-void Feedback::setup(AudioSource* audioSource, const string &fragment)
+void Feedback::setup(const string &fragment)
 {
 	ShaderVisualization::setup("texture.frag");
-
-	mAudioSource = audioSource;
 
 	mFade = 0.95;
 	mLastTime = 0;
@@ -24,7 +22,7 @@ void Feedback::setup(AudioSource* audioSource, const string &fragment)
 	mUpdateShader->uniform("i_resolution", resolution);
 }
 
-void Feedback::update()
+void Feedback::update(const World& world)
 {
 	float time = app::getElapsedSeconds();
 	float dt = time - mLastTime;
@@ -33,11 +31,11 @@ void Feedback::update()
 	mUpdateShader->uniform("i_dt", dt);
 	mUpdateShader->uniform("i_time", time);
 
-	mAudioSource->update();
-	mTexture = mAudioSource->getMagSpectrumTexture();
+	world.audioSource->update();
+	mTexture = world.audioSource->getMagSpectrumTexture();
 
-	mUpdateShader->uniform("i_volume", mAudioSource->getVolume());
-	mUpdateShader->uniform("i_accumulatedSound", mAudioSource->getAccumulatedSound());
+	mUpdateShader->uniform("i_volume", world.audioSource->getVolume());
+	mUpdateShader->uniform("i_accumulatedSound", world.audioSource->getAccumulatedSound());
 
 	gl::ScopedTextureBind texPrev(mFbo.getTexture(), 0);
 	mUpdateShader->uniform("tex_prev", 0);
@@ -45,18 +43,18 @@ void Feedback::update()
 	gl::ScopedTextureBind audio(mTexture, 1);
 	mUpdateShader->uniform("tex_audio", 1);
 
-	mUpdateShader->uniform("i_highestVolume", mAudioSource->getHighestVolumePos());
+	mUpdateShader->uniform("i_highestVolume", world.audioSource->getHighestVolumePos());
 	mUpdateShader->uniform("i_fade", mFade);
 
 	mFbo.render(mUpdateShader);
 }
 
-void Feedback::draw()
+void Feedback::draw(const World& world)
 {
 	gl::ScopedTextureBind tex(mFbo.getTexture(), 0);
 	mShader->uniform("tex", 0);
 
-	ShaderVisualization::draw();
+	ShaderVisualization::draw(world);
 }
 
 void Feedback::switchParams(params::InterfaceGlRef params, const string &group)

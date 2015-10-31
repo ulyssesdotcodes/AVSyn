@@ -13,22 +13,15 @@ class FlockingVisualization : public Visualization {
 public:
 	FlockingVisualization();
 	//! Setup the various sources and buffers needed for the simulation
-	void setup(AudioSource* audioSource, DeltaSource* deltaSource, BeatDetector* beatDetector);
+	void setup();
 	//! Update the position and velocity of each vertex. Also pass in the current values as textures to allow cross-vertex interaction.
-	virtual void update() override;
+	virtual void update(const World& world) override;
 	//! Render the particles based on the positions calculated in update.
-	virtual void draw() override;
-	virtual bool perspective() override;
-	//! Make sure that we have the flock in view.
-	virtual void switchCamera(CameraPersp* camera) override;
+	virtual void draw(const World& world) override;
 	//! So many parameters!
 	virtual void switchParams(params::InterfaceGlRef param, const string &group) override;
 
 private:
-	AudioSource* mAudioSource;
-	DeltaSource* mDeltaSource;
-	BeatDetector* mBeatDetector;
-
 	uint32_t mIteratonIndex;
 	bool mStep;
 

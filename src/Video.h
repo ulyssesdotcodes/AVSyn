@@ -20,13 +20,9 @@ public:
 	void setup(const fs::path &moviePath);
 
 	//! Perform all computations for the visualization.
-	virtual void update();
+	virtual void update(const World& world);
 	//! Draw the visualization to the screen. This assumes matrices and viewport have been set up already.
-	virtual void draw();
-	//! Defines whether this should be rendered with perspective or or orthogonally.
-	virtual bool perspective();
-	//! Set up the camera for this visualization when the user switches to it.
-	virtual void switchCamera(ci::CameraPersp* cam);
+	virtual void draw(const World& world);
 	//! Set up the parameters for this visualization when the user switches to it.
 	virtual void switchParams(ci::params::InterfaceGlRef params, const string &group);
 	virtual void resetParams(ci::params::InterfaceGlRef params);

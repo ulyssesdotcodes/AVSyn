@@ -35,20 +35,14 @@ public:
 	void drawParams() ;
 
 private:
+	World mWorld;
+
 	WindowRef mParamWindow;
 	params::InterfaceGlRef mParams;
 	quat mSceneRotation;
 	bool mSaveFrames;
 
-	CameraPersp mCam;
-	vec3 mEye;
-	vec3 mCenter;
-	vec3 mUp;
-
 	Visualization *mVisualization;
-	AudioSource* mAudioSource;
-	DeltaSource* mDeltaSource;
-	BeatDetector* mBeatDetector;
 
 	map<string, Visualization*> mVisualizations;
 	vector<string> mVisualizationOptions;
@@ -59,11 +53,10 @@ void AVSynApp::setup()
 {
 	vector<DisplayRef> displays = Display::getDisplays();
 
-	mCam = CameraPersp(getWindowWidth(), getWindowHeight(), 50);
-	mCam.setPerspective(60.0f, getWindowAspectRatio(), 1.0f, 3000.0f);
-	mEye = vec3(0.0, 0.0, 100.0f);
-	mCenter = vec3(0);
-	mCam.lookAt(mEye, mCenter);
+	
+	mWorld.camera = unique_ptr<CameraPersp>(new CameraPersp(getWindowWidth(), getWindowHeight(), 50));
+	mWorld.camera->setPerspective(60.0f, getWindowAspectRatio(), 1.0f, 3000.0f);
+	mWorld.camera->lookAt(vec3(0.0, 0.0, 100.0f), vec3(0));
 
 	vec2 paramsSize = vec2(255, 512);
 	mCurrentVisOption = 0;
@@ -80,33 +73,35 @@ void AVSynApp::setup()
 
 	getWindowIndex(0)->getRenderer()->makeCurrentContext();
 
-	mAudioSource = new AudioSource();
-	mDeltaSource = new DeltaSource();
-	mBeatDetector = new BeatDetector(mAudioSource);
-	mAudioSource->setup();
+	mWorld.audioSource = unique_ptr<AudioSource>(new AudioSource());
+	mWorld.deltaSource = unique_ptr<DeltaSource>(new DeltaSource());
+	mWorld.beatDetector = unique_ptr<BeatDetector>(new BeatDetector());
+	mWorld.audioSource->setup();
+	mWorld.windowSize = getWindowIndex(0)->getSize();
+	mWorld.bounds = getWindowIndex(0)->getBounds();
 
 	AudioShaderVisualization *simpleVis = new AudioShaderVisualization();
-	simpleVis->setup(mAudioSource, "simple.frag");
+	simpleVis->setup("simple.frag");
 	mVisualizations.insert(make_pair("Simple", simpleVis));
 	mVisualizationOptions.push_back("Simple");
 
 	AudioShaderVisualization *circularVis = new AudioShaderVisualization();
-	circularVis->setup(mAudioSource, "circular_fft.frag");
+	circularVis->setup("circular_fft.frag");
 	mVisualizations.insert(make_pair("Circular", circularVis));
 	mVisualizationOptions.push_back("Circular");
 
 	auto *flocking = new FlockingVisualization();
-	flocking->setup(mAudioSource, mDeltaSource, mBeatDetector);
+	flocking->setup();
 	mVisualizations.insert(make_pair("Flocking", flocking));
 	mVisualizationOptions.push_back("Flocking");
 
 	auto *dotsVis = new DotsVisualization();
-	dotsVis->setup(mAudioSource, mBeatDetector);
+	dotsVis->setup();
 	mVisualizations.insert(make_pair("Dots", dotsVis));
 	mVisualizationOptions.push_back("Dots");
 
 	auto *eqPointCloud = new EQPointCloud();
-	eqPointCloud->setup(mAudioSource);
+	eqPointCloud->setup();
 	mVisualizations.insert(make_pair("EQPointCloud", eqPointCloud));
 	mVisualizationOptions.push_back("EQPointCloud");
 
@@ -116,7 +111,7 @@ void AVSynApp::setup()
 	//mVisualizationOptions.push_back("Trees");
 
 	auto *fluid = new Fluid();
-	fluid->setup(mAudioSource, mBeatDetector);
+	fluid->setup();
 	mVisualizations.insert(make_pair("Fluid", fluid));
 	mVisualizationOptions.push_back("Fluid");
 
@@ -126,17 +121,17 @@ void AVSynApp::setup()
 	//mVisualizationOptions.push_back("Kick Change Image");
 
 	auto *bufferVis = new Feedback();
-	bufferVis->setup(mAudioSource, "Feedback/buffer.frag");
+	bufferVis->setup("Feedback/buffer.frag");
 	mVisualizations.insert(make_pair("Buffer", bufferVis));
 	mVisualizationOptions.push_back("Buffer");
 
 	auto *rotateVis = new Feedback();
-	rotateVis->setup(mAudioSource, "Feedback/rotate.frag");
+	rotateVis->setup("Feedback/rotate.frag");
 	mVisualizations.insert(make_pair("Rotate", rotateVis));
 	mVisualizationOptions.push_back("Rotate");
 
 	auto *lightsVis = new Lights();
-	lightsVis->setup(mAudioSource);
+	lightsVis->setup();
 	mVisualizations.insert(make_pair("Lights", lightsVis));
 	mVisualizationOptions.push_back("Lights");
 
@@ -153,7 +148,6 @@ void AVSynApp::setup()
 	mCurrentVisOption = mVisualizations.size() - 1;
 	mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
 	
-	mVisualization->switchCamera(&mCam);
 	mVisualization->switchParams(mParams, "Main");
 
 	mParams->addParam("Visualizations", mVisualizationOptions, 
@@ -161,7 +155,6 @@ void AVSynApp::setup()
 			mVisualization->resetParams(mParams);
 			mCurrentVisOption = ind;
 			mVisualization = mVisualizations[mVisualizationOptions[mCurrentVisOption]];
-			mVisualization->switchCamera(&mCam);
 			mVisualization->switchParams(mParams, "Main");
 		},
 		[=]() {
@@ -181,24 +174,15 @@ void AVSynApp::keyDown(KeyEvent event) {
 void AVSynApp::update()
 {
 	getWindowIndex(0)->getRenderer()->makeCurrentContext();
-	mDeltaSource->update();
-	mVisualization->update();
+	mWorld.deltaSource->update();
+	mVisualization->update(mWorld);
 }
 
 void AVSynApp::drawRender()
 {
 	gl::clear( Color( 0, 0, 0 ) ); 
-	if (mVisualization->perspective()) {
-		gl::setMatrices(mCam);
-		gl::rotate(mSceneRotation);
-		gl::enableDepthRead();
-		gl::enableDepthWrite();
-	}
-	else {
-		gl::setMatricesWindow(getWindowSize());
-	}
 
-	mVisualization->draw();
+	mVisualization->draw(mWorld);
 
 	if (mSaveFrames) {
 		writeImage(app::getAppPath().generic_string() + "\\save scene\\image_" + to_string(app::getElapsedFrames()) + ".png", copyWindowSurface());

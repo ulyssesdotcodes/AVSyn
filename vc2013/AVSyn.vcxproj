@@ -202,6 +202,7 @@
     <ClCompile Include="..\src\AudioSource.cpp" />
     <ClCompile Include="..\src\AVSynApp.cpp" />
     <ClCompile Include="..\src\BeatDetector.cpp" />
+    <ClCompile Include="..\src\ChoiceVisualization.cpp" />
     <ClCompile Include="..\src\DeltaSource.cpp" />
     <ClCompile Include="..\src\Feedback.cpp" />
     <ClCompile Include="..\src\DotsVisualization.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="..\src\AudioShaderVisualization.h" />
     <ClInclude Include="..\src\AudioSource.h" />
     <ClInclude Include="..\src\BeatDetector.h" />
+    <ClInclude Include="..\src\ChoiceVisualization.h" />
     <ClInclude Include="..\src\DeltaSource.h" />
     <ClInclude Include="..\src\Feedback.h" />
     <ClInclude Include="..\src\DotsVisualization.h" />
@@ -234,6 +236,7 @@
     <ClInclude Include="..\src\TreeVisualization.h" />
     <ClInclude Include="..\src\Video.h" />
     <ClInclude Include="..\src\Visualization.h" />
+    <ClInclude Include="..\src\World.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\assets\circular_fft.frag" />

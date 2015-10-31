@@ -8,10 +8,8 @@ using namespace ci;
 class Mix : public Visualization {
 public:
 	void setup(map<string, Visualization*> visualizations, vector<string> visualizationOptions);
-	virtual void update() override;
-	virtual void draw() override;
-	virtual bool perspective() override;
-	virtual void switchCamera(ci::CameraPersp * cam) override;
+	virtual void update(const World& world) override;
+	virtual void draw(const World& world) override;
 	virtual void switchParams(ci::params::InterfaceGlRef params, const string &group) override;
 	virtual void setBaseVisualization(const string &visualization);
 

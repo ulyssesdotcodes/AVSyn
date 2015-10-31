@@ -6,8 +6,7 @@ using namespace ci;
 
 const float VOLUME_MIN = 0.001;
 
-BeatDetector::BeatDetector(AudioSource* audioSource) {
-	mAudioSource = audioSource;
+BeatDetector::BeatDetector() {
 	mBeat = 0;
 	mEnergyIndex = 0;
 	mDeterioration = 0;
@@ -18,8 +17,8 @@ BeatDetector::BeatDetector(AudioSource* audioSource) {
 	}
 }
 
-void BeatDetector::update(float c) {
-	if (mAudioSource->getVolume() < VOLUME_MIN) {
+void BeatDetector::update(const World& world, float c) {
+	if (world.audioSource->getVolume() < VOLUME_MIN) {
 		mBeat -= mDeterioration;
 		mBeat = math<float>::max(mBeat, 0.0);
 		return;
@@ -37,8 +36,8 @@ void BeatDetector::update(float c) {
 	int startBucketIndex = 0;
 	int bucketSize = 1;
 	int i = 0;
-	mAudioSource->update();
-	vector<float> spectrum = mAudioSource->getMagSpectrum();
+	world.audioSource->update();
+	vector<float> spectrum = world.audioSource->getMagSpectrum();
 	while (j < BUCKETS) {
 		sum[j] += spectrum[i] / bucketSize;
 		i++;
@@ -76,7 +75,6 @@ void BeatDetector::update(float c) {
 		mBeat -= mDeterioration;
 		mBeat = math<float>::max(mBeat, 0.0);
 	}
-
 }
 
 float BeatDetector::getBeat() {

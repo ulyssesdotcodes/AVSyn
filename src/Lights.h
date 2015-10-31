@@ -7,13 +7,12 @@
 class Lights : public ShaderVisualization
 {
 public:
-	void setup(AudioSource* audioSource);
-	virtual void update() override;
-	virtual void draw() override;
+	void setup();
+	virtual void update(const World& world) override;
+	virtual void draw(const World& world) override;
 	void switchParams(params::InterfaceGlRef params, const string &group);
 
 private:
-	AudioSource* mAudioSource;
 	gl::TextureRef mTexture;
 
 	PingPongFBO mFbo;

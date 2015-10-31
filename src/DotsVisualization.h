@@ -11,19 +11,16 @@ const int BIN_COUNT = 4;
 class DotsVisualization : public ShaderVisualization {
 public:
 	//! Setup both the audio source and a beat detector.
-	void setup(AudioSource* audioSource, BeatDetector* beatDetector);
+	void setup();
 
 protected:
 	//! Update the beat detector, grab eq values for the audio spectrum, and update the shader uniforms appropriately.
-	virtual void renderUniforms() override;
+	virtual void renderUniforms(const World& world) override;
 
 	//! Control hue and loudness
 	virtual void switchParams(params::InterfaceGlRef params, const string &group) override;
 
 private:
-	AudioSource* mAudioSource;
-	BeatDetector* mBeatDetector;
-
 	array<float, BIN_COUNT> mEqs;
 
 	float mAccumulatedLoudness;
