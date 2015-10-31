@@ -25,7 +25,6 @@ private:
 	audio::MonitorSpectralNodeRef mMonitor;
 
 	vector<float>  mSpectrum;
-	audio::Buffer  mBuffer;
 
 	int mLastUpdateFrame;
 	float mAccumulatedSound;

@@ -37,6 +37,7 @@ void AudioShaderVisualization::switchParams(params::InterfaceGlRef params, const
 
 void AudioShaderVisualization::update(const World& world)
 {
+	world.audioSource->update();
 	mTexture = world.audioSource->getMagSpectrumTexture();
 
 	mHue = glm::fract(mHue + mCycleHueSpeed);

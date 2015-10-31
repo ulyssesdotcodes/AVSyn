@@ -33,29 +33,30 @@ void AudioSource::setup() {
 }
 
 void AudioSource::update() {
+}
+
+vector<float> AudioSource::getMagSpectrum() {
+	// Cache spectrum to avoid recalculating it
 	int frame = app::getElapsedFrames();
 	if (frame <= mLastUpdateFrame) {
-		return;
+		return mSpectrum;
 	}
+	mLastUpdateFrame = frame;
 
 	vector<float> scaledSpectrum = mMonitor->getMagSpectrum();
 	for (int i = 0; i < scaledSpectrum.size(); ++i) {
 		scaledSpectrum[i] = audio::linearToDecibel(scaledSpectrum[i]) / 100.0f;
 	}
 	mSpectrum = scaledSpectrum;
-	mBuffer = mMonitor->getBuffer();
 
-	mLastUpdateFrame = frame;
 	mAccumulatedSound += getVolume();
-}
 
-vector<float> AudioSource::getMagSpectrum() {
 	return mSpectrum;
 }
 
 gl::TextureRef AudioSource::getMagSpectrumTexture() {
 	float spectrum[1024 * 4];
-	vector<float> spectrumVec = mSpectrum;
+	vector<float> spectrumVec = getMagSpectrum();
 
 	for (vector<float>::size_type i = 0; i < spectrumVec.size(); i++) {
 		spectrum[i * 4] = spectrumVec[i];
@@ -68,7 +69,7 @@ gl::TextureRef AudioSource::getMagSpectrumTexture() {
 }
 
 float AudioSource::getHighestVolumePos() {
-	vector<float> spectrumVec = mSpectrum;
+	vector<float> spectrumVec = getMagSpectrum();
 
 	float max = 0;
 	float size = spectrumVec.size() / 3;
@@ -99,7 +100,7 @@ vector<float> AudioSource::getEqs(int binCount) {
 
 vector<float> AudioSource::getEqs(int binCount, float scale)
 {
-	vector<float> buffer = mSpectrum;
+	vector<float> buffer = getMagSpectrum();
 	vector<float> bins(binCount);
 	int binSize = buffer.size() * 0.5 / binCount;
 
