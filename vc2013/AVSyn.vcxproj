@@ -205,6 +205,7 @@
     <ClCompile Include="..\src\BlankVisualization.cpp" />
     <ClCompile Include="..\src\ChoiceVisualization.cpp" />
     <ClCompile Include="..\src\DeltaSource.cpp" />
+    <ClCompile Include="..\src\FadeTransition.cpp" />
     <ClCompile Include="..\src\Feedback.cpp" />
     <ClCompile Include="..\src\DotsVisualization.cpp" />
     <ClCompile Include="..\src\EQPointCloud.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="..\src\BlankVisualization.h" />
     <ClInclude Include="..\src\ChoiceVisualization.h" />
     <ClInclude Include="..\src\DeltaSource.h" />
+    <ClInclude Include="..\src\FadeTransition.h" />
     <ClInclude Include="..\src\Feedback.h" />
     <ClInclude Include="..\src\DotsVisualization.h" />
     <ClInclude Include="..\src\EQPointCloud.h" />

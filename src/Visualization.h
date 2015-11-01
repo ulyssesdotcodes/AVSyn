@@ -9,6 +9,8 @@
 
 using namespace std;
 
+typedef shared_ptr<class Visualization> VisualizationRef;
+
 /*
   The base Visualiation intended to be extended.
 */

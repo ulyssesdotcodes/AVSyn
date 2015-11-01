@@ -33,7 +33,6 @@ void DotsVisualization::renderUniforms(const World& world)
 		}
 	}
 
-
 	mShader->uniform("i_eqs", &mEqs[0], BIN_COUNT);
 	mShader->uniform("i_accumulatedLoudness", mAccumulatedLoudness);
 	mShader->uniform("i_hue", mHue);

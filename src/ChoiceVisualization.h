@@ -1,5 +1,6 @@
 #pragma once
 
+#include "FadeTransition.h"
 #include "Visualization.h"
 
 class ChoiceVisualization : public Visualization
@@ -21,4 +22,7 @@ private:
 	vector<string> mVisualizationNames;
 	shared_ptr<Visualization> mVisualization;
 	int mVisualizationIndex;
+
+	bool mFade;
+	unique_ptr<FadeTransition> mFadeTransition;
 };
