@@ -8,7 +8,7 @@
 class AudioShaderVisualization : public ShaderVisualization {
 public:
 	//! Setup with an audio source and an audio fragment shader
-	void setup(const fs::path &fragmentShader);
+	AudioShaderVisualization(const fs::path &fragmentShader);
 	//! Update the audio source and texture
 	virtual void update(const World& world) override;
 	//! Set the texture as a uniform and draw the shader.

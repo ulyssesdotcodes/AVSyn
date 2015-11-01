@@ -202,6 +202,7 @@
     <ClCompile Include="..\src\AudioSource.cpp" />
     <ClCompile Include="..\src\AVSynApp.cpp" />
     <ClCompile Include="..\src\BeatDetector.cpp" />
+    <ClCompile Include="..\src\BlankVisualization.cpp" />
     <ClCompile Include="..\src\ChoiceVisualization.cpp" />
     <ClCompile Include="..\src\DeltaSource.cpp" />
     <ClCompile Include="..\src\Feedback.cpp" />
@@ -222,6 +223,7 @@
     <ClInclude Include="..\src\AudioShaderVisualization.h" />
     <ClInclude Include="..\src\AudioSource.h" />
     <ClInclude Include="..\src\BeatDetector.h" />
+    <ClInclude Include="..\src\BlankVisualization.h" />
     <ClInclude Include="..\src\ChoiceVisualization.h" />
     <ClInclude Include="..\src\DeltaSource.h" />
     <ClInclude Include="..\src\Feedback.h" />

@@ -1,6 +1,6 @@
 #include "ChoiceVisualization.h"
 
-void ChoiceVisualization::setup(map<string, shared_ptr<Visualization>> visualizations)
+ChoiceVisualization::ChoiceVisualization(map<string, shared_ptr<Visualization>> visualizations)
 {
 	mVisualizations = visualizations;
 	for (map<string, shared_ptr<Visualization>>::iterator it = mVisualizations.begin(); it != mVisualizations.end(); ++it) {

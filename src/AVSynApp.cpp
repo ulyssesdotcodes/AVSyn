@@ -8,6 +8,7 @@
 #include "cinder/params/Params.h"
 
 #include "AudioShaderVisualization.h"
+#include "BlankVisualization.h"
 #include "ChoiceVisualization.h"
 #include "DotsVisualization.h"
 #include "EQPointCloud.h"
@@ -44,7 +45,7 @@ private:
 	WindowRef mParamWindow;
 	params::InterfaceGlRef mParams;
 
-	ChoiceVisualization mMainVisualization;
+	unique_ptr<ChoiceVisualization> mMainVisualization;
 };
 
 void AVSynApp::setup()
@@ -76,12 +77,13 @@ void AVSynApp::setup()
 	// Create visualizations list
 	map<string, shared_ptr<Visualization>> visualizations;
 
-	auto simpleVis = make_shared<AudioShaderVisualization>();
-	simpleVis->setup("simple.frag");
+	auto blank = make_shared<BlankVisualization>();
+	visualizations.insert(make_pair("Blank", blank));
+
+	auto simpleVis = make_shared<AudioShaderVisualization>("simple.frag");
 	visualizations.insert(make_pair("Simple", simpleVis));
 
-	auto circularVis = make_shared<AudioShaderVisualization>();
-	circularVis->setup("circular_fft.frag");
+	auto circularVis = make_shared<AudioShaderVisualization>("circular_fft.frag");
 	visualizations.insert(make_pair("Circular", circularVis));
 
 	auto flocking = make_shared<FlockingVisualization>();
@@ -130,10 +132,9 @@ void AVSynApp::setup()
 	mix->setup(visualizations);
 	visualizations.insert(make_pair("Mix", mix));
 
-	mMainVisualization = ChoiceVisualization();
-	mMainVisualization.setup(visualizations);
-	mMainVisualization.switchParams(mParams, "Main");
-	
+	mMainVisualization = make_unique<ChoiceVisualization>(visualizations);
+	mMainVisualization->switchParams(mParams, "Main");
+
 	// Setup rendering!
 	getWindowIndex(0)->getSignalDraw().connect([=]() { drawRender(); });
 }
@@ -148,14 +149,14 @@ void AVSynApp::update()
 {
 	getWindowIndex(0)->getRenderer()->makeCurrentContext();
 	mWorld.deltaSource->update();
-	mMainVisualization.update(mWorld);
+	mMainVisualization->update(mWorld);
 }
 
 void AVSynApp::drawRender()
 {
 	gl::clear( Color( 0, 0, 0 ) ); 
 
-	mMainVisualization.draw(mWorld);
+	mMainVisualization->draw(mWorld);
 }
 
 void AVSynApp::drawParams()
