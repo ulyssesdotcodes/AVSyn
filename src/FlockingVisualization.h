@@ -12,8 +12,6 @@
 class FlockingVisualization : public Visualization {
 public:
 	FlockingVisualization();
-	//! Setup the various sources and buffers needed for the simulation
-	void setup();
 	//! Update the position and velocity of each vertex. Also pass in the current values as textures to allow cross-vertex interaction.
 	virtual void update(const World& world) override;
 	//! Render the particles based on the positions calculated in update.

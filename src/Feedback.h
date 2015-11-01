@@ -5,7 +5,7 @@
 
 class Feedback : public ShaderVisualization {
 public:
-	void setup(const string &fragment);
+	Feedback(const string &fragment);
 	virtual void update(const World& world) override;
 	virtual void draw(const World& world) override;
 	void switchParams(params::InterfaceGlRef params, const string &group);

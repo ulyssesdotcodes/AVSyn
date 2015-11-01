@@ -2,7 +2,7 @@
 
 #include "cinder\Rand.h"
 
-void TreeVisualization::setup()
+TreeVisualization::TreeVisualization()
 {
 	mRotationSpeed = 1.0;
 	mGrowth = 3;

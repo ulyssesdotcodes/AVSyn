@@ -6,10 +6,8 @@ using namespace std;
 
 const float DAMPING = 0.1;
 
-void DotsVisualization::setup()
+DotsVisualization::DotsVisualization() : ShaderVisualization("dots.frag")
 {
-	ShaderVisualization::setup("dots.frag");
-
 	mLoudness = 1.0;
 	mHue = 0.0;
 	mAccumulatedLoudness = 0.0f;

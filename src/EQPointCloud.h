@@ -19,7 +19,7 @@ class EQPointCloud : public Visualization {
 
 public:
 	//! Create the particle buffer and shader program
-	virtual void setup();
+	EQPointCloud();
 	//! Update the three eq particles and the uniforms associated with eqs.
 	virtual void update(const World& world);
 	//! Draw the particles

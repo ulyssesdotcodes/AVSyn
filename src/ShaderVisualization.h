@@ -11,9 +11,8 @@ using namespace ci;
 */
 class ShaderVisualization : public Visualization {
 public:
-	ShaderVisualization();
 	//! Setup the fragment shader program.
-	void setup(const fs::path &fragmentShader);
+	ShaderVisualization(const fs::path &fragmentShader);
 
 	//! Nullops
 	virtual void update(const World& world) override;

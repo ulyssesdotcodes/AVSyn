@@ -3,9 +3,8 @@
 #include "cinder\gl\gl.h"
 #include "cinder\app\App.h"
 
-AudioShaderVisualization::AudioShaderVisualization(const fs::path &fragmentShader)
+AudioShaderVisualization::AudioShaderVisualization(const fs::path &fragmentShader) : ShaderVisualization(fragmentShader)
 {
-	ShaderVisualization::setup(fragmentShader);
 	mHue = 0;
 	mCycleHueSpeed = 0.0;
 	mVolume = 1.0;

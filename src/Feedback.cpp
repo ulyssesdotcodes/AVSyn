@@ -1,10 +1,8 @@
 #include "Feedback.h"
 #include "cinder\app\App.h"
 
-void Feedback::setup(const string &fragment)
+Feedback::Feedback(const string &fragment) : ShaderVisualization("texture.frag")
 {
-	ShaderVisualization::setup("texture.frag");
-
 	mFade = 0.95;
 	mLastTime = 0;
 

@@ -17,7 +17,7 @@ class Video : public Visualization
 {
 public: 
 	//! Setup the video
-	void setup(const fs::path &moviePath);
+	Video(const fs::path &moviePath);
 
 	//! Perform all computations for the visualization.
 	virtual void update(const World& world);

@@ -7,7 +7,7 @@ const int PRESSURE_POINTER = 1;
 const int SMOKE_POINTER = 2;
 const int ADVECT_POINTER = 3;
 
-void Fluid::setup()
+Fluid::Fluid()
 {
 	mLastTime = 0;
 	mSmokePos = vec2(0.2, 0.8);

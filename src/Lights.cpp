@@ -3,10 +3,8 @@
 #include "cinder\Rand.h"
 #include "cinder\app\App.h"
 
-void Lights::setup()
+Lights::Lights() : ShaderVisualization("texture.frag")
 {
-	ShaderVisualization::setup("texture.frag");
-
 	mFade = 0.9;
 
 	mResolution = app::getWindowIndex(0)->getSize();

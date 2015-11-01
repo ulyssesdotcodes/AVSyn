@@ -7,7 +7,7 @@
 class Lights : public ShaderVisualization
 {
 public:
-	void setup();
+	Lights();
 	virtual void update(const World& world) override;
 	virtual void draw(const World& world) override;
 	void switchParams(params::InterfaceGlRef params, const string &group);

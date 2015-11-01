@@ -12,7 +12,7 @@ using namespace ci;
 
 class Fluid : public Visualization {
 public:
-	virtual void setup();
+	Fluid();
 	virtual void update(const World& world) override;
 	virtual void draw(const World& world) override;
 	virtual void switchParams(params::InterfaceGlRef params, const string &group) override;

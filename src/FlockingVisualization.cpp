@@ -30,10 +30,7 @@ FlockingVisualization::FlockingVisualization()
 	mSaturation = 1.0;
 
 	mSeparateOnly = false;
-}
 
-void FlockingVisualization::setup()
-{
 	mStep = true;
 	mIteratonIndex = 0;
 

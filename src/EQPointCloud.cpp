@@ -14,7 +14,7 @@ const int SIZE = 64;
 const float DAMPING = 0.1;
 const float ROTATION_DAMP = 0.1;
 
-void EQPointCloud::setup()
+EQPointCloud::EQPointCloud()
 {
 	mLoudness = 0.25;
 	mRotationSpeed = 1.0;

@@ -87,15 +87,12 @@ void AVSynApp::setup()
 	visualizations.insert(make_pair("Circular", circularVis));
 
 	auto flocking = make_shared<FlockingVisualization>();
-	flocking->setup();
 	visualizations.insert(make_pair("Flocking", flocking));
 
 	auto dotsVis = make_shared<DotsVisualization>();
-	dotsVis->setup();
 	visualizations.insert(make_pair("Dots", dotsVis));
 
 	auto eqPointCloud = make_shared<EQPointCloud>();
-	eqPointCloud->setup();
 	visualizations.insert(make_pair("EQPointCloud", eqPointCloud));
 
 	//auto *trees = new TreeVisualization();
@@ -104,7 +101,6 @@ void AVSynApp::setup()
 	//mVisualizationOptions.push_back("Trees");
 
 	auto fluid = make_shared<Fluid>();
-	fluid->setup();
 	visualizations.insert(make_pair("Fluid", fluid));
 
 	//auto *kickChangeImage = new KinectParticles();
@@ -112,24 +108,19 @@ void AVSynApp::setup()
 	//mVisualizations.insert(make_pair("Kick Change Image", kickChangeImage));
 	//mVisualizationOptions.push_back("Kick Change Image");
 
-	auto bufferVis = make_shared<Feedback>();
-	bufferVis->setup("Feedback/buffer.frag");
+	auto bufferVis = make_shared<Feedback>("Feedback/buffer.frag");
 	visualizations.insert(make_pair("Buffer", bufferVis));
 
-	auto rotateVis = make_shared<Feedback>();
-	rotateVis->setup("Feedback/rotate.frag");
+	auto rotateVis = make_shared<Feedback>("Feedback/rotate.frag");
 	visualizations.insert(make_pair("Rotate", rotateVis));
 
 	auto lightsVis = make_shared<Lights>();
-	lightsVis->setup();
 	visualizations.insert(make_pair("Lights", lightsVis));
 
-	auto wheatFields = make_shared<Video>();
-	wheatFields->setup("Wheat Field.mov");
+	auto wheatFields = make_shared<Video>("Wheat Field.mov");
 	visualizations.insert(make_pair("Wheat Fields", wheatFields));
 
-	auto mix = make_shared<Mix>();
-	mix->setup(visualizations);
+	auto mix = make_shared<Mix>(visualizations);
 	visualizations.insert(make_pair("Mix", mix));
 
 	mMainVisualization = make_unique<ChoiceVisualization>(visualizations);

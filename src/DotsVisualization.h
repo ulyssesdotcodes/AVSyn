@@ -11,7 +11,7 @@ const int BIN_COUNT = 4;
 class DotsVisualization : public ShaderVisualization {
 public:
 	//! Setup both the audio source and a beat detector.
-	void setup();
+	DotsVisualization();
 
 protected:
 	//! Update the beat detector, grab eq values for the audio spectrum, and update the shader uniforms appropriately.

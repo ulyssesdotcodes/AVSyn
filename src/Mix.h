@@ -7,7 +7,7 @@ using namespace ci;
 
 class Mix : public Visualization {
 public:
-	void setup(map<string, shared_ptr<Visualization>> visualizations);
+	Mix(map<string, shared_ptr<Visualization>> visualizations);
 	virtual void update(const World& world) override;
 	virtual void draw(const World& world) override;
 	virtual void switchParams(ci::params::InterfaceGlRef params, const string &group) override;

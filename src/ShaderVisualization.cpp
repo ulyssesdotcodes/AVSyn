@@ -2,11 +2,7 @@
 #include "AudioSource.h"
 #include "cinder\app\App.h"
 
-ShaderVisualization::ShaderVisualization()
-{
-}
-
-void ShaderVisualization::setup(const fs::path &fragmentShader ) 
+ShaderVisualization::ShaderVisualization(const fs::path &fragmentShader )
 {
 	mShader = gl::GlslProg::create(app::loadAsset("passthru.vert"), app::loadAsset(fragmentShader));
 

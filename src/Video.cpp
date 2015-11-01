@@ -1,6 +1,6 @@
 #include "Video.h"
 
-void Video::setup(const fs::path &moviePath)
+Video::Video(const fs::path &moviePath)
 {
 	mMovie = qtime::MovieGl::create(app::loadAsset(moviePath));
 	mMovie->setLoop();

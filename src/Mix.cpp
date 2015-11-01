@@ -1,7 +1,7 @@
 #include "Mix.h"
 #include "cinder\app\App.h"
 
-void Mix::setup(map<string, shared_ptr<Visualization>> visualizations)
+Mix::Mix(map<string, shared_ptr<Visualization>> visualizations)
 {
 	mVisualizations = visualizations;
 	for (map<string, shared_ptr<Visualization>>::iterator it = mVisualizations.begin(); it != mVisualizations.end(); ++it) {

@@ -47,7 +47,7 @@ struct Gen {
 class TreeVisualization: public Visualization {
 public:
 	//! Setup the sources and the transforms needed for displaying the L systems.
-	void setup();
+	TreeVisualization();
 	//! Run a number of commands based on growth and beat
 	void update(const World& world) override;
 	//! Draw mPositions with mColors
