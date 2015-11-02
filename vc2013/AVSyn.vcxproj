@@ -210,7 +210,7 @@
     <ClCompile Include="..\src\DotsVisualization.cpp" />
     <ClCompile Include="..\src\EQPointCloud.cpp" />
     <ClCompile Include="..\src\FlockingVisualization.cpp" />
-    <ClCompile Include="..\src\Fluid.cpp" />
+    <ClCompile Include="..\src\FluidVisualizer.cpp" />
     <ClCompile Include="..\src\Lights.cpp" />
     <ClCompile Include="..\src\Mix.cpp" />
     <ClCompile Include="..\src\PingPongFBO.cpp" />
@@ -232,7 +232,7 @@
     <ClInclude Include="..\src\DotsVisualization.h" />
     <ClInclude Include="..\src\EQPointCloud.h" />
     <ClInclude Include="..\src\FlockingVisualization.h" />
-    <ClInclude Include="..\src\Fluid.h" />
+    <ClInclude Include="..\src\FluidVisualizer.h" />
     <ClInclude Include="..\src\Lights.h" />
     <ClInclude Include="..\src\Mix.h" />
     <ClInclude Include="..\src\PingPongFBO.h" />

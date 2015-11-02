@@ -1,13 +1,14 @@
-#include "Fluid.h"
 #include "cinder\app\App.h"
 #include "cinder\Rand.h"
+
+#include "FluidVisualizer.h"
 
 const int VELOCITY_POINTER = 0;
 const int PRESSURE_POINTER = 1;
 const int SMOKE_POINTER = 2;
 const int ADVECT_POINTER = 3;
 
-Fluid::Fluid()
+FluidVisualizer::FluidVisualizer()
 {
 	mLastTime = 0;
 	mSmokePos = vec2(0.2, 0.8);
@@ -17,7 +18,6 @@ Fluid::Fluid()
 	mSpeed = 1.0;
 	mFlipVelocity = false;
 	mSaturation = 0.5;
-
 
 	//Setup shaders
 	mWindowResolution = vec2(app::getWindowIndex(0)->getWidth(), app::getWindowIndex(0)->getHeight());
@@ -83,7 +83,7 @@ Fluid::Fluid()
 	mPressureFBO = PingPongFBO(fmtRG, mFluidResolution, 2);
 }
 
-void Fluid::update(const World& world)
+void FluidVisualizer::update(const World& world)
 {
 	float time = app::getElapsedSeconds();
 	float dt = time - mLastTime;
@@ -110,7 +110,7 @@ void Fluid::update(const World& world)
 	advectSmoke(world, dt, time);
 }
 
-void Fluid::draw(const World& world)
+void FluidVisualizer::draw(const World& world)
 {
 	gl::setMatricesWindow(world.windowSize);
 
@@ -123,7 +123,7 @@ void Fluid::draw(const World& world)
 	gl::drawSolidRect(world.bounds);
 }
 
-void Fluid::switchParams(params::InterfaceGlRef params, const string &group)
+void FluidVisualizer::switchParams(params::InterfaceGlRef params, const string &group)
 {
 	addParamName(group + "/Volume");
 	params->addParam(group + "/Volume", &mVolume)
@@ -150,7 +150,7 @@ void Fluid::switchParams(params::InterfaceGlRef params, const string &group)
 	params->addParam(group + "/Flip Velocity", &mFlipVelocity);
 }
 
-void Fluid::advectVelocity(float dt)
+void FluidVisualizer::advectVelocity(float dt)
 {
 	mAdvectShader->uniform("boundaryConditions", true);
 	mAdvectShader->uniform("target_resolution", mFluidResolution);
@@ -161,7 +161,7 @@ void Fluid::advectVelocity(float dt)
 	advect(dt, &mVelocityFBO, &mVelocityFBO);
 }
 
-void Fluid::advectSmoke(const World& world, float dt, float time) 
+void FluidVisualizer::advectSmoke(const World& world, float dt, float time) 
 {
 	// Create new smoke
 	{
@@ -184,7 +184,7 @@ void Fluid::advectSmoke(const World& world, float dt, float time)
 	advect(dt, &mVelocityFBO, &mSmokeFBO);
 }
 
-void Fluid::advect(float dt, PingPongFBO *velocity, PingPongFBO *target) {
+void FluidVisualizer::advect(float dt, PingPongFBO *velocity, PingPongFBO *target) {
 	{
 		mAdvectShader->uniform("dt", dt);
 		gl::ScopedTextureBind scopeVel(velocity->getTexture(), VELOCITY_POINTER);
@@ -224,7 +224,7 @@ void Fluid::advect(float dt, PingPongFBO *velocity, PingPongFBO *target) {
 	}
 }
 
-void Fluid::applyForce(const World& world, float dt)
+void FluidVisualizer::applyForce(const World& world, float dt)
 {
 	mForcesShader->uniform("dt", dt);
 	mForcesShader->uniform("time", mLastTime);
@@ -236,7 +236,7 @@ void Fluid::applyForce(const World& world, float dt)
 	mVelocityFBO.render(mForcesShader);
 }
 
-void Fluid::computeDivergence()
+void FluidVisualizer::computeDivergence()
 {
 	gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
 	mDivergenceShader->uniform("tex_velocity", VELOCITY_POINTER);
@@ -246,7 +246,7 @@ void Fluid::computeDivergence()
 	mPressureFBO.render(mDivergenceShader);
 }
 
-void Fluid::solvePressure()
+void FluidVisualizer::solvePressure()
 {
 	for (int i = 0; i < 40; ++i) {
 		gl::ScopedTextureBind scopePressure(mPressureFBO.getTexture(), PRESSURE_POINTER);
@@ -255,7 +255,7 @@ void Fluid::solvePressure()
 	}
 }
 
-void Fluid::subtractPressure()
+void FluidVisualizer::subtractPressure()
 {
 	gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
 	mSubtractPressureShader->uniform("tex_velocity", VELOCITY_POINTER);
@@ -265,7 +265,7 @@ void Fluid::subtractPressure()
 	mVelocityFBO.render(mSubtractPressureShader);
 }
 
-void Fluid::updateSmokePos(const World& world, float time, float dt) {
+void FluidVisualizer::updateSmokePos(const World& world, float time, float dt) {
 	vector<float> audiovel = world.audioSource->getEqs(4);
 	vec2 newVel = vec2(pow(audiovel[0], 1.5) - pow(audiovel[2], 1), pow(audiovel[1], 1.2) - pow(audiovel[3], 0.8));
 	newVel = newVel * vec2(0.5) + vec2(0.5) * newVel * world.beatDetector->getBeat();

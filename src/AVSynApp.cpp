@@ -14,7 +14,7 @@
 #include "EQPointCloud.h"
 #include "Feedback.h"
 #include "FlockingVisualization.h"
-#include "Fluid.h"
+#include "FluidVisualizer.h"
 #include "Lights.h"
 #include "Mix.h"
 #include "ShaderVisualization.h"
@@ -100,7 +100,7 @@ void AVSynApp::setup()
 	//mVisualizations.insert(make_pair("Trees", trees));
 	//mVisualizationOptions.push_back("Trees");
 
-	auto fluid = make_shared<Fluid>();
+	auto fluid = make_shared<FluidVisualizer>();
 	visualizations.insert(make_pair("Fluid", fluid));
 
 	//auto *kickChangeImage = new KinectParticles();

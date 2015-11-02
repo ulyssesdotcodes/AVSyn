@@ -10,9 +10,9 @@
 
 using namespace ci;
 
-class Fluid : public Visualization {
+class FluidVisualizer : public Visualization {
 public:
-	Fluid();
+	FluidVisualizer();
 	virtual void update(const World& world) override;
 	virtual void draw(const World& world) override;
 	virtual void switchParams(params::InterfaceGlRef params, const string &group) override;
