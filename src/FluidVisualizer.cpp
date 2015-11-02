@@ -1,7 +1,9 @@
-#include "cinder\app\App.h"
-#include "cinder\Rand.h"
-
 #include "FluidVisualizer.h"
+
+#include "cinder/app/App.h"
+#include "cinder/Rand.h"
+
+using namespace ci;
 
 const int VELOCITY_POINTER = 0;
 const int PRESSURE_POINTER = 1;
@@ -123,7 +125,7 @@ void FluidVisualizer::draw(const World& world)
 	gl::drawSolidRect(world.bounds);
 }
 
-void FluidVisualizer::switchParams(params::InterfaceGlRef params, const string &group)
+void FluidVisualizer::switchParams(params::InterfaceGlRef params, const std::string &group)
 {
 	addParamName(group + "/Volume");
 	params->addParam(group + "/Volume", &mVolume)
@@ -211,7 +213,7 @@ void FluidVisualizer::advect(float dt, PingPongFBO *velocity, PingPongFBO *targe
 		gl::ScopedTextureBind scopeVel(velocity->getTexture(), VELOCITY_POINTER);
 		mAdvectMaccormackShader->uniform("tex_velocity", VELOCITY_POINTER);
 
-		vector<gl::TextureRef> textures = target->getTextures();
+		std::vector<gl::TextureRef> textures = target->getTextures();
 		gl::ScopedTextureBind scopedPhiN(textures.at(1), 3);
 		mAdvectMaccormackShader->uniform("phi_n", 3);
 		mAdvectMaccormackShader->uniform("tex_target", 3);
@@ -266,7 +268,7 @@ void FluidVisualizer::subtractPressure()
 }
 
 void FluidVisualizer::updateSmokePos(const World& world, float time, float dt) {
-	vector<float> audiovel = world.audioSource->getEqs(4);
+	std::vector<float> audiovel = world.audioSource->getEqs(4);
 	vec2 newVel = vec2(pow(audiovel[0], 1.5) - pow(audiovel[2], 1), pow(audiovel[1], 1.2) - pow(audiovel[3], 0.8));
 	newVel = newVel * vec2(0.5) + vec2(0.5) * newVel * world.beatDetector->getBeat();
 

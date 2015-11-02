@@ -1,14 +1,13 @@
 #include "AudioSource.h"
 
-#include "cinder\audio\audio.h"
-#include "cinder\gl\gl.h"
-#include "cinder\gl\GlslProg.h"
-#include "cinder\gl\Texture.h"
-#include "cinder\app\App.h"
-#include "cinder\Rand.h"
+#include "cinder/app/App.h"
+#include "cinder/audio/audio.h"
+#include "cinder/gl/gl.h"
+#include "cinder/gl/GlslProg.h"
+#include "cinder/gl/Texture.h"
+#include "cinder/Rand.h"
 
 using namespace ci;
-using namespace std;
 
 /*
  * Note: All outputs are scaled to decibel then divided by 100.
@@ -35,7 +34,7 @@ void AudioSource::setup() {
 void AudioSource::update() {
 }
 
-vector<float> AudioSource::getMagSpectrum() {
+std::vector<float> AudioSource::getMagSpectrum() {
 	// Cache spectrum to avoid recalculating it
 	int frame = app::getElapsedFrames();
 	if (frame <= mLastUpdateFrame) {
@@ -43,7 +42,7 @@ vector<float> AudioSource::getMagSpectrum() {
 	}
 	mLastUpdateFrame = frame;
 
-	vector<float> scaledSpectrum = mMonitor->getMagSpectrum();
+	std::vector<float> scaledSpectrum = mMonitor->getMagSpectrum();
 	for (int i = 0; i < scaledSpectrum.size(); ++i) {
 		scaledSpectrum[i] = audio::linearToDecibel(scaledSpectrum[i]) / 100.0f;
 	}
@@ -56,11 +55,11 @@ vector<float> AudioSource::getMagSpectrum() {
 
 gl::TextureRef AudioSource::getMagSpectrumTexture() {
 	float spectrum[1024 * 4];
-	vector<float> spectrumVec = getMagSpectrum();
+	std::vector<float> spectrumVec = getMagSpectrum();
 	audio::Buffer buffer = mMonitor->getBuffer();
 
 
-	for (vector<float>::size_type i = 0; i < spectrumVec.size(); i++) {
+	for (std::vector<float>::size_type i = 0; i < spectrumVec.size(); i++) {
 		spectrum[i * 4] = spectrumVec[i];
 		spectrum[i * 4 + 1] = buffer.getData()[i];
 		spectrum[i * 4 + 2] = 0.0f;
@@ -71,12 +70,12 @@ gl::TextureRef AudioSource::getMagSpectrumTexture() {
 }
 
 float AudioSource::getHighestVolumePos() {
-	vector<float> spectrumVec = getMagSpectrum();
+	std::vector<float> spectrumVec = getMagSpectrum();
 
 	float max = 0;
 	float size = spectrumVec.size() / 3;
 
-	for (vector<float>::size_type i = 0; i < size; i++) {
+	for (std::vector<float>::size_type i = 0; i < size; i++) {
 		float pos = i / size;
 		if (math<float>::pow(spectrumVec[i], 1.5 * pos) > spectrumVec[max]) {
 			max = i;
@@ -96,17 +95,17 @@ float AudioSource::getAccumulatedSound()
 	return mAccumulatedSound;
 }
 
-vector<float> AudioSource::getEqs(int binCount) {
+std::vector<float> AudioSource::getEqs(int binCount) {
 	return getEqs(binCount, 1.0);
 }
 
-vector<float> AudioSource::getEqs(int binCount, float scale)
+std::vector<float> AudioSource::getEqs(int binCount, float scale)
 {
-	vector<float> buffer = getMagSpectrum();
-	vector<float> bins(binCount);
+	std::vector<float> buffer = getMagSpectrum();
+	std::vector<float> bins(binCount);
 	int binSize = buffer.size() * 0.5 / binCount;
 
-	for (vector<float>::size_type i = 0; i < buffer.size() * 0.5; i++) {
+	for (std::vector<float>::size_type i = 0; i < buffer.size() * 0.5; i++) {
 		int bin = i / binSize;
 
 		// Just discard the last one if it fits perfectly.
@@ -115,7 +114,7 @@ vector<float> AudioSource::getEqs(int binCount, float scale)
 		}
 	}
 
-	for (vector<float>::iterator it = bins.begin(); it != bins.end(); ++it) {
+	for (std::vector<float>::iterator it = bins.begin(); it != bins.end(); ++it) {
 		// 100.0f to account for linear to decibal
 		*it = *it * scale/ binSize;
 	}

@@ -1,6 +1,6 @@
-#include "cinder\app\App.h"
-
 #include "FadeTransition.h"
+
+#include "cinder/app/App.h"
 
 using namespace ci;
 

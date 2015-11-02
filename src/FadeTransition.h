@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cinder\gl\gl.h"
+#include "cinder/gl/gl.h"
 
 #include "PingPongFBO.h"
 #include "Visualization.h"
@@ -19,9 +19,9 @@ private:
 	VisualizationRef mOldVisualization,
 		mNewVisualization;
 
-	gl::GlslProgRef mMixShader;
-	gl::FboRef mOldVisFbo,
+	ci::gl::GlslProgRef mMixShader;
+	ci::gl::FboRef mOldVisFbo,
 	 mNewVisFbo;
 
-	void drawVisualization(const World& world, VisualizationRef visualization, gl::FboRef fbo);
+	void drawVisualization(const World& world, VisualizationRef visualization, ci::gl::FboRef fbo);
 };

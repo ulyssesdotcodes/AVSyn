@@ -1,21 +1,17 @@
 #pragma once
 
-#include "cinder\gl\gl.h"
-#include <vector>
-
-using namespace std;
-using namespace ci;
+#include "cinder/gl/gl.h"
 
 class PingPongFBO {
 public:
 	PingPongFBO();
-	PingPongFBO(gl::Fbo::Format fmt, vec2 size, int buffers);
-	gl::TextureRef getTexture();
-	vector<gl::TextureRef> getTextures();
-	void render(gl::GlslProgRef shader);
-	void render(gl::BatchRef batch, vec2 translate = vec2(0), Colorf color = Colorf::white());
+	PingPongFBO(ci::gl::Fbo::Format fmt, ci::vec2 size, int buffers);
+	ci::gl::TextureRef getTexture();
+	std::vector<ci::gl::TextureRef> getTextures();
+	void render(ci::gl::GlslProgRef shader);
+	void render(ci::gl::BatchRef batch, ci::vec2 translate = ci::vec2(0), ci::Colorf color = ci::Colorf::white());
 
 private:
-	vector<gl::FboRef> mFBOs;
+	std::vector<ci::gl::FboRef> mFBOs;
 	int mIteration;
 };

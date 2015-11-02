@@ -1,5 +1,7 @@
 #include "PingPongFBO.h"
 
+using namespace ci;
+
 PingPongFBO::PingPongFBO()
 {
 }
@@ -20,9 +22,9 @@ gl::TextureRef PingPongFBO::getTexture()
 	return mFBOs.at(mIteration % mFBOs.size())->getColorTexture();
 }
 
-vector<gl::TextureRef> PingPongFBO::getTextures()
+std::vector<gl::TextureRef> PingPongFBO::getTextures()
 {
-	vector<gl::TextureRef> textures;
+	std::vector<gl::TextureRef> textures;
 
 	for (int i = mIteration - mFBOs.size() + 1; i <= mIteration; ++i) {
 		textures.push_back(mFBOs.at(i % mFBOs.size())->getColorTexture());

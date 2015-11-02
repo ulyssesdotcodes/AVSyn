@@ -1,7 +1,9 @@
 #include "AudioShaderVisualization.h"
 
-#include "cinder\gl\gl.h"
-#include "cinder\app\App.h"
+#include "cinder/gl/gl.h"
+#include "cinder/app/App.h"
+
+using namespace ci;
 
 AudioShaderVisualization::AudioShaderVisualization(const fs::path &fragmentShader) : ShaderVisualization(fragmentShader)
 {
@@ -10,7 +12,7 @@ AudioShaderVisualization::AudioShaderVisualization(const fs::path &fragmentShade
 	mVolume = 1.0;
 }
 
-void AudioShaderVisualization::switchParams(params::InterfaceGlRef params, const string &group)
+void AudioShaderVisualization::switchParams(params::InterfaceGlRef params, const std::string &group)
 {
 	addParamName(group + "/Hue");
 	params->addParam(group + "/Hue", &mHue)

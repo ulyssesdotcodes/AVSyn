@@ -1,10 +1,11 @@
 #pragma once
 
-#include "cinder\gl\BufferTexture.h"
-#include "Visualization.h"
+#include "cinder/gl/BufferTexture.h"
+
 #include "AudioSource.h"
-#include "DeltaSource.h"
 #include "BeatDetector.h"
+#include "DeltaSource.h"
+#include "Visualization.h"
 
 /*
   A flocking simulation that responds to music.
@@ -17,19 +18,19 @@ public:
 	//! Render the particles based on the positions calculated in update.
 	virtual void draw(const World& world) override;
 	//! So many parameters!
-	virtual void switchParams(params::InterfaceGlRef param, const string &group) override;
+	virtual void switchParams(ci::params::InterfaceGlRef param, const std::string &group) override;
 
 private:
 	uint32_t mIteratonIndex;
 	bool mStep;
 
-	gl::GlslProgRef mUpdateShader;
-	gl::GlslProgRef mRenderShader;
+	ci::gl::GlslProgRef mUpdateShader;
+	ci::gl::GlslProgRef mRenderShader;
 
-	array<gl::VaoRef, 2> mVaos;
-	array<gl::VboRef, 2> mPositions, mVelocities, mColors;
-	array<gl::BufferTextureRef, 2> mPositionBufTex;
-	array<gl::BufferTextureRef, 2> mVelocityBufTex;
+	std::array<ci::gl::VaoRef, 2> mVaos;
+	std::array<ci::gl::VboRef, 2> mPositions, mVelocities, mColors;
+	std::array<ci::gl::BufferTextureRef, 2> mPositionBufTex;
+	std::array<ci::gl::BufferTextureRef, 2> mVelocityBufTex;
 
 	float mSeparationDistance;
 	float mAlignmentDistance;

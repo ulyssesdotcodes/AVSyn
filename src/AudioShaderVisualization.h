@@ -8,19 +8,19 @@
 class AudioShaderVisualization : public ShaderVisualization {
 public:
 	//! Setup with an audio source and an audio fragment shader
-	AudioShaderVisualization(const fs::path &fragmentShader);
+	AudioShaderVisualization(const ci::fs::path &fragmentShader);
 	//! Update the audio source and texture
 	virtual void update(const World& world) override;
 	//! Set the texture as a uniform and draw the shader.
 	virtual void draw(const World& world) override;
 	//! Nullop
-	virtual void switchParams(params::InterfaceGlRef params, const string &group) override;
+	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
 
 protected:
 	virtual void renderUniforms(const World& world) override;
 
 private:
-	gl::TextureRef mTexture;
+	ci::gl::TextureRef mTexture;
 	float mHue;
 	float mVolume;
 	float mCycleHueSpeed;

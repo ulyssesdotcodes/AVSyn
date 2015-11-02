@@ -1,18 +1,18 @@
 #pragma once
 
-#include "cinder\Camera.h"
+#include "cinder/Camera.h"
 
 #include "AudioSource.h"
-#include "DeltaSource.h"
 #include "BeatDetector.h"
+#include "DeltaSource.h"
 
 class BeatDetector;
 
 struct World {
-	unique_ptr<CameraPersp> camera;
-	unique_ptr<AudioSource> audioSource;
-	unique_ptr<DeltaSource> deltaSource;
-	unique_ptr<BeatDetector> beatDetector;
-	ivec2 windowSize;
-	Area bounds;
+	std::unique_ptr<ci::CameraPersp> camera;
+	std::unique_ptr<AudioSource> audioSource;
+	std::unique_ptr<DeltaSource> deltaSource;
+	std::unique_ptr<BeatDetector> beatDetector;
+	ci::ivec2 windowSize;
+	ci::Area bounds;
 };

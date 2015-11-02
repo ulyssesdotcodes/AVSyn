@@ -1,8 +1,8 @@
 #include "FlockingVisualization.h"
 
-#include "cinder\app\App.h"
-#include "cinder\Rand.h"
-#include "cinder\Camera.h"
+#include "cinder/app/App.h"
+#include "cinder/Camera.h"
+#include "cinder/Rand.h"
 
 using namespace ci;
 
@@ -34,7 +34,7 @@ FlockingVisualization::FlockingVisualization()
 	mStep = true;
 	mIteratonIndex = 0;
 
-	vector<string> feedbackVaryings({
+	std::vector<std::string> feedbackVaryings({
 		"tf_position",
 		"tf_velocity",
 		"tf_color"
@@ -52,9 +52,9 @@ FlockingVisualization::FlockingVisualization()
 
 	mRenderShader = gl::GlslProg::create(renderFormat);
 
-	array<vec3, NUM_PARTICLES> positions;
-	array<vec3, NUM_PARTICLES> velocities;
-	array<vec3, NUM_PARTICLES> colors;
+	std::array<vec3, NUM_PARTICLES> positions;
+	std::array<vec3, NUM_PARTICLES> velocities;
+	std::array<vec3, NUM_PARTICLES> colors;
 
 
 	for (int i = 0; i < NUM_PARTICLES; ++i) {
@@ -99,7 +99,7 @@ FlockingVisualization::FlockingVisualization()
 	mVelocityBufTex[1] = gl::BufferTexture::create(mVelocities[1], GL_RGB32F);
 }
 
-void FlockingVisualization::switchParams(params::InterfaceGlRef params, const string &group) {
+void FlockingVisualization::switchParams(params::InterfaceGlRef params, const std::string &group) {
 	addParamName("Loudness");
 	params->addParam("Loudness", &mLoudness)
 		.min(0.0)

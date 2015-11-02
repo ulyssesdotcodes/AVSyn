@@ -1,6 +1,6 @@
 #include "DeltaSource.h"
 
-#include "cinder\app\App.h"
+#include "cinder/app/App.h"
 
 using namespace ci;
 

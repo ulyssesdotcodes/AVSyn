@@ -1,6 +1,8 @@
 #include "TreeVisualization.h"
 
-#include "cinder\Rand.h"
+#include "cinder/Rand.h"
+
+using namespace ci;
 
 TreeVisualization::TreeVisualization()
 {
@@ -40,7 +42,7 @@ TreeVisualization::TreeVisualization()
 	resetGen();
 }
 
-void TreeVisualization::switchParams(params::InterfaceGlRef params, const string &group) 
+void TreeVisualization::switchParams(params::InterfaceGlRef params, const std::string &group) 
 {
 	addParamName(group + "/Rotation Speed");
 	params->addParam(group + "/Rotation Speed", &mRotationSpeed)
@@ -146,15 +148,15 @@ void TreeVisualization::resetGen()
 void TreeVisualization::lstep()
 {
 	for (int i = 0; i < mGenStack.size(); ++i) {
-		string newGen = "";
-		string gen = mGenStack[i]->str;
+		std::string newGen = "";
+		std::string gen = mGenStack[i]->str;
 		for (int j = 0; j < gen.length(); ++j) {
 			if (RULES.find(gen[j]) == RULES.end()) {
 				newGen.append(1, gen[j]);
 			}
 			else {
-				vector<string> choices = RULES.at(gen[j]);
-				string choice = choices[Rand::randInt(choices.size())];
+				std::vector<std::string> choices = RULES.at(gen[j]);
+				std::string choice = choices[Rand::randInt(choices.size())];
 				newGen.append(choice);
 			}
 		}

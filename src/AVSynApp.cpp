@@ -29,7 +29,6 @@
 
 using namespace ci;
 using namespace ci::app;
-using namespace std;
 
 class AVSynApp : public App {
 public:
@@ -45,18 +44,18 @@ private:
 	WindowRef mParamWindow;
 	params::InterfaceGlRef mParams;
 
-	unique_ptr<ChoiceVisualization> mMainVisualization;
+	std::unique_ptr<ChoiceVisualization> mMainVisualization;
 };
 
 void AVSynApp::setup()
 {
 	// Set up world
-	mWorld.camera = unique_ptr<CameraPersp>(new CameraPersp(getWindowWidth(), getWindowHeight(), 50));
+	mWorld.camera = std::unique_ptr<CameraPersp>(new CameraPersp(getWindowWidth(), getWindowHeight(), 50));
 	mWorld.camera->setPerspective(60.0f, getWindowAspectRatio(), 1.0f, 3000.0f);
 	mWorld.camera->lookAt(vec3(0.0, 0.0, 100.0f), vec3(0));
-	mWorld.audioSource = unique_ptr<AudioSource>(new AudioSource());
-	mWorld.deltaSource = unique_ptr<DeltaSource>(new DeltaSource());
-	mWorld.beatDetector = unique_ptr<BeatDetector>(new BeatDetector());
+	mWorld.audioSource = std::unique_ptr<AudioSource>(new AudioSource());
+	mWorld.deltaSource = std::unique_ptr<DeltaSource>(new DeltaSource());
+	mWorld.beatDetector = std::unique_ptr<BeatDetector>(new BeatDetector());
 	mWorld.audioSource->setup();
 	mWorld.windowSize = getWindowIndex(0)->getSize();
 	mWorld.bounds = getWindowIndex(0)->getBounds();
@@ -75,24 +74,24 @@ void AVSynApp::setup()
 	getWindowIndex(0)->getRenderer()->makeCurrentContext();
 
 	// Create visualizations list
-	map<string, shared_ptr<Visualization>> visualizations;
+	std::map<std::string, std::shared_ptr<Visualization>> visualizations;
 
-	auto blank = make_shared<BlankVisualization>();
+	auto blank = std::make_shared<BlankVisualization>();
 	visualizations.insert(make_pair("Blank", blank));
 
-	auto simpleVis = make_shared<AudioShaderVisualization>("simple.frag");
+	auto simpleVis = std::make_shared<AudioShaderVisualization>("simple.frag");
 	visualizations.insert(make_pair("Simple", simpleVis));
 
-	auto circularVis = make_shared<AudioShaderVisualization>("circular_fft.frag");
+	auto circularVis = std::make_shared<AudioShaderVisualization>("circular_fft.frag");
 	visualizations.insert(make_pair("Circular", circularVis));
 
-	auto flocking = make_shared<FlockingVisualization>();
+	auto flocking = std::make_shared<FlockingVisualization>();
 	visualizations.insert(make_pair("Flocking", flocking));
 
-	auto dotsVis = make_shared<DotsVisualization>();
+	auto dotsVis = std::make_shared<DotsVisualization>();
 	visualizations.insert(make_pair("Dots", dotsVis));
 
-	auto eqPointCloud = make_shared<EQPointCloud>();
+	auto eqPointCloud = std::make_shared<EQPointCloud>();
 	visualizations.insert(make_pair("EQPointCloud", eqPointCloud));
 
 	//auto *trees = new TreeVisualization();
@@ -100,7 +99,7 @@ void AVSynApp::setup()
 	//mVisualizations.insert(make_pair("Trees", trees));
 	//mVisualizationOptions.push_back("Trees");
 
-	auto fluid = make_shared<FluidVisualizer>();
+	auto fluid = std::make_shared<FluidVisualizer>();
 	visualizations.insert(make_pair("Fluid", fluid));
 
 	//auto *kickChangeImage = new KinectParticles();
@@ -108,22 +107,22 @@ void AVSynApp::setup()
 	//mVisualizations.insert(make_pair("Kick Change Image", kickChangeImage));
 	//mVisualizationOptions.push_back("Kick Change Image");
 
-	auto bufferVis = make_shared<Feedback>("Feedback/buffer.frag");
+	auto bufferVis = std::make_shared<Feedback>("Feedback/buffer.frag");
 	visualizations.insert(make_pair("Buffer", bufferVis));
 
-	auto rotateVis = make_shared<Feedback>("Feedback/rotate.frag");
+	auto rotateVis = std::make_shared<Feedback>("Feedback/rotate.frag");
 	visualizations.insert(make_pair("Rotate", rotateVis));
 
-	auto lightsVis = make_shared<Lights>();
+	auto lightsVis = std::make_shared<Lights>();
 	visualizations.insert(make_pair("Lights", lightsVis));
 
-	auto wheatFields = make_shared<Video>("Wheat Field.mov");
+	auto wheatFields = std::make_shared<Video>("Wheat Field.mov");
 	visualizations.insert(make_pair("Wheat Fields", wheatFields));
 
-	auto mix = make_shared<Mix>(visualizations);
+	auto mix = std::make_shared<Mix>(visualizations);
 	visualizations.insert(make_pair("Mix", mix));
 
-	mMainVisualization = make_unique<ChoiceVisualization>(visualizations);
+	mMainVisualization = std::make_unique<ChoiceVisualization>(visualizations);
 	mMainVisualization->switchParams(mParams, "Main");
 
 	// Setup rendering!
@@ -159,7 +158,7 @@ void AVSynApp::drawParams()
 
 CINDER_APP(AVSynApp, RendererGl(), [&](App::Settings *settings) {
 	FullScreenOptions options;
-	vector<DisplayRef> displays = Display::getDisplays();
+	std::vector<DisplayRef> displays = Display::getDisplays();
 	settings->setFullScreen(true, options);	
 	if (displays.size() > 1) {
 		settings->setDisplay(displays[1]);

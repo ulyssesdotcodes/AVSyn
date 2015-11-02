@@ -1,8 +1,7 @@
 #pragma once
 
-
-#include "ShaderVisualization.h"
 #include "PingPongFBO.h"
+#include "ShaderVisualization.h"
 
 class Lights : public ShaderVisualization
 {
@@ -10,17 +9,17 @@ public:
 	Lights();
 	virtual void update(const World& world) override;
 	virtual void draw(const World& world) override;
-	void switchParams(params::InterfaceGlRef params, const string &group);
+	void switchParams(ci::params::InterfaceGlRef params, const std::string &group);
 
 private:
-	gl::TextureRef mTexture;
+	ci::gl::TextureRef mTexture;
 
 	PingPongFBO mFbo;
 
-	gl::GlslProgRef mFadeShader;
-	gl::BatchRef mNewLight;
+	ci::gl::GlslProgRef mFadeShader;
+	ci::gl::BatchRef mNewLight;
 
 	float mFade;
 	float mLastTime;
-	vec2 mResolution;
+	ci::vec2 mResolution;
 };

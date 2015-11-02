@@ -1,30 +1,25 @@
 #pragma once
 
-#include "cinder\audio\audio.h"
-#include "cinder\gl\gl.h"
-
-#include <vector>
-
-using namespace ci;
-using namespace std;
+#include "cinder/audio/audio.h"
+#include "cinder/gl/gl.h"
 
 class AudioSource {
 public:
 	void setup();
 	void update();
-	vector<float> getMagSpectrum();
-	gl::TextureRef getMagSpectrumTexture();
+	std::vector<float> getMagSpectrum();
+	ci::gl::TextureRef getMagSpectrumTexture();
 	float getVolume();
 	float getAccumulatedSound();
 	float getHighestVolumePos();
-	vector<float> getEqs(int binCount);
-	vector<float> getEqs(int binCount, float scale);
+	std::vector<float> getEqs(int binCount);
+	std::vector<float> getEqs(int binCount, float scale);
 
 private:
-	audio::InputDeviceNodeRef mInputNode;
-	audio::MonitorSpectralNodeRef mMonitor;
+	ci::audio::InputDeviceNodeRef mInputNode;
+	ci::audio::MonitorSpectralNodeRef mMonitor;
 
-	vector<float>  mSpectrum;
+	std::vector<float>  mSpectrum;
 
 	int mLastUpdateFrame;
 	float mAccumulatedSound;

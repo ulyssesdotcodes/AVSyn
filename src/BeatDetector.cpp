@@ -1,6 +1,7 @@
 #include "BeatDetector.h"
-#include "cinder\CinderMath.h"
-#include "cinder\app\App.h"
+
+#include "cinder/app/App.h"
+#include "cinder/CinderMath.h"
 
 using namespace ci;
 
@@ -31,13 +32,13 @@ void BeatDetector::update(const World& world, float c) {
 
 	mLastUpdate = frames;
 
-	array<float, BUCKETS> sum = {};
+	std::array<float, BUCKETS> sum = {};
 	int j = 0;
 	int startBucketIndex = 0;
 	int bucketSize = 1;
 	int i = 0;
 	world.audioSource->update();
-	vector<float> spectrum = world.audioSource->getMagSpectrum();
+	std::vector<float> spectrum = world.audioSource->getMagSpectrum();
 	while (j < BUCKETS) {
 		sum[j] += spectrum[i] / bucketSize;
 		i++;

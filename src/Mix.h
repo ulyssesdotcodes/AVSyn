@@ -1,36 +1,35 @@
 #pragma once
 
-#include "Visualization.h"
-#include "cinder\gl\gl.h"
+#include "cinder/gl/gl.h"
 
-using namespace ci;
+#include "Visualization.h"
 
 class Mix : public Visualization {
 public:
-	Mix(map<string, shared_ptr<Visualization>> visualizations);
+	Mix(std::map<std::string, std::shared_ptr<Visualization>> visualizations);
 	virtual void update(const World& world) override;
 	virtual void draw(const World& world) override;
-	virtual void switchParams(ci::params::InterfaceGlRef params, const string &group) override;
-	virtual void setBaseVisualization(const string &visualization);
+	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
+	virtual void setBaseVisualization(const std::string &visualization);
 
 private:
-	map<string, shared_ptr<Visualization>> mVisualizations;
-	vector<string> mVisualizationOptions;
-	array<int, 2> mVisOption;
+	std::map<std::string, std::shared_ptr<Visualization>> mVisualizations;
+	std::vector<std::string> mVisualizationOptions;
+	std::array<int, 2> mVisOption;
 
-	vec2 mResolution;
-	array<gl::FboRef, 2> mVisFBO;
+	ci::vec2 mResolution;
+	std::array<ci::gl::FboRef, 2> mVisFBO;
 
-	gl::GlslProgRef mMixShader;
+	ci::gl::GlslProgRef mMixShader;
 
 	float mFade;
 	float mAdd;
 	float mMultiply;
 
-	CameraPersp* mCam;
-	params::InterfaceGlRef mParams;
+	ci::CameraPersp* mCam;
+	ci::params::InterfaceGlRef mParams;
 
-	shared_ptr<Visualization> getVis(int index);
+	std::shared_ptr<Visualization> getVis(int index);
 
 	void updateUniforms();
 };

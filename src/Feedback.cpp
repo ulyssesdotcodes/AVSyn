@@ -1,7 +1,10 @@
 #include "Feedback.h"
-#include "cinder\app\App.h"
 
-Feedback::Feedback(const string &fragment) : ShaderVisualization("texture.frag")
+#include "cinder/app/App.h"
+
+using namespace ci;
+
+Feedback::Feedback(const std::string &fragment) : ShaderVisualization("texture.frag")
 {
 	mFade = 0.95;
 	mLastTime = 0;
@@ -55,7 +58,7 @@ void Feedback::draw(const World& world)
 	ShaderVisualization::draw(world);
 }
 
-void Feedback::switchParams(params::InterfaceGlRef params, const string &group)
+void Feedback::switchParams(params::InterfaceGlRef params, const std::string &group)
 {
 	addParamName(group + "/Fade");
 	params->addParam(group + "/Fade", &mFade)

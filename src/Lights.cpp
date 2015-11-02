@@ -1,7 +1,9 @@
 #include "Lights.h"
 
-#include "cinder\Rand.h"
 #include "cinder\app\App.h"
+#include "cinder\Rand.h"
+
+using namespace ci;
 
 Lights::Lights() : ShaderVisualization("texture.frag")
 {
@@ -55,6 +57,6 @@ void Lights::draw(const World& world)
 	ShaderVisualization::draw(world);
 }
 
-void Lights::switchParams(params::InterfaceGlRef params, const string & group)
+void Lights::switchParams(params::InterfaceGlRef params, const std::string & group)
 {
 }

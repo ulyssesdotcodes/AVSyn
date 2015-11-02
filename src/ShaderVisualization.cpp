@@ -1,6 +1,10 @@
 #include "ShaderVisualization.h"
+
+#include "cinder/app/App.h"
+
 #include "AudioSource.h"
-#include "cinder\app\App.h"
+
+using namespace ci;
 
 ShaderVisualization::ShaderVisualization(const fs::path &fragmentShader )
 {

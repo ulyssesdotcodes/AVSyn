@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ShaderVisualization.h"
 #include "BeatDetector.h"
+#include "ShaderVisualization.h"
 
 const int BIN_COUNT = 4;
 
@@ -18,10 +18,10 @@ protected:
 	virtual void renderUniforms(const World& world) override;
 
 	//! Control hue and loudness
-	virtual void switchParams(params::InterfaceGlRef params, const string &group) override;
+	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
 
 private:
-	array<float, BIN_COUNT> mEqs;
+	std::array<float, BIN_COUNT> mEqs;
 
 	float mAccumulatedLoudness;
 

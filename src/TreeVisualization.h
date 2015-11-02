@@ -1,11 +1,10 @@
 #pragma once
 
-#include "Visualization.h"
+#include "cinder/gl/gl.h"
+
 #include "AudioSource.h"
 #include "BeatDetector.h"
-#include "cinder\gl\gl.h"
-
-using namespace ci;
+#include "Visualization.h"
 
 const int MAX_LINE_VERTICES = 5000;
 const float DELTA_ANGLE = M_PI * 22.5 / 180.0;
@@ -13,7 +12,7 @@ const float LENGTH = 4.0;
 const float ROTATION_DAMP = 0.01;
 
 //! The rules for recursively generating an L-System. Each item for a rule has an equal possibility of being used for replacement.
-const map<char, vector<string>> RULES = 
+const std::map<char, std::vector<std::string>> RULES = 
 {
 	{'F', {
 		"F[+F]F[-F]F",
@@ -32,10 +31,10 @@ const map<char, vector<string>> RULES =
 };
 
 struct Gen {
-	string str;
+	std::string str;
 	int index;
-	vec3 currentVertex;
-	vec3 heading;
+	ci::vec3 currentVertex;
+	ci::vec3 heading;
 	int parent;
 };
 
@@ -53,7 +52,7 @@ public:
 	//! Draw mPositions with mColors
 	void draw(const World& world) override;
 	//! Setup params
-	void switchParams(params::InterfaceGlRef params, const string &group) override;
+	void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
 
 private:
 	//! Generate the final L system strings and store them in mGen
@@ -63,23 +62,23 @@ private:
 	//! Perform one command - moving forward or turning. Modifies mGen and mPositions.
 	void runCommand(char rule, Gen* gen);
 
-	array<vec3, MAX_LINE_VERTICES> mPositions;
-	array<vec4, MAX_LINE_VERTICES> mColors;
+	std::array<ci::vec3, MAX_LINE_VERTICES> mPositions;
+	std::array<ci::vec4, MAX_LINE_VERTICES> mColors;
 	int mIndex;
 
-	gl::GlslProgRef mShader;
-	gl::BatchRef mBatch;
-	gl::VboMeshRef mMesh;
+	ci::gl::GlslProgRef mShader;
+	ci::gl::BatchRef mBatch;
+	ci::gl::VboMeshRef mMesh;
 
-	array<quat, 2> mRu, mRl, mRh;
+	std::array<ci::quat, 2> mRu, mRl, mRh;
 
-	vector<Gen*> mGenStack;
+	std::vector<Gen*> mGenStack;
 
 	int mGrowth;
 	float mRotationSpeed;
 	float mHue;
 	float mBeatConstant;
 
-	ColorA mColor;
-	quat mRotation;
+	ci::ColorA mColor;
+	ci::quat mRotation;
 };

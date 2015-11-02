@@ -1,10 +1,9 @@
 #pragma once
 
-#include "cinder\gl\gl.h"
+#include "cinder/gl/gl.h"
+
 #include "AudioSource.h"
 #include "Visualization.h"
-
-using namespace ci;
 
 /*
   A visualization that renders a glsl fragment shader to the screen.
@@ -12,7 +11,7 @@ using namespace ci;
 class ShaderVisualization : public Visualization {
 public:
 	//! Setup the fragment shader program.
-	ShaderVisualization(const fs::path &fragmentShader);
+	ShaderVisualization(const ci::fs::path &fragmentShader);
 
 	//! Nullops
 	virtual void update(const World& world) override;
@@ -22,5 +21,5 @@ public:
 protected:
 	//! Convenience method for child classes to override to add uniforms to the shader program.
 	virtual void renderUniforms(const World& world);
-	gl::GlslProgRef mShader;
+	ci::gl::GlslProgRef mShader;
 };

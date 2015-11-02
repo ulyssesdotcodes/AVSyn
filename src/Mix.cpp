@@ -1,10 +1,12 @@
 #include "Mix.h"
 #include "cinder\app\App.h"
 
-Mix::Mix(map<string, shared_ptr<Visualization>> visualizations)
+using namespace ci;
+
+Mix::Mix(std::map<std::string, std::shared_ptr<Visualization>> visualizations)
 {
 	mVisualizations = visualizations;
-	for (map<string, shared_ptr<Visualization>>::iterator it = mVisualizations.begin(); it != mVisualizations.end(); ++it) {
+	for (std::map<std::string, std::shared_ptr<Visualization>>::iterator it = mVisualizations.begin(); it != mVisualizations.end(); ++it) {
 		mVisualizationOptions.push_back(it->first);
 	}
 	mVisOption[0] = 1;
@@ -29,7 +31,7 @@ Mix::Mix(map<string, shared_ptr<Visualization>> visualizations)
 void Mix::update(const World& world)
 {
 	for (int i = 0; i < 2; ++i) {
-		shared_ptr<Visualization> vis = getVis(mVisOption[i]);
+		std::shared_ptr<Visualization> vis = getVis(mVisOption[i]);
 		vis->update(world);
 		gl::ScopedFramebuffer fbo(mVisFBO[i]);
 		gl::clear(Color(0, 0, 0));
@@ -56,7 +58,7 @@ void Mix::draw(const World& world)
 	gl::drawSolidRect(app::getWindowIndex(0)->getBounds());
 }
 
-void Mix::switchParams(ci::params::InterfaceGlRef params, const string &group)
+void Mix::switchParams(ci::params::InterfaceGlRef params, const std::string &group)
 {
 	mParams = params;
 
@@ -109,11 +111,11 @@ void Mix::switchParams(ci::params::InterfaceGlRef params, const string &group)
 	getVis(mVisOption[1])->switchParams(mParams, "VisB");
 }
 
-void Mix::setBaseVisualization(const string & visualization)
+void Mix::setBaseVisualization(const std::string & visualization)
 {
 }
 
-shared_ptr<Visualization> Mix::getVis(int index)
+std::shared_ptr<Visualization> Mix::getVis(int index)
 {
 	return mVisualizations.at(mVisualizationOptions.at(index));
 }

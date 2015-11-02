@@ -1,5 +1,7 @@
 #include "Video.h"
 
+using namespace ci;
+
 Video::Video(const fs::path &moviePath)
 {
 	mMovie = qtime::MovieGl::create(app::loadAsset(moviePath));
@@ -28,7 +30,7 @@ void Video::draw(const World& world)
 	}
 }
 
-void Video::switchParams(ci::params::InterfaceGlRef params, const string & group)
+void Video::switchParams(ci::params::InterfaceGlRef params, const std::string & group)
 {
 }
 

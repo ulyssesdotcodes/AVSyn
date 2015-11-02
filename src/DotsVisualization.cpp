@@ -1,9 +1,5 @@
 #include "DotsVisualization.h"
 
-#include <vector>
-
-using namespace std;
-
 const float DAMPING = 0.1;
 
 DotsVisualization::DotsVisualization() : ShaderVisualization("dots.frag")
@@ -22,7 +18,7 @@ void DotsVisualization::renderUniforms(const World& world)
 
 	mAccumulatedLoudness += world.beatDetector->getBeat() + world.audioSource->getVolume() * mLoudness;
 
-	vector<float> eqs = world.audioSource->getEqs(BIN_COUNT);
+	std::vector<float> eqs = world.audioSource->getEqs(BIN_COUNT);
 
 	for (int i = 0; i < BIN_COUNT; ++i) {
 		if (eqs[i] > mEqs[i]) {
@@ -38,7 +34,7 @@ void DotsVisualization::renderUniforms(const World& world)
 	mShader->uniform("i_hue", mHue);
 }
 
-void DotsVisualization::switchParams(params::InterfaceGlRef params, const string &group) {
+void DotsVisualization::switchParams(ci::params::InterfaceGlRef params, const std::string &group) {
 	addParamName(group + "/Loudness");
 	params->addParam(group + "/Loudness", &mLoudness)
 		.min(0.0)

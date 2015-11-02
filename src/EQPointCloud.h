@@ -1,12 +1,13 @@
 #pragma once
 
-#include "cinder\gl\gl.h"
-#include "Visualization.h"
+#include "cinder/gl/gl.h"
+
 #include "AudioSource.h"
+#include "Visualization.h"
 
 struct EQ {
-	vec3 pos;
-	vec3 velocity;
+	ci::vec3 pos;
+	ci::vec3 velocity;
 };
 
 /*
@@ -24,19 +25,19 @@ public:
 	virtual void update(const World& world);
 	//! Draw the particles
 	virtual void draw(const World& world);
-	virtual void switchParams(params::InterfaceGlRef params, const string &group) override;
+	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
 
 private:
-	vector<vec3> mParticles;
-	gl::GlslProgRef mRenderProg;
-	gl::VboRef		mParticleBuffer[1];
-	gl::BatchRef mBatch;
+	std::vector<ci::vec3> mParticles;
+	ci::gl::GlslProgRef mRenderProg;
+	ci::gl::VboRef		mParticleBuffer[1];
+	ci::gl::BatchRef mBatch;
 
-	vector<EQ> mEqs;
-	vec3 mEqVolumes;
+	std::vector<EQ> mEqs;
+	ci::vec3 mEqVolumes;
 
 	float mLoudness;
-	quat mRotation;
+	ci::quat mRotation;
 	float mRotationSpeed;
 	float mHue;
 	float mLastVolume;

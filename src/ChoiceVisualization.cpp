@@ -1,9 +1,11 @@
 #include "ChoiceVisualization.h"
 
-ChoiceVisualization::ChoiceVisualization(map<string, shared_ptr<Visualization>> visualizations)
+using namespace ci;
+
+ChoiceVisualization::ChoiceVisualization(std::map<std::string, std::shared_ptr<Visualization>> visualizations)
 {
 	mVisualizations = visualizations;
-	for (map<string, shared_ptr<Visualization>>::iterator it = mVisualizations.begin(); it != mVisualizations.end(); ++it) {
+	for (std::map<std::string, std::shared_ptr<Visualization>>::iterator it = mVisualizations.begin(); it != mVisualizations.end(); ++it) {
 		mVisualizationNames.push_back(it->first);
 	}
 
@@ -39,11 +41,11 @@ void ChoiceVisualization::draw(const World& world)
 	}
 }
 
-void ChoiceVisualization::switchParams(ci::params::InterfaceGlRef params, const string & group)
+void ChoiceVisualization::switchParams(ci::params::InterfaceGlRef params, const std::string & group)
 {
 	params->addParam("Visualization", mVisualizationNames, 
 		[=](int ind) {
-			VisualizationRef oldVisualization = shared_ptr<Visualization>(mVisualization);
+			VisualizationRef oldVisualization = std::shared_ptr<Visualization>(mVisualization);
 			oldVisualization->resetParams(params);
 
 			mVisualizationIndex = ind;
@@ -51,7 +53,7 @@ void ChoiceVisualization::switchParams(ci::params::InterfaceGlRef params, const 
 			mVisualization->switchParams(params, group + "/Vis");
 
 			if (mFade) {
-				mFadeTransition = make_unique<FadeTransition>(oldVisualization, mVisualization, 5.0);
+				mFadeTransition = std::make_unique<FadeTransition>(oldVisualization, mVisualization, 5.0);
 			}
 		},
 		[=]() {

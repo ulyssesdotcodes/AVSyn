@@ -1,12 +1,10 @@
 #include "EQPointCloud.h"
 
-#include "cinder\Color.h"
-#include "cinder\Rand.h"
-#include "cinder\app\App.h"
-#include "cinder\CinderMath.h"
-#include <vector>
+#include "cinder/app/App.h"
+#include "cinder/CinderMath.h"
+#include "cinder/Color.h"
+#include "cinder/Rand.h"
 
-using namespace std;
 using namespace ci;
 
 const int NUM_PARTICLES = 300000;
@@ -42,7 +40,7 @@ EQPointCloud::EQPointCloud()
 	mEqs.push_back({ mParticles.at(2), Rand::randVec3()});
 }
 
-void EQPointCloud::switchParams(params::InterfaceGlRef params, const string &group) {
+void EQPointCloud::switchParams(params::InterfaceGlRef params, const std::string &group) {
 	addParamName(group + "/Loudness");
 	params->addParam(group + "/Loudness", &mLoudness)
 		.min(0.0)
@@ -67,7 +65,7 @@ void EQPointCloud::switchParams(params::InterfaceGlRef params, const string &gro
 
 void EQPointCloud::update(const World& world)
 {
-	for (vector<EQ>::iterator it = mEqs.begin(); it != mEqs.end(); ++it) {
+	for (std::vector<EQ>::iterator it = mEqs.begin(); it != mEqs.end(); ++it) {
 		it->pos += it->velocity;
 		if (math<float>::abs(it->pos.x) > SIZE * 0.5) {
 			it->velocity.x = -it->velocity.x;

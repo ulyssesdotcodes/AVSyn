@@ -1,27 +1,26 @@
 #pragma once
 
-#include "Visualization.h"
-#include "cinder\gl\gl.h"
-#include "cinder\gl\BufferTexture.h"
-#include "cinder\app\App.h"
+#include "cinder/gl/gl.h"
+#include "cinder/gl/BufferTexture.h"
+#include "cinder/app/App.h"
+
 #include "AudioSource.h"
 #include "BeatDetector.h"
 #include "PingPongFBO.h"
-
-using namespace ci;
+#include "Visualization.h"
 
 class FluidVisualizer : public Visualization {
 public:
 	FluidVisualizer();
 	virtual void update(const World& world) override;
 	virtual void draw(const World& world) override;
-	virtual void switchParams(params::InterfaceGlRef params, const string &group) override;
+	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
 
 private:
-	vec2 mWindowResolution;
-	vec2 mFluidResolution;
+	ci::vec2 mWindowResolution,
+		 mFluidResolution;
 
-	gl::GlslProgRef 
+	ci::gl::GlslProgRef 
 		mAdvectShader, 
 		mAdvectMaccormackShader,
 		mForcesShader, 
@@ -34,9 +33,9 @@ private:
 	PingPongFBO mVelocityFBO, mPressureFBO, mSmokeFBO;
 
 	float mLastTime;
-	vec2 mAudioVel;
-	vec2 mSmokePos;
-	vec2 mAudioVelMult;
+	ci::vec2 mAudioVel,
+		mSmokePos,
+		mAudioVelMult;
 
 	float mVolume;
 	float mSpeed;
