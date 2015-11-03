@@ -99,6 +99,9 @@
     <ClCompile Include="..\src\Fluid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\ExplosionsVisualizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -165,6 +168,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Fluid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ExplosionsVisualizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -251,6 +257,9 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\assets\fluid\smoke_draw.frag">
+      <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\fluid\explosions.frag">
       <Filter>Shaders\Fluid</Filter>
     </None>
   </ItemGroup>

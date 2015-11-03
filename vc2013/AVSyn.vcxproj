@@ -205,6 +205,7 @@
     <ClCompile Include="..\src\BlankVisualization.cpp" />
     <ClCompile Include="..\src\ChoiceVisualization.cpp" />
     <ClCompile Include="..\src\DeltaSource.cpp" />
+    <ClCompile Include="..\src\ExplosionsVisualizer.cpp" />
     <ClCompile Include="..\src\FadeTransition.cpp" />
     <ClCompile Include="..\src\Feedback.cpp" />
     <ClCompile Include="..\src\DotsVisualization.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="..\src\BlankVisualization.h" />
     <ClInclude Include="..\src\ChoiceVisualization.h" />
     <ClInclude Include="..\src\DeltaSource.h" />
+    <ClInclude Include="..\src\ExplosionsVisualizer.h" />
     <ClInclude Include="..\src\FadeTransition.h" />
     <ClInclude Include="..\src\Feedback.h" />
     <ClInclude Include="..\src\DotsVisualization.h" />
@@ -256,6 +258,7 @@
     <None Include="..\assets\fluid\advect.frag" />
     <None Include="..\assets\fluid\advect_maccormack.frag" />
     <None Include="..\assets\fluid\apply_force.frag" />
+    <None Include="..\assets\fluid\explosions.frag" />
     <None Include="..\assets\fluid\smoke_draw.frag" />
     <None Include="..\assets\fluid\smoke_drop.frag" />
     <None Include="..\assets\fluid\smoke_drop_forces.frag" />
