@@ -7,8 +7,6 @@ uniform vec2 smokeDropPos;
 uniform float volume;
 uniform float beat;
 uniform float dt;
-uniform float hue;
-uniform float saturation;
 
 out vec4 fragColor;
 
@@ -30,9 +28,16 @@ void main() {
 
 	vec2 dropDistance = pos - mSDP;
 
-	float smoke = max(0, 0.008 - dot(dropDistance, dropDistance)) * dt * 4096 * max(beat, 0.125) * pow(volume, 0.5);
+	float density = max(0, 0.008 - dot(dropDistance, dropDistance)) * dt * max(beat, 0.125) * pow(volume, 0.5);
 
-	smoke *= mix(0.6, 1.0, rand(vec2(pos.x * pos.y, cos(dt + volume))));
+	density *= mix(0.6, 1.0, rand(vec2(pos.x * pos.y, cos(dt + volume))));
 
-	fragColor = vec4(current + hsv2rgb(vec3(hue, saturation, 1.0)) * smoke, 1);
+	float temperature = current.y + density * 256;
+
+	float hue = current.z;
+	if(density > 0.0001) {
+		hue = 0.22;
+	}
+
+	fragColor = vec4(current.x + density, temperature, hue, 1);
 }

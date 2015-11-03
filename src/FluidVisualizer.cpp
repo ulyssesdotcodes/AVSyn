@@ -25,64 +25,33 @@ FluidVisualizer::FluidVisualizer()
 	mWindowResolution = vec2(app::getWindowIndex(0)->getWidth(), app::getWindowIndex(0)->getHeight());
 	mFluidResolution = glm::floor(mWindowResolution * vec2(0.2));
 
+	mFluid = Fluid(mFluidResolution);
+
 	gl::GlslProg::Format updateFormat;
 	updateFormat.vertex(app::loadAsset("passthru.vert"));
 
-	updateFormat.fragment(app::loadAsset("Fluid/advect.frag"));
-	mAdvectShader = gl::GlslProg::create(updateFormat);
-	mAdvectShader->uniform("resolution", mFluidResolution);
-
-	updateFormat.fragment(app::loadAsset("Fluid/advect_maccormack.frag"));
-	mAdvectMaccormackShader = gl::GlslProg::create(updateFormat);
-	mAdvectMaccormackShader->uniform("resolution", mFluidResolution);
-
 	updateFormat.fragment(app::loadAsset("Fluid/smoke_drop_forces.frag"));
 	mForcesShader = gl::GlslProg::create(updateFormat);
-	mForcesShader->uniform("resolution", mFluidResolution);
-	mForcesShader->uniform("smokeDropPos", vec2(0.5, 0.8));
+	mForcesShader->uniform("i_resolution", mFluidResolution);
 
 	updateFormat.fragment(app::loadAsset("Fluid/smoke_drop.frag"));
 	mSmokeDropShader = gl::GlslProg::create(updateFormat);
 	mSmokeDropShader->uniform("resolution", mWindowResolution);
 	mSmokeDropShader->uniform("smokeDropPos", vec2(0.5, 0.8));
 
-	updateFormat.fragment(app::loadAsset("Fluid/subtract_pressure.frag"));
-	mSubtractPressureShader = gl::GlslProg::create(updateFormat);
-	mSubtractPressureShader->uniform("resolution", mFluidResolution);
-
-	updateFormat.fragment(app::loadAsset("Fluid/velocity_divergence.frag"));
-	mDivergenceShader = gl::GlslProg::create(updateFormat);
-	mDivergenceShader->uniform("resolution", mFluidResolution);
-
-	updateFormat.fragment(app::loadAsset("Fluid/solve_pressure.frag"));
-	mPressureSolveShader = gl::GlslProg::create(updateFormat);
-	mPressureSolveShader->uniform("resolution", mFluidResolution);
-
-	updateFormat.fragment(app::loadAsset("texture.frag"));
+	updateFormat.fragment(app::loadAsset("Fluid/smoke_draw.frag"));
 	mRenderShader = gl::GlslProg::create(updateFormat);
 	mRenderShader->uniform("i_resolution", mWindowResolution);
 
 	gl::Texture2d::Format texFmt;
-	texFmt.setInternalFormat(GL_RGBA16F);
+	texFmt.setInternalFormat(GL_RGBA32F);
 	texFmt.setDataType(GL_FLOAT);
 	texFmt.setTarget(GL_TEXTURE_2D);
 	texFmt.setWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 	gl::Fbo::Format fmt;
 	fmt.disableDepth()
 		.setColorTextureFormat(texFmt);
-	mVelocityFBO = PingPongFBO(fmt, mFluidResolution, 4);
-	mSmokeFBO = PingPongFBO(fmt, mWindowResolution, 4);
-
-	gl::Texture2d::Format texFmtRG;
-	texFmtRG.setInternalFormat(GL_RG16F);
-	texFmtRG.setDataType(GL_FLOAT);
-	texFmtRG.setTarget(GL_TEXTURE_2D);
-	texFmtRG.setWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
-	gl::Fbo::Format fmtRG;
-	fmtRG.disableDepth()
-		.setColorTextureFormat(texFmtRG);
-
-	mPressureFBO = PingPongFBO(fmtRG, mFluidResolution, 2);
+	mSmokeField = PingPongFBO(fmt, mWindowResolution, 4);
 }
 
 void FluidVisualizer::update(const World& world)
@@ -100,29 +69,34 @@ void FluidVisualizer::update(const World& world)
 
 	updateSmokePos(world, time, dt);
 
+	// Update the fluid with the smoker's forces shader
+	mFluid.update(dt, mForcesShader, mSmokeField.getTexture());
 
-	advectVelocity(dt);
+	// Drop new smoke
+	gl::ScopedTextureBind scopeSmokeDrop(mSmokeField.getTexture(), 0);
+	mSmokeDropShader->uniform("tex_prev", 0);
+	mSmokeField.render(mSmokeDropShader);
 
-	applyForce(world, dt);
-
-	computeDivergence();
-	solvePressure();
-	subtractPressure();
-
-	advectSmoke(world, dt, time);
+	// Use the fluid to advect the smoke
+	mFluid.advect(dt, &mSmokeField);
 }
 
 void FluidVisualizer::draw(const World& world)
 {
-	gl::setMatricesWindow(world.windowSize);
+	vec2 smokeSize = mSmokeField.getTexture()->getSize();
+	gl::clear(Color(0, 0, 0));
 
-	gl::ScopedTextureBind scopeSmoke(mSmokeFBO.getTexture(), SMOKE_POINTER);
-	mRenderShader->uniform("tex", SMOKE_POINTER);
+	gl::ScopedTextureBind tex(mSmokeField.getTexture(), 2);
+	mRenderShader->uniform("tex", 2);
 
+	gl::ScopedViewport vp(ivec2(0), smokeSize);
+	gl::pushMatrices();
+	gl::setMatricesWindow(smokeSize);
 	gl::ScopedGlslProg glsl(mRenderShader);
-	gl::context()->setDefaultShaderVars();
 
-	gl::drawSolidRect(world.bounds);
+	gl::drawSolidRect(Rectf(0, 0, smokeSize.x, smokeSize.y));
+
+	gl::popMatrices();
 }
 
 void FluidVisualizer::switchParams(params::InterfaceGlRef params, const std::string &group)
@@ -152,121 +126,6 @@ void FluidVisualizer::switchParams(params::InterfaceGlRef params, const std::str
 	params->addParam(group + "/Flip Velocity", &mFlipVelocity);
 }
 
-void FluidVisualizer::advectVelocity(float dt)
-{
-	mAdvectShader->uniform("boundaryConditions", true);
-	mAdvectShader->uniform("target_resolution", mFluidResolution);
-
-	mAdvectMaccormackShader->uniform("boundaryConditions", true);
-	mAdvectMaccormackShader->uniform("target_resolution", mFluidResolution);
-
-	advect(dt, &mVelocityFBO, &mVelocityFBO);
-}
-
-void FluidVisualizer::advectSmoke(const World& world, float dt, float time) 
-{
-	// Create new smoke
-	{
-		mSmokeDropShader->uniform("beat", world.beatDetector->getBeat());
-		mSmokeDropShader->uniform("volume", world.audioSource->getVolume() * mVolume);
-		mSmokeDropShader->uniform("dt", dt);
-
-		gl::ScopedTextureBind scopeSmokeDrop(mSmokeFBO.getTexture(), SMOKE_POINTER);
-		mSmokeDropShader->uniform("tex_prev", SMOKE_POINTER);
-
-		mSmokeFBO.render(mSmokeDropShader);
-	}
-
-	mAdvectShader->uniform("boundaryConditions", false);
-	mAdvectShader->uniform("target_resolution", mWindowResolution);
-
-	mAdvectMaccormackShader->uniform("boundaryConditions", false);
-	mAdvectMaccormackShader->uniform("target_resolution", mWindowResolution);
-
-	advect(dt, &mVelocityFBO, &mSmokeFBO);
-}
-
-void FluidVisualizer::advect(float dt, PingPongFBO *velocity, PingPongFBO *target) {
-	{
-		mAdvectShader->uniform("dt", dt);
-		gl::ScopedTextureBind scopeVel(velocity->getTexture(), VELOCITY_POINTER);
-		mAdvectShader->uniform("tex_velocity", VELOCITY_POINTER);
-		gl::ScopedTextureBind scopeTarget(target->getTexture(), ADVECT_POINTER);
-		mAdvectShader->uniform("tex_target", ADVECT_POINTER);
-
-		target->render(mAdvectShader);
-	}
-
-	// Run time backwards for the second one
-	{
-		mAdvectShader->uniform("dt", -dt);
-		gl::ScopedTextureBind scopeVel(velocity->getTexture(), VELOCITY_POINTER);
-		mAdvectShader->uniform("tex_velocity", VELOCITY_POINTER);
-		gl::ScopedTextureBind scopeTarget(target->getTexture(), ADVECT_POINTER);
-		mAdvectShader->uniform("tex_target", ADVECT_POINTER);
-
-		target->render(mAdvectShader);
-	}
-
-	{
-		mAdvectMaccormackShader->uniform("dt", dt);
-		gl::ScopedTextureBind scopeVel(velocity->getTexture(), VELOCITY_POINTER);
-		mAdvectMaccormackShader->uniform("tex_velocity", VELOCITY_POINTER);
-
-		std::vector<gl::TextureRef> textures = target->getTextures();
-		gl::ScopedTextureBind scopedPhiN(textures.at(1), 3);
-		mAdvectMaccormackShader->uniform("phi_n", 3);
-		mAdvectMaccormackShader->uniform("tex_target", 3);
-		gl::ScopedTextureBind scopedPhiN1Hat(textures.at(2), 4);
-		mAdvectMaccormackShader->uniform("phi_n_1_hat", 4);
-		gl::ScopedTextureBind scopedPhiNHat(textures.at(3), 5);
-		mAdvectMaccormackShader->uniform("phi_n_hat", 5);
-
-		target->render(mAdvectMaccormackShader);
-	}
-}
-
-void FluidVisualizer::applyForce(const World& world, float dt)
-{
-	mForcesShader->uniform("dt", dt);
-	mForcesShader->uniform("time", mLastTime);
-	mForcesShader->uniform("beat", world.beatDetector->getBeat());
-
-	gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
-	mForcesShader->uniform("tex_velocity", VELOCITY_POINTER);
-
-	mVelocityFBO.render(mForcesShader);
-}
-
-void FluidVisualizer::computeDivergence()
-{
-	gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
-	mDivergenceShader->uniform("tex_velocity", VELOCITY_POINTER);
-	gl::ScopedTextureBind scopePressure(mPressureFBO.getTexture(), PRESSURE_POINTER);
-	mDivergenceShader->uniform("tex_pressure", PRESSURE_POINTER);
-
-	mPressureFBO.render(mDivergenceShader);
-}
-
-void FluidVisualizer::solvePressure()
-{
-	for (int i = 0; i < 40; ++i) {
-		gl::ScopedTextureBind scopePressure(mPressureFBO.getTexture(), PRESSURE_POINTER);
-		mPressureSolveShader->uniform("tex_pressure", PRESSURE_POINTER);
-		mPressureFBO.render(mPressureSolveShader);
-	}
-}
-
-void FluidVisualizer::subtractPressure()
-{
-	gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
-	mSubtractPressureShader->uniform("tex_velocity", VELOCITY_POINTER);
-	gl::ScopedTextureBind scopePressure(mPressureFBO.getTexture(), PRESSURE_POINTER);
-	mSubtractPressureShader->uniform("tex_pressure", PRESSURE_POINTER);
-
-	mVelocityFBO.render(mSubtractPressureShader);
-}
-
 void FluidVisualizer::updateSmokePos(const World& world, float time, float dt) {
 	std::vector<float> audiovel = world.audioSource->getEqs(4);
 	vec2 newVel = vec2(pow(audiovel[0], 1.5) - pow(audiovel[2], 1), pow(audiovel[1], 1.2) - pow(audiovel[3], 0.8));
@@ -294,11 +153,12 @@ void FluidVisualizer::updateSmokePos(const World& world, float time, float dt) {
 		mAudioVelMult.y = -mAudioVelMult.y;
 	}
 
+	mSmokeDropShader->uniform("dt", dt);
+	mSmokeDropShader->uniform("volume", world.audioSource->getVolume());
+	mSmokeDropShader->uniform("beat", world.beatDetector->getBeat());
 	mSmokeDropShader->uniform("smokeDropPos", smokeDropPos);
-	mSmokeDropShader->uniform("hue", cos(time * 0.5f));
-	mSmokeDropShader->uniform("saturation", mSaturation);
-	mForcesShader->uniform("smokeDropPos", smokeDropPos);
-	mForcesShader->uniform("smokeVel", smokeDropPos - mSmokePos);
+	mForcesShader->uniform("i_dt", dt);
+	mForcesShader->uniform("i_time", (float) app::getElapsedSeconds());
 
 	mSmokePos = smokeDropPos;
 }

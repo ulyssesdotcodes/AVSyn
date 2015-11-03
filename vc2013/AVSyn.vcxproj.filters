@@ -96,6 +96,9 @@
     <ClCompile Include="..\src\FluidVisualizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Fluid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -159,6 +162,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\FluidVisualizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Fluid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -243,6 +249,9 @@
     </None>
     <None Include="..\assets\fade.frag">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\fluid\smoke_draw.frag">
+      <Filter>Shaders\Fluid</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

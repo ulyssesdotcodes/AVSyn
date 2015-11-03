@@ -1,15 +1,15 @@
 #version 330 core
 
-uniform vec2 resolution;
+uniform vec2 i_resolution;
 uniform sampler2D tex_pressure;
 
 out vec4 fragColor;
 
 vec2 inner(vec2 pos) {
-	float L = texture2D(tex_pressure, pos + vec2(-1, 0) / resolution.xy).y;
-	float T = texture2D(tex_pressure, pos + vec2(0, 1) / resolution.xy).y;
-	float R = texture2D(tex_pressure, pos + vec2(1, 0) / resolution.xy).y;
-	float B = texture2D(tex_pressure, pos + vec2(0, -1) / resolution.xy).y;
+	float L = texture2D(tex_pressure, pos + vec2(-1, 0) / i_resolution.xy).y;
+	float T = texture2D(tex_pressure, pos + vec2(0, 1) / i_resolution.xy).y;
+	float R = texture2D(tex_pressure, pos + vec2(1, 0) / i_resolution.xy).y;
+	float B = texture2D(tex_pressure, pos + vec2(0, -1) / i_resolution.xy).y;
 
 	float bC = texture2D(tex_pressure, pos).x;
 
@@ -19,19 +19,18 @@ vec2 inner(vec2 pos) {
 vec2 boundary(vec2 pos) {
 	vec2 offset = vec2(0, 0);
 
-	if(pos.x <= 1. / resolution.x) {
-		offset.x = 1.1/resolution.x;
+	if(pos.x <= 1. / i_resolution.x) {
+		offset.x = 1.1/i_resolution.x;
 	}
-	else if(pos.x * resolution.x >= resolution.x - 1) {
-		offset.x = -1.1/resolution.x;
+	else if(pos.x * i_resolution.x >= i_resolution.x - 1) {
+		offset.x = -1.1/i_resolution.x;
 	}
 
-	if(pos.y <= 1. / resolution.y) {
-		offset.y = 1.1/resolution.y;
+	if(pos.y <= 1. / i_resolution.y) {
+		offset.y = 1.1/i_resolution.y;
 	}
-	else if(pos.y * resolution.y >= resolution.y - 1) {
-		offset.y = -1.1/resolution.y;
-		return vec2(0);
+	else if(pos.y * i_resolution.y >= i_resolution.y - 1) {
+		offset.y = -1.1/i_resolution.y;
 	}
 
 	return texture2D(tex_pressure, pos + offset).xy;
@@ -39,8 +38,8 @@ vec2 boundary(vec2 pos) {
 
 void main() {
 	vec2 outDP;
-	vec2 pos = gl_FragCoord.xy / resolution.xy;
-	if(pos.x <= 1. / resolution.x || pos.y <= 1. / resolution.y || pos.x >= 1.0 - 1 / resolution.x || pos.y >= 1.0 - 1 / resolution.y) {
+	vec2 pos = gl_FragCoord.xy / i_resolution.xy;
+	if(pos.x <= 1. / i_resolution.x || pos.y <= 1. / i_resolution.y || pos.x >= 1.0 - 1.1 / i_resolution.x || pos.y >= 1.0 - 1.1 / i_resolution.y) {
 		outDP = boundary(pos);
 	}
 	else {

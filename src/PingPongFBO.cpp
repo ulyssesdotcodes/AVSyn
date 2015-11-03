@@ -1,6 +1,7 @@
 #include "PingPongFBO.h"
 
 using namespace ci;
+using namespace std;
 
 PingPongFBO::PingPongFBO()
 {
@@ -67,4 +68,9 @@ void PingPongFBO::render(gl::BatchRef batch, vec2 translate, Colorf color)
 
 	// Increment mIteration here so that `getTexture()` always points to the latest
 	++mIteration;
+}
+
+Rectf PingPongFBO::getBounds()
+{
+	return mFBOs[0]->getBounds();
 }

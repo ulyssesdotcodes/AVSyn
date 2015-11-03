@@ -6,6 +6,7 @@
 
 #include "AudioSource.h"
 #include "BeatDetector.h"
+#include "Fluid.h"
 #include "PingPongFBO.h"
 #include "Visualization.h"
 
@@ -17,20 +18,16 @@ public:
 	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
 
 private:
+	Fluid mFluid;
+	PingPongFBO mSmokeField;
+
 	ci::vec2 mWindowResolution,
 		 mFluidResolution;
 
 	ci::gl::GlslProgRef 
-		mAdvectShader, 
-		mAdvectMaccormackShader,
-		mForcesShader, 
-		mDivergenceShader, 
-		mPressureSolveShader, 
-		mSubtractPressureShader, 
 		mRenderShader,
+		mForcesShader, 
 		mSmokeDropShader;
-
-	PingPongFBO mVelocityFBO, mPressureFBO, mSmokeFBO;
 
 	float mLastTime;
 	ci::vec2 mAudioVel,
@@ -42,12 +39,5 @@ private:
 	float mSaturation;
 	bool mFlipVelocity;
 
-	void advectVelocity(float dt);
-	void advectSmoke(const World& world, float dt, float time);
-	void advect(float dt, PingPongFBO *velocity, PingPongFBO *target);
-	void applyForce(const World& world, float dt);
-	void computeDivergence();
-	void solvePressure();
-	void subtractPressure();
 	void updateSmokePos(const World& world, float time, float dt);
 };
