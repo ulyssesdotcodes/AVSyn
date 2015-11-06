@@ -3,7 +3,7 @@
 #include "PingPongFBO.h"
 #include "ShaderVisualization.h"
 
-class Feedback : public ShaderVisualization {
+class Feedback : public Visualization {
 public:
 	Feedback(const std::string &fragment);
 	virtual void update(const World& world) override;
@@ -13,10 +13,7 @@ public:
 private:
 	ci::gl::TextureRef mTexture;
 
-	PingPongFBO mFbo;
-
 	ci::gl::GlslProgRef mUpdateShader;
 
-	float mFade;
 	float mLastTime;
 };

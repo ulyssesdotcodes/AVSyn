@@ -253,14 +253,14 @@
     <None Include="..\assets\feedback\rotate.frag">
       <Filter>Shaders\Feedback</Filter>
     </None>
-    <None Include="..\assets\fade.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\assets\fluid\smoke_draw.frag">
       <Filter>Shaders\Fluid</Filter>
     </None>
     <None Include="..\assets\fluid\explosions.frag">
       <Filter>Shaders\Fluid</Filter>
+    </None>
+    <None Include="..\assets\feedback.frag">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

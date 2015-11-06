@@ -23,6 +23,7 @@ void ShaderVisualization::renderUniforms(const World& world) {
 
 void ShaderVisualization::draw(const World& world)
 {
+	gl::clear(Color(0, 0, 0));
 	gl::setMatricesWindow(world.windowSize);
 
 	gl::ScopedGlslProg glScp(mShader);

@@ -115,4 +115,5 @@ void EQPointCloud::draw(const World& world)
 
 	gl::rotate(mRotation);
 	mBatch->draw();
+	gl::rotate(quat());
 }

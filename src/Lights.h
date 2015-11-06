@@ -12,14 +12,6 @@ public:
 	void switchParams(ci::params::InterfaceGlRef params, const std::string &group);
 
 private:
-	ci::gl::TextureRef mTexture;
-
-	PingPongFBO mFbo;
-
-	ci::gl::GlslProgRef mFadeShader;
 	ci::gl::BatchRef mNewLight;
-
-	float mFade;
-	float mLastTime;
 	ci::vec2 mResolution;
 };

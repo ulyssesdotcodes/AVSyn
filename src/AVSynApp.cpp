@@ -126,7 +126,7 @@ void AVSynApp::setup()
 	auto mix = std::make_shared<Mix>(visualizations);
 	visualizations.insert(make_pair("Mix", mix));
 
-	mMainVisualization = std::make_unique<ChoiceVisualization>(visualizations);
+	mMainVisualization = std::make_unique<ChoiceVisualization>(mWorld, visualizations);
 	mMainVisualization->switchParams(mParams, "Main");
 
 	// Setup rendering!

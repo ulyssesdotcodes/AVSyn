@@ -249,7 +249,7 @@
   <ItemGroup>
     <None Include="..\assets\circular_fft.frag" />
     <None Include="..\assets\color.frag" />
-    <None Include="..\assets\fade.frag" />
+    <None Include="..\assets\feedback.frag" />
     <None Include="..\assets\feedback\buffer.frag" />
     <None Include="..\assets\dots.frag" />
     <None Include="..\assets\eq_pointcloud.vert" />

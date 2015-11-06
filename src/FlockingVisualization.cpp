@@ -100,14 +100,14 @@ FlockingVisualization::FlockingVisualization()
 }
 
 void FlockingVisualization::switchParams(params::InterfaceGlRef params, const std::string &group) {
-	addParamName("Loudness");
+	addParamName(group + "/Loudness");
 	params->addParam("Loudness", &mLoudness)
 		.min(0.0)
 		.max(2.0)
 		.step(0.001)
 		.group(group);
 
-	addParamName("Speed");
+	addParamName(group + "/Speed");
 	params->addParam("Speed", &mSpeed)
 		.min(0.5)
 		.max(4.0)

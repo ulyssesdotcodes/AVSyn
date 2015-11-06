@@ -6,7 +6,7 @@
 class ChoiceVisualization : public Visualization
 {
 public:
-	ChoiceVisualization(std::map<std::string, std::shared_ptr<Visualization>> visualizations);
+	ChoiceVisualization(const World& world, std::map<std::string, std::shared_ptr<Visualization>> visualizations);
 
 	//! Perform all computations for the visualization.
 	virtual void update(const World& world);
@@ -23,6 +23,15 @@ private:
 	std::shared_ptr<Visualization> mVisualization;
 	int mVisualizationIndex;
 
-	bool mFade;
+	bool mFadeTransitionOn;
 	std::unique_ptr<FadeTransition> mFadeTransition;
+
+	ci::gl::FboRef mCurrentVis;
+	PingPongFBO mPingPongFBO;
+
+	ci::gl::GlslProgRef mFeedbackShader;
+
+	float mFade,
+		mScaleFade,
+		mScale;
 };
