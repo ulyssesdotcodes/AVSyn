@@ -140,5 +140,12 @@ void ChoiceVisualization::switchParams(ci::params::InterfaceGlRef params, const 
 		.step(0.01)
 		.group(group);
 
+	params->addButton(group + "/Feedback/Reset",
+		[=]() {
+			mFade = 0.98;
+			mScale = 1.0;
+			mScaleFade = 0.0;
+		}, "group=" + group);
+
 	mVisualization->switchParams(params, group);
 }
