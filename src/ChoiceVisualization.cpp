@@ -34,6 +34,7 @@ ChoiceVisualization::ChoiceVisualization(const World& world, std::map<std::strin
 	mCurrentVis = gl::Fbo::create(world.windowSize.x, world.windowSize.y, fmt);
 	mPingPongFBO = PingPongFBO(fmt, world.windowSize, 2);
 
+	mFadeTransitionOn = true;
 	mFade = 0.0;
 	mScale = 1.0;
 	mScaleFade = 0.8;

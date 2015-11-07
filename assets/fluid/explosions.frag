@@ -37,7 +37,7 @@ void main() {
 
 	density *= mix(0.6, 1.0, rand(vec2(pos.x * pos.y, cos(i_time))));
 
-	float temperature = current.y + density * 32;
+	float temperature = current.y + density;
 
 	float hue = current.z;
 	if(density > 0.0001) {
