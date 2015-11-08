@@ -37,11 +37,17 @@ ChoiceVisualization::ChoiceVisualization(const World& world, std::map<std::strin
 	mFadeTransitionOn = true;
 	mFade = 0.0;
 	mScale = 1.0;
-	mScaleFade = 0.8;
+	mScaleFade = 0.0;
+	mHueShift = 0.0;
+	mHueShiftCycle = 0.0;
+	mSaturationShift = 0.0;
+	mLightnessShift = 1.0;
 }
 
 void ChoiceVisualization::update(const World& world)
 {
+	mHueShift = glm::fract(mHueShift + mHueShiftCycle * world.deltaSource->delta());
+
 	// If there's a transition, defer to it.
 	if (mFadeTransition != nullptr) {
 		mFadeTransition->update(world);
@@ -70,7 +76,7 @@ void ChoiceVisualization::update(const World& world)
 void ChoiceVisualization::draw(const World& world)
 {
 
-	if (mFade == 0.0 && mScale == 1.0) {
+	if (mFade == 0.0 && mScale == 1.0 && mHueShift == 0.0 && mSaturationShift == 0 && mLightnessShift == 0) {
 		gl::clear(Color(0, 0, 0));
 		gl::setMatricesWindow(world.windowSize);
 		gl::draw(mCurrentVis->getColorTexture());
@@ -86,6 +92,9 @@ void ChoiceVisualization::draw(const World& world)
 			mFeedbackShader->uniform("i_fade", mFade);
 			mFeedbackShader->uniform("i_scale", mScale);
 			mFeedbackShader->uniform("i_scaleFade", mScaleFade);
+			mFeedbackShader->uniform("i_hueShift", mHueShift);
+			mFeedbackShader->uniform("i_saturationShift", mSaturationShift);
+			mFeedbackShader->uniform("i_lightnessShift", mLightnessShift);
 
 			gl::setMatricesWindow(world.windowSize);
 			mPingPongFBO.render(mFeedbackShader);
@@ -100,6 +109,7 @@ void ChoiceVisualization::draw(const World& world)
 
 void ChoiceVisualization::switchParams(ci::params::InterfaceGlRef params, const std::string & group)
 {
+	addParamName(group + "/Visualization");
 	params->addParam(group + "/Visualization", mVisualizationNames, 
 		[=](int ind) {
 			VisualizationRef oldVisualization = std::shared_ptr<Visualization>(mVisualization);
@@ -119,32 +129,74 @@ void ChoiceVisualization::switchParams(ci::params::InterfaceGlRef params, const 
 	)
 		.group(group);
 
+	addParamName(group + "/Fade Transition");
 	params->addParam(group + "/Fade Transition", &mFadeTransitionOn)
 		.group(group);
 
+	addParamName(group + "/Feedback/Fade");
 	params->addParam(group + "/Feedback/Fade", &mFade)
 		.min(0.0f)
 		.max(1.0f)
 		.step(0.01)
 		.group(group);
 
+	addParamName(group + "/Feedback/Scale");
 	params->addParam(group + "/Feedback/Scale", &mScale)
 		.min(0.1f)
 		.max(2.0f)
 		.step(0.01)
 		.group(group);
 
+	addParamName(group + "/Feedback/ScaleFade");
 	params->addParam(group + "/Feedback/ScaleFade", &mScaleFade)
 		.min(0.0f)
 		.max(1.0f)
 		.step(0.01)
 		.group(group);
 
+	addParamName(group + "/Feedback/Reset");
 	params->addButton(group + "/Feedback/Reset",
 		[=]() {
 			mFade = 0.98;
 			mScale = 1.0;
 			mScaleFade = 0.0;
+		}, "group=" + group);
+
+	addParamName(group + "/Feedback/HueShift");
+	params->addParam(group + "/Feedback/HueShift", &mHueShift)
+		.min(0.0f)
+		.max(1.0f)
+		.step(0.01)
+		.group(group);
+
+	addParamName(group + "/Feedback/SaturationShift");
+	params->addParam(group + "/Feedback/SaturationShift", &mSaturationShift)
+		.min(0.0f)
+		.max(1.0f)
+		.step(0.01)
+		.group(group);
+
+	addParamName(group + "/Feedback/LightnessShift");
+	params->addParam(group + "/Feedback/LightnessShift", &mLightnessShift)
+		.min(0.0f)
+		.max(2.0f)
+		.step(0.01)
+		.group(group);
+
+	addParamName(group + "/Feedback/HueShiftCycle");
+	params->addParam(group + "/Feedback/HueShiftCycle", &mHueShiftCycle)
+		.min(0.0f)
+		.max(1.00f)
+		.step(0.01)
+		.group(group);
+
+	addParamName(group + "/Feedback/ResetColor");
+	params->addButton(group + "/Feedback/ResetColor",
+		[=]() {
+			mHueShift = 0.0;
+			mHueShiftCycle = 0.0;
+			mSaturationShift = 0.0;
+			mLightnessShift = 1.0;
 		}, "group=" + group);
 
 	mVisualization->switchParams(params, group);

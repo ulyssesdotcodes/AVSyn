@@ -33,5 +33,9 @@ private:
 
 	float mFade,
 		mScaleFade,
-		mScale;
+		mScale,
+		mHueShift,
+		mHueShiftCycle,
+		mSaturationShift,
+		mLightnessShift;
 };
