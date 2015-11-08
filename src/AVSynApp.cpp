@@ -12,7 +12,6 @@
 #include "ChoiceVisualization.h"
 #include "DotsVisualization.h"
 #include "EQPointCloud.h"
-#include "ExplosionsVisualizer.h"
 #include "Feedback.h"
 #include "FlockingVisualization.h"
 #include "FluidVisualizer.h"
@@ -103,9 +102,6 @@ void AVSynApp::setup()
 	auto fluid = std::make_shared<FluidVisualizer>();
 	visualizations.insert(make_pair("Fluid", fluid));
 
-	auto explosions = std::make_shared<ExplosionsVisualizer>();
-	visualizations.insert(make_pair("Explosions", explosions));
-
 	//auto *kickChangeImage = new KinectParticles();
 	//kickChangeImage->setup(mAudioSource, mBeatDetector, mVisualizations, mVisualizationOptions);
 	//mVisualizations.insert(make_pair("Kick Change Image", kickChangeImage));
@@ -119,9 +115,6 @@ void AVSynApp::setup()
 
 	auto lightsVis = std::make_shared<Lights>();
 	visualizations.insert(make_pair("Lights", lightsVis));
-
-	auto wheatFields = std::make_shared<Video>("Wheat Field.mov");
-	visualizations.insert(make_pair("Wheat Fields", wheatFields));
 
 	auto mix = std::make_shared<Mix>(visualizations);
 	visualizations.insert(make_pair("Mix", mix));
