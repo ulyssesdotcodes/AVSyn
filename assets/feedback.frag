@@ -6,7 +6,8 @@ uniform sampler2D tex_current;
 uniform vec2 i_resolution;
 uniform float i_fade;
 uniform float i_scale;
-uniform float i_scaleFade;
+uniform float i_offsetY;
+uniform float i_manipFade;
 uniform float i_hueShift;
 uniform float i_saturationShift;
 uniform float i_lightnessShift;
@@ -45,11 +46,19 @@ void main() {
 
 	current = clamp(current, 0.0, 0.999);
 
-	vec2 prevPos = (pos - 0.5 + 0.5 * i_scale) / i_scale;
+	vec2 prevPos = pos;
 	vec3 prev = vec3(0);
 
-	if(abs(i_scale - 1.0) > 0.001 && prevPos.x > 0 && prevPos.x < 1.0 && prevPos.y > 0 && prevPos.y < 1.0) {
-		prev = texture2D(tex_prev, prevPos).xyz * i_scaleFade;
+	if(abs(i_scale - 1.0) > 0.001) {
+		prevPos = (prevPos - 0.5 + 0.5 * i_scale) / i_scale;
+	}
+
+	if(abs(i_offsetY - 1.0) > 0.001) {
+		prevPos.y = prevPos.y + i_offsetY;
+	}
+
+	if(prevPos.x > 0 && prevPos.x < 1.0 && prevPos.y > 0 && prevPos.y < 1.0) {
+		prev = texture2D(tex_prev, prevPos).xyz * i_manipFade;
 	}
 
 	if(i_fade > 0.0) {

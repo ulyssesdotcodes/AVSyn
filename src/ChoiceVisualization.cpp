@@ -37,11 +37,12 @@ ChoiceVisualization::ChoiceVisualization(const World& world, std::map<std::strin
 	mFadeTransitionOn = true;
 	mFade = 0.0;
 	mScale = 1.0;
-	mScaleFade = 0.0;
+	mOffsetY = 0.0;
 	mHueShift = 0.0;
 	mHueShiftCycle = 0.0;
 	mSaturationShift = 0.0;
 	mLightnessShift = 1.0;
+	mManipFade = 0.0;
 }
 
 void ChoiceVisualization::update(const World& world)
@@ -91,8 +92,9 @@ void ChoiceVisualization::draw(const World& world)
 
 			mFeedbackShader->uniform("i_fade", mFade);
 			mFeedbackShader->uniform("i_scale", mScale);
-			mFeedbackShader->uniform("i_scaleFade", mScaleFade);
+			mFeedbackShader->uniform("i_offsetY", mOffsetY);
 			mFeedbackShader->uniform("i_hueShift", mHueShift);
+			mFeedbackShader->uniform("i_manipFade", mManipFade);
 			mFeedbackShader->uniform("i_saturationShift", mSaturationShift);
 			mFeedbackShader->uniform("i_lightnessShift", mLightnessShift);
 
@@ -147,8 +149,15 @@ void ChoiceVisualization::switchParams(ci::params::InterfaceGlRef params, const 
 		.step(0.01)
 		.group(group);
 
-	addParamName(group + "/Feedback/ScaleFade");
-	params->addParam(group + "/Feedback/ScaleFade", &mScaleFade)
+	addParamName(group + "/Feedback/OffsetY");
+	params->addParam(group + "/Feedback/OffsetY", &mOffsetY)
+		.min(-1.0f)
+		.max(1.0f)
+		.step(0.01)
+		.group(group);
+
+	addParamName(group + "/Feedback/ManipFade");
+	params->addParam(group + "/Feedback/ManipFade", &mManipFade)
 		.min(0.0f)
 		.max(1.0f)
 		.step(0.01)
@@ -159,7 +168,7 @@ void ChoiceVisualization::switchParams(ci::params::InterfaceGlRef params, const 
 		[=]() {
 			mFade = 0.98;
 			mScale = 1.0;
-			mScaleFade = 0.0;
+			mManipFade = 0.0;
 		}, "group=" + group);
 
 	addParamName(group + "/Feedback/HueShift");

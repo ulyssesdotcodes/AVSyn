@@ -32,10 +32,11 @@ private:
 	ci::gl::GlslProgRef mFeedbackShader;
 
 	float mFade,
-		mScaleFade,
+		mOffsetY,
 		mScale,
 		mHueShift,
 		mHueShiftCycle,
 		mSaturationShift,
-		mLightnessShift;
+		mLightnessShift,
+		mManipFade;
 };
