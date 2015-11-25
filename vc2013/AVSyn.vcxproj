@@ -245,6 +245,7 @@
     <ClInclude Include="..\src\World.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\assets\circle.frag" />
     <None Include="..\assets\circular_fft.frag" />
     <None Include="..\assets\color.frag" />
     <None Include="..\assets\feedback.frag" />

@@ -16,4 +16,5 @@ private:
 	ci::gl::GlslProgRef mUpdateShader;
 
 	float mLastTime;
+	float mVolume;
 };

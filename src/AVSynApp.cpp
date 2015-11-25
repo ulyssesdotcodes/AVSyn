@@ -93,6 +93,8 @@ void AVSynApp::setup()
 	mParamWindow->getSignalDraw().connect([=]() { drawParams(); });
 	mParams = params::InterfaceGl::create(getWindow(), "Options", paramsSize);
 
+	mParams->addParam("Render Vertices", &mRenderVertices);
+
 	// Reset to the regular window instead of params
 	getWindowIndex(0)->getRenderer()->makeCurrentContext();
 
@@ -102,7 +104,7 @@ void AVSynApp::setup()
 	auto blank = std::make_shared<BlankVisualization>();
 	visualizations.insert(make_pair("Blank", blank));
 
-	auto simpleVis = std::make_shared<AudioShaderVisualization>("simple.frag");
+	auto simpleVis = std::make_shared<AudioShaderVisualization>("circle.frag");
 	visualizations.insert(make_pair("Simple", simpleVis));
 
 	auto circularVis = std::make_shared<AudioShaderVisualization>("circular_fft.frag");
@@ -151,11 +153,11 @@ void AVSynApp::setup()
 	std::vector<vec2> texCoordsVertices;
 	mVertices.push_back(vec3(0, 0, 0));
 	texCoordsVertices.push_back(vec2(0, 1));
-	mVertices.push_back(vec3(resolution.x * 0.5, 0, 0));
+	mVertices.push_back(vec3(resolution.x, 0, 0));
 	texCoordsVertices.push_back(vec2(1, 1));
-	mVertices.push_back(vec3(0, resolution.y * 0.5, 0));
+	mVertices.push_back(vec3(0, resolution.y, 0));
 	texCoordsVertices.push_back(vec2(0, 0));
-	mVertices.push_back(vec3(resolution.x * 0.5, resolution.y * 0.5, 0));
+	mVertices.push_back(vec3(resolution.x, resolution.y, 0));
 	texCoordsVertices.push_back(vec2(1, 0));
 
 	mDrawVertex = gl::Batch::create(geom::Circle().radius(16), gl::getStockShader(gl::ShaderDef().color()));
@@ -168,6 +170,7 @@ void AVSynApp::setup()
 	//geom::BufferLayout texCoordsLayout = geom::BufferLayout();
 	//texCoordsLayout.append(geom::TEX_COORD_0, 2, sizeof(vec2), 0);
 
+	mRenderVertices = false;
 	mWidth = 32;
 
 	auto plane = 

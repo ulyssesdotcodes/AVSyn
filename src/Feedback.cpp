@@ -7,6 +7,7 @@ using namespace ci;
 Feedback::Feedback(const std::string &fragment)
 {
 	mLastTime = 0;
+	mVolume = 1.0f;
 
 	vec2 resolution = app::getWindowIndex(0)->getSize();
 
@@ -29,7 +30,7 @@ void Feedback::update(const World& world)
 	world.audioSource->update();
 	mTexture = world.audioSource->getMagSpectrumTexture();
 
-	mUpdateShader->uniform("i_volume", world.audioSource->getVolume());
+	mUpdateShader->uniform("i_volume", world.audioSource->getVolume() * mVolume);
 	mUpdateShader->uniform("i_accumulatedSound", world.audioSource->getAccumulatedSound());
 	mUpdateShader->uniform("i_highestVolume", world.audioSource->getHighestVolumePos());
 }
@@ -46,4 +47,10 @@ void Feedback::draw(const World& world)
 
 void Feedback::switchParams(params::InterfaceGlRef params, const std::string &group)
 {
+	addParamName(group + "/Volume");
+	params->addParam(group + "/Volume", &mVolume)
+		.min(0.0)
+		.max(2.0)
+		.step(0.02)
+		.group(group);
 }
