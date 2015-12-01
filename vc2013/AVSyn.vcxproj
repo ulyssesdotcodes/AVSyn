@@ -201,6 +201,7 @@
     <ClCompile Include="..\src\AudioShaderVisualization.cpp" />
     <ClCompile Include="..\src\AudioSource.cpp" />
     <ClCompile Include="..\src\AVSynApp.cpp" />
+    <ClCompile Include="..\src\AxonNeuron.cpp" />
     <ClCompile Include="..\src\BeatDetector.cpp" />
     <ClCompile Include="..\src\BlankVisualization.cpp" />
     <ClCompile Include="..\src\ChoiceVisualization.cpp" />
@@ -214,6 +215,8 @@
     <ClCompile Include="..\src\FluidVisualizer.cpp" />
     <ClCompile Include="..\src\Lights.cpp" />
     <ClCompile Include="..\src\Mix.cpp" />
+    <ClCompile Include="..\src\Neuron.cpp" />
+    <ClCompile Include="..\src\NeuronVisualization.cpp" />
     <ClCompile Include="..\src\PingPongFBO.cpp" />
     <ClCompile Include="..\src\ShaderVisualization.cpp" />
     <ClCompile Include="..\src\TreeVisualization.cpp" />
@@ -224,6 +227,7 @@
     <ClInclude Include="..\include\Resources.h" />
     <ClInclude Include="..\src\AudioShaderVisualization.h" />
     <ClInclude Include="..\src\AudioSource.h" />
+    <ClInclude Include="..\src\AxonNeuron.h" />
     <ClInclude Include="..\src\BeatDetector.h" />
     <ClInclude Include="..\src\BlankVisualization.h" />
     <ClInclude Include="..\src\ChoiceVisualization.h" />
@@ -237,6 +241,8 @@
     <ClInclude Include="..\src\FluidVisualizer.h" />
     <ClInclude Include="..\src\Lights.h" />
     <ClInclude Include="..\src\Mix.h" />
+    <ClInclude Include="..\src\Neuron.h" />
+    <ClInclude Include="..\src\NeuronVisualization.h" />
     <ClInclude Include="..\src\PingPongFBO.h" />
     <ClInclude Include="..\src\ShaderVisualization.h" />
     <ClInclude Include="..\src\TreeVisualization.h" />

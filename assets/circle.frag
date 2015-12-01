@@ -36,8 +36,8 @@ void main(void)
     vec2 uv = (gl_FragCoord.xy / i_resolution.xy - vec2(0.5)) * vec2(i_resolution.x/i_resolution.y, 1.0);
     vec2 cuv = toPolar(uv, vec2(0));
 
-	cuv.x = (cuv.x + 3.1415 * 0.5) / (2 * 3.1415);
-	vec3 sound = texture2D(tex_audio, vec2(cuv.x, 0.25)).xyz;
+	cuv.x = (cuv.x + 3.1415 * 0.5) * 2 / (2 * 3.1415) - 1.0;
+	vec3 sound = texture2D(tex_audio, vec2(fract(cuv.x), 0.25)).xyz;
 	if(cuv.y < 0.2) {
 		discard;
 	}

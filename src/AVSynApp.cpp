@@ -18,6 +18,7 @@
 #include "FluidVisualizer.h"
 #include "Lights.h"
 #include "Mix.h"
+#include "NeuronVisualization.h"
 #include "ShaderVisualization.h"
 #include "Video.h"
 #include "Visualization.h"
@@ -140,6 +141,9 @@ void AVSynApp::setup()
 
 	auto lightsVis = std::make_shared<Lights>();
 	visualizations.insert(make_pair("Lights", lightsVis));
+
+	auto neuronsVis = std::make_shared<NeuronVisualization>(mWorld);
+	visualizations.insert(make_pair("Neurons", neuronsVis));
 
 	auto mix = std::make_shared<Mix>(visualizations);
 	visualizations.insert(make_pair("Mix", mix));

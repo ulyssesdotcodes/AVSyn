@@ -5,6 +5,7 @@ uniform sampler2D tex_audio;
 uniform vec2 i_resolution;
 uniform float i_highestVolume;
 uniform float i_time;
+uniform float i_volume;
 uniform float i_accumulatedSound;
 
 out vec4 fragColor;
@@ -42,7 +43,7 @@ void main() {
 
 	vec2 audio = texture2D(tex_audio, vec2(posRotated.x, 0.25)).xy;
 
-	float audX = audio.y * 0.4 + 0.5;
+	float audX = audio.y * 0.4 * i_volume + 0.5;
 	float clamped = clamp(20 * (0.05 - abs(posRotated.y - audX)), 0, 1);
 
 	fragColor = vec4(hsv2rgb(vec3(i_highestVolume, 0.5, clamped)), 1);

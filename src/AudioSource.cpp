@@ -110,7 +110,7 @@ std::vector<float> AudioSource::getEqs(int binCount, float scale)
 
 		// Just discard the last one if it fits perfectly.
 		if(bin < bins.size()) {
-			bins[bin] += buffer[i];
+			bins[bin] += glm::pow(buffer[i], 2.0 - ((float) i / (float) buffer.size()));
 		}
 	}
 

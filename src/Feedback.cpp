@@ -30,7 +30,7 @@ void Feedback::update(const World& world)
 	world.audioSource->update();
 	mTexture = world.audioSource->getMagSpectrumTexture();
 
-	mUpdateShader->uniform("i_volume", world.audioSource->getVolume() * mVolume);
+	mUpdateShader->uniform("i_volume", mVolume);
 	mUpdateShader->uniform("i_accumulatedSound", world.audioSource->getAccumulatedSound());
 	mUpdateShader->uniform("i_highestVolume", world.audioSource->getHighestVolumePos());
 }

@@ -11,7 +11,7 @@ ChoiceVisualization::ChoiceVisualization(const World& world, std::map<std::strin
 		mVisualizationNames.push_back(it->first);
 	}
 
-	mVisualizationIndex = 0;
+	mVisualizationIndex = mVisualizationNames.size() - 3;
 	mVisualization = visualizations[mVisualizationNames[mVisualizationIndex]];
 
 	mFadeTransition = nullptr;
