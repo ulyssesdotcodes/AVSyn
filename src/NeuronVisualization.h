@@ -15,6 +15,8 @@ public:
 	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
 
 private:
+	float mVolume;
+
 	std::vector<std::shared_ptr<Neuron>> mInnerNeurons;
 	std::vector<std::shared_ptr<Neuron>> mOuterNeurons;
 };

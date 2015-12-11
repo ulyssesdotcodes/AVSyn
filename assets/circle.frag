@@ -3,6 +3,7 @@ uniform sampler2D tex_audio;
 uniform float i_time;
 uniform float i_hue;
 uniform float i_volume;
+uniform float i_holeSize;
 
 out vec4 fragColor;
 
@@ -38,14 +39,14 @@ void main(void)
 
 	cuv.x = (cuv.x + 3.1415 * 0.5) * 2 / (2 * 3.1415) - 1.0;
 	vec3 sound = texture2D(tex_audio, vec2(fract(cuv.x), 0.25)).xyz;
-	if(cuv.y < 0.2) {
+	if(cuv.y < i_holeSize) {
 		discard;
 	}
 
 	vec3 color;
 	color.x = cuv.x;
 	color.y = 1.0;
-	color.z = ceil(sound.x * 0.5 + 0.2 - cuv.y);
+	color.z = ceil(sound.x * 0.5 + i_holeSize - cuv.y);
 
     fragColor = vec4(hsv2rgb(color), 1.0);
 }

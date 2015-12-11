@@ -9,6 +9,8 @@ using namespace ci;
 
 NeuronVisualization::NeuronVisualization(const World &world)
 {
+	mVolume = 1.0;
+
 	int innerNeuronCount = OUTER_NEURON_COUNT - 4;
 
 	auto randPos = [](vec2 area) { return vec2(Rand::randFloat() * area.x, Rand::randFloat() * area.y); };
@@ -41,7 +43,7 @@ void NeuronVisualization::update(const World & world)
 	for (int i = 0; i < OUTER_NEURON_COUNT; ++i) {
 		Impulse impulse;
 		impulse.color = Colorf(ColorModel::CM_HSV, (float) i / (float) OUTER_NEURON_COUNT, 1.0, 1.0);
-		impulse.intensity = volumes.at(i);
+		impulse.intensity = volumes.at(i) * mVolume;
 
 		mOuterNeurons.at(i)->synapse(impulse);
 		mOuterNeurons.at(i)->update();
@@ -61,4 +63,10 @@ void NeuronVisualization::draw(const World & world)
 
 void NeuronVisualization::switchParams(ci::params::InterfaceGlRef params, const std::string & group)
 {
+	addParamName(group + "/Volume");
+	params->addParam(group + "/Volume", &mVolume)
+		.min(0.0)
+		.max(2.0)
+		.step(0.001)
+		.group(group);
 }
