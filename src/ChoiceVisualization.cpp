@@ -4,7 +4,7 @@
 
 using namespace ci;
 
-ChoiceVisualization::ChoiceVisualization(const World& world, std::map<std::string, std::shared_ptr<Visualization>> visualizations)
+ChoiceVisualization::ChoiceVisualization(const World& world, std::map<std::string, std::shared_ptr<Visualization>> visualizations, OscVisController *oscVisController)
 {
 	mVisualizations = visualizations;
 	for (std::map<std::string, std::shared_ptr<Visualization>>::iterator it = mVisualizations.begin(); it != mVisualizations.end(); ++it) {
@@ -43,6 +43,11 @@ ChoiceVisualization::ChoiceVisualization(const World& world, std::map<std::strin
 	mSaturationShift = 0.0;
 	mLightnessShift = 1.0;
 	mManipFade = 0.0;
+
+	oscVisController->subscribeVisListener([=](int index) {
+		app::console() << "Received: " << index << std::endl;
+		setVisualization(index);
+	});
 }
 
 void ChoiceVisualization::update(const World& world)
@@ -109,21 +114,28 @@ void ChoiceVisualization::draw(const World& world)
 	}
 }
 
+void ChoiceVisualization::setVisualization(int index) 
+{
+	VisualizationRef oldVisualization = std::shared_ptr<Visualization>(mVisualization);
+	oldVisualization->resetParams(mParams);
+
+	mVisualizationIndex = index;
+	mVisualization = mVisualizations[mVisualizationNames[mVisualizationIndex]];
+	mVisualization->switchParams(mParams, "/Vis");
+
+	if (mFadeTransitionOn) {
+		mFadeTransition = std::make_unique<FadeTransition>(oldVisualization, mVisualization, 5.0);
+	}
+}
+
 void ChoiceVisualization::switchParams(ci::params::InterfaceGlRef params, const std::string & group)
 {
+	mParams = params;
+
 	addParamName(group + "/Visualization");
 	params->addParam(group + "/Visualization", mVisualizationNames, 
 		[=](int ind) {
-			VisualizationRef oldVisualization = std::shared_ptr<Visualization>(mVisualization);
-			oldVisualization->resetParams(params);
-
-			mVisualizationIndex = ind;
-			mVisualization = mVisualizations[mVisualizationNames[mVisualizationIndex]];
-			mVisualization->switchParams(params, group + "/Vis");
-
-			if (mFadeTransitionOn) {
-				mFadeTransition = std::make_unique<FadeTransition>(oldVisualization, mVisualization, 5.0);
-			}
+			setVisualization(ind);
 		},
 		[=]() {
 			return mVisualizationIndex;

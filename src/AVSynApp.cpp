@@ -19,6 +19,8 @@
 #include "Lights.h"
 #include "Mix.h"
 #include "NeuronVisualization.h"
+#include "OscController.h"
+#include "OscVisController.h"
 #include "ShaderVisualization.h"
 #include "Video.h"
 #include "Visualization.h"
@@ -70,6 +72,8 @@ private:
 	gl::BatchRef mDrawRect;
 
 	gl::FboRef mFbo;
+
+	std::shared_ptr<OscController> mOscController;
 };
 
 void AVSynApp::setup()
@@ -86,6 +90,8 @@ void AVSynApp::setup()
 	mWorld.bounds = getWindowIndex(0)->getBounds();
 
 	// Set up params
+	mOscController = std::make_shared<OscController>();
+
 	vec2 paramsSize = vec2(255, 512);
 	auto format = Window::Format();
 	format.setSize(paramsSize + vec2(40, 40));
@@ -148,7 +154,7 @@ void AVSynApp::setup()
 	auto mix = std::make_shared<Mix>(visualizations);
 	visualizations.insert(make_pair("Mix", mix));
 
-	mMainVisualization = std::make_unique<ChoiceVisualization>(mWorld, visualizations);
+	mMainVisualization = std::make_unique<ChoiceVisualization>(mWorld, visualizations, new OscVisController("/visA", mOscController));
 	mMainVisualization->switchParams(mParams, "Main");
 
 	// Setup rendering!

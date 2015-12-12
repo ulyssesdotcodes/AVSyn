@@ -1,12 +1,14 @@
 #pragma once
 
 #include "FadeTransition.h"
+#include "OscVisController.h"
 #include "Visualization.h"
 
 class ChoiceVisualization : public Visualization
 {
 public:
-	ChoiceVisualization(const World& world, std::map<std::string, std::shared_ptr<Visualization>> visualizations);
+	ChoiceVisualization(const World& world, std::map<std::string, std::shared_ptr<Visualization>> visualizations, 
+		OscVisController *oscController);
 
 	//! Perform all computations for the visualization.
 	virtual void update(const World& world);
@@ -15,7 +17,7 @@ public:
 	//! Set up the parameters for this visualization when the user switches to it.
 	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group);
 	//! A convenience method so that parameters added in switchParams can be easily removed.
-
+	virtual void setVisualization(int index);
 
 private:
 	std::map<std::string, std::shared_ptr<Visualization>> mVisualizations;
@@ -39,4 +41,6 @@ private:
 		mSaturationShift,
 		mLightnessShift,
 		mManipFade;
+
+	ci::params::InterfaceGlRef mParams;
 };
