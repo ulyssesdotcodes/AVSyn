@@ -4,12 +4,12 @@
 
 using namespace ci;
 
-ChoiceVisualization::ChoiceVisualization(const World& world, std::map<std::string, std::shared_ptr<Visualization>> visualizations, OscVisController *oscVisController)
+ChoiceVisualization::ChoiceVisualization(const World& world, std::vector<std::string> orderedVisualizationNames, 
+	std::map<std::string, std::shared_ptr<Visualization>> visualizations, OscVisController *oscVisController)
 {
 	mVisualizations = visualizations;
-	for (std::map<std::string, std::shared_ptr<Visualization>>::iterator it = mVisualizations.begin(); it != mVisualizations.end(); ++it) {
-		mVisualizationNames.push_back(it->first);
-	}
+
+	mVisualizationNames = orderedVisualizationNames;
 
 	mVisualizationIndex = mVisualizationNames.size() - 3;
 	mVisualization = visualizations[mVisualizationNames[mVisualizationIndex]];

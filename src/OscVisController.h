@@ -4,7 +4,7 @@
 
 class OscVisController {
 public:
-	OscVisController(const std::string &path, std::shared_ptr<OscController> controller);
+	OscVisController(const std::string &path, std::shared_ptr<OscController> controller, std::vector<std::string> visualizationNames);
 
 	void subscribeVisListener(std::function<void(int)>);
 

@@ -104,6 +104,7 @@ void AVSynApp::setup()
 
 	// Reset to the regular window instead of params
 	getWindowIndex(0)->getRenderer()->makeCurrentContext();
+	getWindowIndex(0)->getRenderer()->makeCurrentContext();
 
 	// Create visualizations list
 	std::map<std::string, std::shared_ptr<Visualization>> visualizations;
@@ -154,8 +155,26 @@ void AVSynApp::setup()
 	auto mix = std::make_shared<Mix>(visualizations);
 	visualizations.insert(make_pair("Mix", mix));
 
-	mMainVisualization = std::make_unique<ChoiceVisualization>(mWorld, visualizations, new OscVisController("/visA", mOscController));
+	std::vector<std::string> visualizationNames;
+	for (std::map<std::string, std::shared_ptr<Visualization>>::iterator it = visualizations.begin(); it != visualizations.end(); ++it) {
+		visualizationNames.push_back(it->first);
+	}
+
+	mMainVisualization = 
+		std::make_unique<ChoiceVisualization>(mWorld, visualizationNames, visualizations,  
+			new OscVisController("/visA", mOscController, visualizationNames));
 	mMainVisualization->switchParams(mParams, "Main");
+
+	mOscController->subscribe("/connection", [this, visualizationNames](osc::Message __) {
+		osc::Message message;
+		message.setAddress("/connection/choices");
+
+		for (std::vector<std::string>::const_iterator it = visualizationNames.begin(); it != visualizationNames.end(); ++it) {
+			message.addStringArg(*it);
+		}
+
+		mOscController->sendMessage(message);
+	});
 
 	// Setup rendering!
 	vec2 resolution = getWindowIndex(0)->getSize();

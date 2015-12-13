@@ -3,12 +3,21 @@
 #include "OscListener.h"
 #include "OscSender.h"
 
+#include <map>
+
 class OscController {
 public:
 	OscController();
-	void subscribe(const std::string &path, std::function<void(const ci::osc::Message*)>);
+
+	// Function that can be passed by value to
+	void subscribe(const std::string &address, std::function<void(const ci::osc::Message)>);
+
+	// Pass by value
+	void sendMessage(ci::osc::Message message);
 
 private:
 	ci::osc::Listener mListener;
 	ci::osc::Sender mSender;
+
+	std::map<std::string, std::function<void(const ci::osc::Message)>> mObservers;
 };

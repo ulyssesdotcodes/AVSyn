@@ -7,8 +7,8 @@
 class ChoiceVisualization : public Visualization
 {
 public:
-	ChoiceVisualization(const World& world, std::map<std::string, std::shared_ptr<Visualization>> visualizations, 
-		OscVisController *oscController);
+	ChoiceVisualization(const World& world, std::vector<std::string> orderedVisualizationNames, 
+		std::map<std::string, std::shared_ptr<Visualization>> visualizations, OscVisController *oscController);
 
 	//! Perform all computations for the visualization.
 	virtual void update(const World& world);
