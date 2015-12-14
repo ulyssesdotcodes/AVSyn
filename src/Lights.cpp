@@ -35,6 +35,6 @@ void Lights::draw(const World& world)
 	gl::translate(vec2(0, 0));
 }
 
-void Lights::switchParams(params::InterfaceGlRef params, const std::string & group)
+void Lights::switchParams(OscVisController &controller)
 {
 }

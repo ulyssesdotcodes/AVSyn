@@ -12,7 +12,7 @@ public:
 
 	virtual void update(const World &world) override;
 	virtual void draw(const World &world) override;
-	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
+	virtual void switchParams(OscVisController &controller) override;
 
 private:
 	float mVolume;

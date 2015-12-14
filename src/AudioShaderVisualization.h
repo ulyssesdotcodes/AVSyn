@@ -14,14 +14,11 @@ public:
 	//! Set the texture as a uniform and draw the shader.
 	virtual void draw(const World& world) override;
 	//! Nullop
-	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
+	virtual void switchParams(OscVisController &controller) override;
 
 protected:
 	virtual void renderUniforms(const World& world) override;
 
 private:
 	ci::gl::TextureRef mTexture;
-	float mHue;
-	float mVolume;
-	float mCycleHueSpeed;
 };

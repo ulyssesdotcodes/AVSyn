@@ -12,22 +12,10 @@ const int NUM_PARTICLES = BUFFER_WIDTH * BUFFER_WIDTH;
 
 FlockingVisualization::FlockingVisualization()
 {
-	mSeparationDistance = 6.0;
-	mAlignmentDistance = 6.0;
-	mCohesionDistance = 6.0;
-
-	mRoamingDistance = 40.0f;
 
 	mLoudness = 1.0;
 	mAccumulatedLoudness = 0.0f;
-
-	mSpeed = 2.0f;
-
 	mBeatConstant = 1.4;
-
-	mHue = 0.0;
-	mCycleHueSpeed = 0.0;
-	mSaturation = 1.0;
 
 	mSeparateOnly = false;
 
@@ -99,79 +87,14 @@ FlockingVisualization::FlockingVisualization()
 	mVelocityBufTex[1] = gl::BufferTexture::create(mVelocities[1], GL_RGB32F);
 }
 
-void FlockingVisualization::switchParams(params::InterfaceGlRef params, const std::string &group) {
-	addParamName(group + "/Loudness");
-	params->addParam("Loudness", &mLoudness)
-		.min(0.0)
-		.max(2.0)
-		.step(0.001)
-		.group(group);
-
-	addParamName(group + "/Speed");
-	params->addParam("Speed", &mSpeed)
-		.min(0.5)
-		.max(4.0)
-		.step(0.001)
-		.group(group);
-
-	addParamName(group + "/Beat Constant");
-	params->addParam(group + "/Beat Constant", &mBeatConstant)
-		.min(1.1)
-		.max(2.0)
-		.step(0.001)
-		.group(group);
-
-	addParamName(group + "/Roaming Distance");
-	params->addParam(group + "/Roaming Distance", &mRoamingDistance)
-		.min(20.0)
-		.max(120.0)
-		.step(1.0)
-		.group(group);
-
-	addParamName(group + "/Hue");
-	params->addParam(group + "/Hue", &mHue)
-		.min(0.0)
-		.max(1.0)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Saturation");
-	params->addParam(group + "/Saturation", &mSaturation)
-		.min(0.0)
-		.max(1.0)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Cycle Hue Speed");
-	params->addParam(group + "/Cycle Hue Speed", &mCycleHueSpeed)
-		.min(0.0)
-		.max(0.01667)
-		.step(0.0001)
-		.group(group);
-
-	addParamName(group + "/Separation Distance");
-	params->addParam(group + "/Separation Distance", &mSeparationDistance)
-		.min(0.0)
-		.max(30.0)
-		.step(1.0)
-		.group(group);
-
-	addParamName(group + "/Cohesion Distance");
-	params->addParam(group + "/Cohesion Distance", &mCohesionDistance)
-		.min(0.0)
-		.max(30.0)
-		.step(1.0)
-		.group(group);
-
-	addParamName(group + "/Alignment Distance");
-	params->addParam(group + "/Alignment Distance", &mAlignmentDistance)
-		.min(0.0)
-		.max(30.0)
-		.step(1.0)
-		.group(group);
-
-	addParamName(group + "/Separate Only");
-	params->addParam(group + "/Separate Only", &mSeparateOnly);
+void FlockingVisualization::switchParams(OscVisController &controller) {
+	controller.subscribeSliderListener("Loudness", 0, 2, [&](auto val) { mLoudness = val; });
+	controller.subscribeSliderListener("Beat Constant", 1.1, 2, [&](auto val) { mBeatConstant = val; });
+	controller.subscribeSliderGlslListener("Speed", 0.5, 4, 2, mUpdateShader, "i_speed");
+	controller.subscribeSliderGlslListener("Roaming Distance", 20, 120, 40, mUpdateShader, "i_roamingDistance");
+	controller.subscribeSliderGlslListener("Separation Distance", 0, 30, 12, mUpdateShader, "i_separationDistance");
+	controller.subscribeSliderGlslListener("Cohesion Distance", 0, 30, 8, mUpdateShader, "i_cohesionDistance");
+	controller.subscribeSliderGlslListener("Alignment Distance", 0, 30, 6, mUpdateShader, "i_alignmentDistance");
 }
 
 
@@ -182,21 +105,11 @@ void FlockingVisualization::update(const World& world)
 	float loudness = audio::linearToDecibel(world.audioSource->getVolume()) * 0.01f * mLoudness;;
 	mAccumulatedLoudness += loudness;
 
-	mHue = glm::fract(mHue + mCycleHueSpeed);
-
 	mUpdateShader->uniform("delta", world.deltaSource->delta());
-	mUpdateShader->uniform("separationDistance", mSeparationDistance);
-	mUpdateShader->uniform("alignmentDistance", mAlignmentDistance);
-	mUpdateShader->uniform("cohesionDistance", mCohesionDistance);
 	mUpdateShader->uniform("loudness", loudness);
 	mUpdateShader->uniform("accumulatedLoudness", mAccumulatedLoudness);
 	mUpdateShader->uniform("beat", world.beatDetector->getBeat());
-	mUpdateShader->uniform("roamingDistance", mRoamingDistance);
-	mUpdateShader->uniform("speed", mSpeed);
-	mUpdateShader->uniform("hue", mHue);
-	mUpdateShader->uniform("saturation", mSaturation);
 	mUpdateShader->uniform("eqs", &(world.audioSource->getEqs(3, mLoudness))[0], 3);
-	mUpdateShader->uniform("separateOnly", mSeparateOnly);
 
 
 	gl::ScopedVao scopedVao(mVaos[mIteratonIndex & 1]);

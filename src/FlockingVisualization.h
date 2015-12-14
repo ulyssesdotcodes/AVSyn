@@ -18,7 +18,7 @@ public:
 	//! Render the particles based on the positions calculated in update.
 	virtual void draw(const World& world) override;
 	//! So many parameters!
-	virtual void switchParams(ci::params::InterfaceGlRef param, const std::string &group) override;
+	virtual void switchParams(OscVisController &controller) override;
 
 private:
 	uint32_t mIteratonIndex;
@@ -32,16 +32,8 @@ private:
 	std::array<ci::gl::BufferTextureRef, 2> mPositionBufTex;
 	std::array<ci::gl::BufferTextureRef, 2> mVelocityBufTex;
 
-	float mSeparationDistance;
-	float mAlignmentDistance;
-	float mCohesionDistance;
-	float mRoamingDistance;
 	float mAccumulatedLoudness;
-	float mSpeed;
 	float mBeatConstant;
 	float mLoudness;
-	float mHue;
-	float mSaturation;
-	float mCycleHueSpeed;
 	bool mSeparateOnly;
 };

@@ -2,18 +2,17 @@
 
 #include "cinder/gl/gl.h"
 
-#include "Visualization.h"
+#include "ChoiceVisualization.h"
 
-class Mix : public Visualization {
+class Mix {
 public:
-	Mix(std::map<std::string, std::shared_ptr<Visualization>> visualizations);
-	virtual void update(const World& world) override;
-	virtual void draw(const World& world) override;
-	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
-	virtual void setBaseVisualization(const std::string &visualization);
+	Mix(const World& world, std::vector<std::string> orderedVisualizationNames, 
+		std::map<std::string, std::shared_ptr<Visualization>> visualizations, std::shared_ptr<OscController> oscController);
+	virtual void update(const World& world);
+	virtual void draw(const World& world);
 
 private:
-	std::map<std::string, std::shared_ptr<Visualization>> mVisualizations;
+	std::array<std::shared_ptr<ChoiceVisualization>, 2> mChoiceVises;
 	std::vector<std::string> mVisualizationOptions;
 	std::array<int, 2> mVisOption;
 
@@ -28,8 +27,6 @@ private:
 
 	ci::CameraPersp* mCam;
 	ci::params::InterfaceGlRef mParams;
-
-	std::shared_ptr<Visualization> getVis(int index);
 
 	void updateUniforms();
 };

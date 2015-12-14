@@ -5,7 +5,6 @@ const float DAMPING = 0.1;
 DotsVisualization::DotsVisualization() : ShaderVisualization("dots.frag")
 {
 	mLoudness = 1.0;
-	mHue = 0.0;
 	mAccumulatedLoudness = 0.0f;
 }
 
@@ -31,21 +30,8 @@ void DotsVisualization::renderUniforms(const World& world)
 
 	mShader->uniform("i_eqs", &mEqs[0], BIN_COUNT);
 	mShader->uniform("i_accumulatedLoudness", mAccumulatedLoudness);
-	mShader->uniform("i_hue", mHue);
 }
 
-void DotsVisualization::switchParams(ci::params::InterfaceGlRef params, const std::string &group) {
-	addParamName(group + "/Loudness");
-	params->addParam(group + "/Loudness", &mLoudness)
-		.min(0.0)
-		.max(2.0)
-		.step(0.001)
-		.group(group);
-
-	addParamName(group + "/Hue");
-	params->addParam(group + "/Hue", &mHue)
-		.min(0.0)
-		.max(1.0)
-		.step(0.01)
-		.group(group);
+void DotsVisualization::switchParams(OscVisController &controller) {
+	controller.subscribeSliderListener("Loudness", 0, 2, [&](auto val) { mLoudness = val; });
 }

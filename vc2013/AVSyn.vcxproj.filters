@@ -81,9 +81,6 @@
     <ClCompile Include="..\src\BeatDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Visualization.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\TreeVisualization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -166,6 +163,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\OscVisController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Visualization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

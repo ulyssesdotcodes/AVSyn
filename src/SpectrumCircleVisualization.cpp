@@ -6,22 +6,10 @@ SpectrumCircleVisualization::SpectrumCircleVisualization() : AudioShaderVisualiz
 	mHoleSize = 0.2;
 }
 
-void SpectrumCircleVisualization::switchParams(ci::params::InterfaceGlRef params, const std::string & group)
+void SpectrumCircleVisualization::switchParams(OscVisController &controller)
 {
-	addParamName(group + "/Volume");
-	params->addParam(group + "/Volume", &mVolume)
-		.min(0.0)
-		.max(2.0)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/HoleSize");
-	params->addParam(group + "/HoleSize", &mHoleSize)
-		.min(0.0)
-		.max(1.0)
-		.step(0.01)
-		.group(group);
-
+	controller.subscribeSliderGlslListener("Volume", 0, 2, 1, mShader, "i_volume");
+	controller.subscribeSliderGlslListener("Hole Size", 0, 1, 0.2, mShader, "i_holeSize");
 }
 
 void SpectrumCircleVisualization::renderUniforms(const World & world)

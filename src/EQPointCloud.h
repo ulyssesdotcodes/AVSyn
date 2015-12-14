@@ -25,7 +25,7 @@ public:
 	virtual void update(const World& world);
 	//! Draw the particles
 	virtual void draw(const World& world);
-	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
+	virtual void switchParams(OscVisController &controller) override;
 
 private:
 	std::vector<ci::vec3> mParticles;

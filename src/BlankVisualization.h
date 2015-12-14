@@ -9,6 +9,6 @@ public:
 	//! Draw the visualization to the screen. This assumes matrices and viewport have been set up already.
 	virtual void draw(const World& world);
 	//! Set up the parameters for this visualization when the user switches to it.
-	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group);
+	virtual void switchParams(OscVisController &controller);
 	//! A convenience method so that parameters added in switchParams can be easily removed.
 };

@@ -40,27 +40,9 @@ EQPointCloud::EQPointCloud()
 	mEqs.push_back({ mParticles.at(2), Rand::randVec3()});
 }
 
-void EQPointCloud::switchParams(params::InterfaceGlRef params, const std::string &group) {
-	addParamName(group + "/Loudness");
-	params->addParam(group + "/Loudness", &mLoudness)
-		.min(0.0)
-		.max(2.0)
-		.step(0.001)
-		.group(group);
-
-	addParamName(group + "/Hue");
-	params->addParam(group + "/Hue", &mHue)
-		.min(0.0)
-		.max(1.0)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Rotation Speed");
-	params->addParam(group + "/Rotation Speed", &mRotationSpeed)
-		.min(0.0)
-		.max(2.0)
-		.step(0.01)
-		.group(group);
+void EQPointCloud::switchParams(OscVisController &controller) {
+	controller.subscribeSliderListener("Loudness", 0, 2, [&](auto val) { mLoudness = val; });
+	controller.subscribeSliderListener("Rotation Speed", 0, 2, [&](auto val) { mRotationSpeed = val; });
 }
 
 void EQPointCloud::update(const World& world)
@@ -111,7 +93,6 @@ void EQPointCloud::draw(const World& world)
 	mRenderProg->uniform("i_eq0", mEqs.at(0).pos);
 	mRenderProg->uniform("i_eq1", mEqs.at(1).pos);
 	mRenderProg->uniform("i_eq2", mEqs.at(2).pos);
-	mRenderProg->uniform("i_hue", mHue);
 
 	gl::rotate(mRotation);
 	mBatch->draw();

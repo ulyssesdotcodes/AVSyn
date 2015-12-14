@@ -53,7 +53,7 @@ private:
 	WindowRef mParamWindow;
 	params::InterfaceGlRef mParams;
 
-	std::unique_ptr<ChoiceVisualization> mMainVisualization;
+	std::unique_ptr<Mix> mMainVisualization;
 
 
 	//////////////////////
@@ -152,18 +152,13 @@ void AVSynApp::setup()
 	auto neuronsVis = std::make_shared<NeuronVisualization>(mWorld);
 	visualizations.insert(make_pair("Neurons", neuronsVis));
 
-	auto mix = std::make_shared<Mix>(visualizations);
-	visualizations.insert(make_pair("Mix", mix));
-
 	std::vector<std::string> visualizationNames;
 	for (std::map<std::string, std::shared_ptr<Visualization>>::iterator it = visualizations.begin(); it != visualizations.end(); ++it) {
 		visualizationNames.push_back(it->first);
 	}
 
 	mMainVisualization = 
-		std::make_unique<ChoiceVisualization>(mWorld, visualizationNames, visualizations,  
-			new OscVisController("/visA", mOscController, visualizationNames));
-	mMainVisualization->switchParams(mParams, "Main");
+		std::make_unique<Mix>(mWorld, visualizationNames, visualizations, mOscController);
 
 	mOscController->subscribe("/connection", [this, visualizationNames](osc::Message __) {
 		osc::Message message;

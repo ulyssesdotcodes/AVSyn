@@ -3,14 +3,13 @@
 
 using namespace ci;
 
-Mix::Mix(std::map<std::string, std::shared_ptr<Visualization>> visualizations)
+Mix::Mix(const World& world, std::vector<std::string> orderedVisualizationNames, 
+	std::map<std::string, std::shared_ptr<Visualization>> visualizations, std::shared_ptr<OscController> oscController)
 {
-	mVisualizations = visualizations;
-	for (std::map<std::string, std::shared_ptr<Visualization>>::iterator it = mVisualizations.begin(); it != mVisualizations.end(); ++it) {
-		mVisualizationOptions.push_back(it->first);
-	}
-	mVisOption[0] = 1;
-	mVisOption[1] = 0;
+	mChoiceVises[0] = std::make_shared<ChoiceVisualization>(world, orderedVisualizationNames, visualizations,
+		OscVisController("/visA", oscController, orderedVisualizationNames));
+	mChoiceVises[1] = std::make_shared<ChoiceVisualization>(world, orderedVisualizationNames, visualizations,
+		OscVisController("/visB", oscController, orderedVisualizationNames));
 
 	mFade = 0.0;
 	mAdd = 1.0;
@@ -26,18 +25,37 @@ Mix::Mix(std::map<std::string, std::shared_ptr<Visualization>> visualizations)
 		.fragment(app::loadAsset("mix.frag"));
 	mMixShader = gl::GlslProg::create(shaderProg);
 	mMixShader->uniform("i_resolution", mResolution);
+	//addParamName(group + "/Fade");
+	//params->addParam(group + "/Fade", &mFade)
+	//	.min(0.0)
+	//	.max(1.0)
+	//	.step(0.01)
+	//	.group(group);
+
+	//addParamName(group + "/Multiply");
+	//params->addParam(group + "/Multiply", &mMultiply)
+	//	.min(0.0)
+	//	.max(6.0)
+	//	.step(0.01)
+	//	.group(group);
+
+	//addParamName(group + "/Add");
+	//params->addParam(group + "/Add", &mAdd)
+	//	.min(0.0)
+	//	.max(2.0)
+	//	.step(0.01)
+	//	.group(group);
 }
 
 void Mix::update(const World& world)
 {
 	for (int i = 0; i < 2; ++i) {
-		std::shared_ptr<Visualization> vis = getVis(mVisOption[i]);
-		vis->update(world);
+		mChoiceVises[i]->update(world);
 		gl::ScopedFramebuffer fbo(mVisFBO[i]);
 		gl::clear(Color(0, 0, 0));
 		gl::ScopedViewport scpVp(mVisFBO[i]->getSize());
 		gl::pushMatrices();
-		vis->draw(world);
+		mChoiceVises[i]->draw(world);
 		gl::popMatrices();
 	}
 }
@@ -56,68 +74,6 @@ void Mix::draw(const World& world)
 	gl::context()->setDefaultShaderVars();
 
 	gl::drawSolidRect(app::getWindowIndex(0)->getBounds());
-}
-
-void Mix::switchParams(ci::params::InterfaceGlRef params, const std::string &group)
-{
-	mParams = params;
-
-	addParamName(group + "/Fade");
-	params->addParam(group + "/Fade", &mFade)
-		.min(0.0)
-		.max(1.0)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Multiply");
-	params->addParam(group + "/Multiply", &mMultiply)
-		.min(0.0)
-		.max(6.0)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Add");
-	params->addParam(group + "/Add", &mAdd)
-		.min(0.0)
-		.max(2.0)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Visualization A");
-	params->addParam(group + "/Visualization A", mVisualizationOptions, 
-		[=](int ind) {
-			getVis(mVisOption[0])->resetParams(mParams);
-			mVisOption[0] = ind;
-			getVis(mVisOption[0])->switchParams(mParams,"VisA");
-		},
-			[=]() {
-			return mVisOption[0];
-		})
-		.group(group);
-
-	addParamName(group + "/Visualization B");
-	params->addParam(group + "/Visualization B", mVisualizationOptions, 
-		[=](int ind) {
-			getVis(mVisOption[1])->resetParams(mParams);
-			mVisOption[1] = ind;
-			getVis(mVisOption[1])->switchParams(mParams, "VisB");
-		},
-			[=]() {
-			return mVisOption[1];
-		})
-		.group(group);
-
-	getVis(mVisOption[0])->switchParams(mParams, "VisA");
-	getVis(mVisOption[1])->switchParams(mParams, "VisB");
-}
-
-void Mix::setBaseVisualization(const std::string & visualization)
-{
-}
-
-std::shared_ptr<Visualization> Mix::getVis(int index)
-{
-	return mVisualizations.at(mVisualizationOptions.at(index));
 }
 
 void Mix::updateUniforms()

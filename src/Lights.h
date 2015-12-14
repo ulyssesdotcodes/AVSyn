@@ -9,7 +9,7 @@ public:
 	Lights();
 	virtual void update(const World& world) override;
 	virtual void draw(const World& world) override;
-	void switchParams(ci::params::InterfaceGlRef params, const std::string &group);
+	void switchParams(OscVisController &controller);
 
 private:
 	ci::gl::BatchRef mNewLight;

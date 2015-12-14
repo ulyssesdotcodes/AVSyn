@@ -52,7 +52,7 @@ public:
 	//! Draw mPositions with mColors
 	void draw(const World& world) override;
 	//! Setup params
-	void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
+	void switchParams(OscVisController &controller) override;
 
 private:
 	//! Generate the final L system strings and store them in mGen

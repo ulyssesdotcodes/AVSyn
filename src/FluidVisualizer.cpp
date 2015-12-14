@@ -16,10 +16,8 @@ FluidVisualizer::FluidVisualizer()
 	mSmokePos = vec2(0.2, 0.8);
 	mAudioVel = vec2(0);
 	mAudioVelMult = vec2(0.05);
-	mVolume = 2.0;
 	mSpeed = 1.0;
 	mFlipVelocity = false;
-	mSaturation = 0.5;
 
 	//Setup shaders
 	mWindowResolution = vec2(app::getWindowIndex(0)->getWidth(), app::getWindowIndex(0)->getHeight());
@@ -99,31 +97,10 @@ void FluidVisualizer::draw(const World& world)
 	gl::popMatrices();
 }
 
-void FluidVisualizer::switchParams(params::InterfaceGlRef params, const std::string &group)
+void FluidVisualizer::switchParams(OscVisController &controller)
 {
-	addParamName(group + "/Volume");
-	params->addParam(group + "/Volume", &mVolume)
-		.min(0.5)
-		.max(4.0f)
-		.step(0.01f)
-		.group(group);
-
-	addParamName(group + "/Speed");
-	params->addParam(group + "/Speed", &mSpeed)
-		.min(0.5)
-		.max(4.0)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Saturation");
-	params->addParam(group + "/Saturation", &mSaturation)
-		.min(0.0)
-		.max(1.0)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Flip Velocity");
-	params->addParam(group + "/Flip Velocity", &mFlipVelocity);
+	controller.subscribeSliderGlslListener("Volume", 0.5, 4.0, 2.0, mSmokeDropShader, "i_volume");
+	controller.subscribeSliderListener("Speed", 0.5, 4.0, [&](auto val) { mSpeed = val; });
 }
 
 void FluidVisualizer::updateSmokePos(const World& world, float time, float dt) {

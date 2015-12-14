@@ -61,12 +61,7 @@ void NeuronVisualization::draw(const World & world)
 	}
 }
 
-void NeuronVisualization::switchParams(ci::params::InterfaceGlRef params, const std::string & group)
+void NeuronVisualization::switchParams(OscVisController &controller)
 {
-	addParamName(group + "/Volume");
-	params->addParam(group + "/Volume", &mVolume)
-		.min(0.0)
-		.max(2.0)
-		.step(0.001)
-		.group(group);
+	controller.subscribeSliderListener("Volume", 0, 2, [&](auto val) { mVolume = val;  });
 }

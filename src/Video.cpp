@@ -30,12 +30,11 @@ void Video::draw(const World& world)
 	}
 }
 
-void Video::switchParams(ci::params::InterfaceGlRef params, const std::string & group)
+void Video::switchParams(OscVisController &controller)
 {
 }
 
-void Video::resetParams(ci::params::InterfaceGlRef params)
+void Video::hide()
 {
-	Visualization::resetParams(params);
 	mMovie->stop();
 }

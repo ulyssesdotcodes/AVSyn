@@ -18,13 +18,11 @@ protected:
 	virtual void renderUniforms(const World& world) override;
 
 	//! Control hue and loudness
-	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
+	virtual void switchParams(OscVisController &controller) override;
 
 private:
 	std::array<float, BIN_COUNT> mEqs;
 
 	float mAccumulatedLoudness;
-
 	float mLoudness;
-	float mHue;
 };

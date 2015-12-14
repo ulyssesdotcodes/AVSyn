@@ -4,9 +4,9 @@ uniform vec2 resolution;
 uniform sampler2D tex_prev;
 
 uniform vec2 smokeDropPos;
-uniform float volume;
-uniform float beat;
-uniform float dt;
+uniform float i_volume;
+uniform float i_beat;
+uniform float i_dt;
 
 out vec4 fragColor;
 
@@ -28,9 +28,9 @@ void main() {
 
 	vec2 dropDistance = pos - mSDP;
 
-	float density = max(0, 0.008 - dot(dropDistance, dropDistance)) * dt * max(beat, 0.125) * pow(volume, 0.5);
+	float density = max(0, 0.008 - dot(dropDistance, dropDistance)) * i_dt * max(i_beat, 0.125) * pow(i_volume, 0.5);
 
-	density *= mix(0.6, 1.0, rand(vec2(pos.x * pos.y, cos(dt + volume))));
+	density *= mix(0.6, 1.0, rand(vec2(pos.x * pos.y, cos(i_dt + i_volume))));
 
 	float temperature = current.y + density * 256;
 

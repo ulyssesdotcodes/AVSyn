@@ -5,12 +5,9 @@
 using namespace ci;
 
 ChoiceVisualization::ChoiceVisualization(const World& world, std::vector<std::string> orderedVisualizationNames, 
-	std::map<std::string, std::shared_ptr<Visualization>> visualizations, OscVisController *oscVisController)
+	std::map<std::string, std::shared_ptr<Visualization>> visualizations, OscVisController oscVisController) :
+	mOscVisController(oscVisController), mVisualizations(visualizations), mVisualizationNames(orderedVisualizationNames)
 {
-	mVisualizations = visualizations;
-
-	mVisualizationNames = orderedVisualizationNames;
-
 	mVisualizationIndex = mVisualizationNames.size() - 3;
 	mVisualization = visualizations[mVisualizationNames[mVisualizationIndex]];
 
@@ -44,10 +41,87 @@ ChoiceVisualization::ChoiceVisualization(const World& world, std::vector<std::st
 	mLightnessShift = 1.0;
 	mManipFade = 0.0;
 
-	oscVisController->subscribeVisListener([=](int index) {
+	mOscVisController.subscribeVisListener([=](int index) {
 		app::console() << "Received: " << index << std::endl;
 		setVisualization(index);
 	});
+
+	//addParamName(group + "/Fade Transition");
+	//params->addParam(group + "/Fade Transition", &mFadeTransitionOn)
+	//	.group(group);
+
+	//addParamName(group + "/Feedback/Fade");
+	//params->addParam(group + "/Feedback/Fade", &mFade)
+	//	.min(0.0f)
+	//	.max(1.0f)
+	//	.step(0.01)
+	//	.group(group);
+
+	//addParamName(group + "/Feedback/Scale");
+	//params->addParam(group + "/Feedback/Scale", &mScale)
+	//	.min(0.1f)
+	//	.max(2.0f)
+	//	.step(0.01)
+	//	.group(group);
+
+	//addParamName(group + "/Feedback/OffsetY");
+	//params->addParam(group + "/Feedback/OffsetY", &mOffsetY)
+	//	.min(-1.0f)
+	//	.max(1.0f)
+	//	.step(0.01)
+	//	.group(group);
+
+	//addParamName(group + "/Feedback/ManipFade");
+	//params->addParam(group + "/Feedback/ManipFade", &mManipFade)
+	//	.min(0.0f)
+	//	.max(1.0f)
+	//	.step(0.01)
+	//	.group(group);
+
+	//addParamName(group + "/Feedback/Reset");
+	//params->addButton(group + "/Feedback/Reset",
+	//	[=]() {
+	//		mFade = 0.98;
+	//		mScale = 1.0;
+	//		mManipFade = 0.0;
+	//	}, "group=" + group);
+
+	//addParamName(group + "/Feedback/HueShift");
+	//params->addParam(group + "/Feedback/HueShift", &mHueShift)
+	//	.min(0.0f)
+	//	.max(1.0f)
+	//	.step(0.01)
+	//	.group(group);
+
+	//addParamName(group + "/Feedback/SaturationShift");
+	//params->addParam(group + "/Feedback/SaturationShift", &mSaturationShift)
+	//	.min(0.0f)
+	//	.max(1.0f)
+	//	.step(0.01)
+	//	.group(group);
+
+	//addParamName(group + "/Feedback/LightnessShift");
+	//params->addParam(group + "/Feedback/LightnessShift", &mLightnessShift)
+	//	.min(0.0f)
+	//	.max(2.0f)
+	//	.step(0.01)
+	//	.group(group);
+
+	//addParamName(group + "/Feedback/HueShiftCycle");
+	//params->addParam(group + "/Feedback/HueShiftCycle", &mHueShiftCycle)
+	//	.min(0.0f)
+	//	.max(1.00f)
+	//	.step(0.01)
+	//	.group(group);
+
+	//addParamName(group + "/Feedback/ResetColor");
+	//params->addButton(group + "/Feedback/ResetColor",
+	//	[=]() {
+	//		mHueShift = 0.0;
+	//		mHueShiftCycle = 0.0;
+	//		mSaturationShift = 0.0;
+	//		mLightnessShift = 1.0;
+	//	}, "group=" + group);
 }
 
 void ChoiceVisualization::update(const World& world)
@@ -117,108 +191,14 @@ void ChoiceVisualization::draw(const World& world)
 void ChoiceVisualization::setVisualization(int index) 
 {
 	VisualizationRef oldVisualization = std::shared_ptr<Visualization>(mVisualization);
-	oldVisualization->resetParams(mParams);
+
+	mOscVisController.clear();
 
 	mVisualizationIndex = index;
 	mVisualization = mVisualizations[mVisualizationNames[mVisualizationIndex]];
-	mVisualization->switchParams(mParams, "/Vis");
+	mVisualization->switchParams(mOscVisController);
 
 	if (mFadeTransitionOn) {
 		mFadeTransition = std::make_unique<FadeTransition>(oldVisualization, mVisualization, 5.0);
 	}
-}
-
-void ChoiceVisualization::switchParams(ci::params::InterfaceGlRef params, const std::string & group)
-{
-	mParams = params;
-
-	addParamName(group + "/Visualization");
-	params->addParam(group + "/Visualization", mVisualizationNames, 
-		[=](int ind) {
-			setVisualization(ind);
-		},
-		[=]() {
-			return mVisualizationIndex;
-		}
-	)
-		.group(group);
-
-	addParamName(group + "/Fade Transition");
-	params->addParam(group + "/Fade Transition", &mFadeTransitionOn)
-		.group(group);
-
-	addParamName(group + "/Feedback/Fade");
-	params->addParam(group + "/Feedback/Fade", &mFade)
-		.min(0.0f)
-		.max(1.0f)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Feedback/Scale");
-	params->addParam(group + "/Feedback/Scale", &mScale)
-		.min(0.1f)
-		.max(2.0f)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Feedback/OffsetY");
-	params->addParam(group + "/Feedback/OffsetY", &mOffsetY)
-		.min(-1.0f)
-		.max(1.0f)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Feedback/ManipFade");
-	params->addParam(group + "/Feedback/ManipFade", &mManipFade)
-		.min(0.0f)
-		.max(1.0f)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Feedback/Reset");
-	params->addButton(group + "/Feedback/Reset",
-		[=]() {
-			mFade = 0.98;
-			mScale = 1.0;
-			mManipFade = 0.0;
-		}, "group=" + group);
-
-	addParamName(group + "/Feedback/HueShift");
-	params->addParam(group + "/Feedback/HueShift", &mHueShift)
-		.min(0.0f)
-		.max(1.0f)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Feedback/SaturationShift");
-	params->addParam(group + "/Feedback/SaturationShift", &mSaturationShift)
-		.min(0.0f)
-		.max(1.0f)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Feedback/LightnessShift");
-	params->addParam(group + "/Feedback/LightnessShift", &mLightnessShift)
-		.min(0.0f)
-		.max(2.0f)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Feedback/HueShiftCycle");
-	params->addParam(group + "/Feedback/HueShiftCycle", &mHueShiftCycle)
-		.min(0.0f)
-		.max(1.00f)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Feedback/ResetColor");
-	params->addButton(group + "/Feedback/ResetColor",
-		[=]() {
-			mHueShift = 0.0;
-			mHueShiftCycle = 0.0;
-			mSaturationShift = 0.0;
-			mLightnessShift = 1.0;
-		}, "group=" + group);
-
-	mVisualization->switchParams(params, group);
 }

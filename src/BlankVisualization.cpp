@@ -10,6 +10,6 @@ void BlankVisualization::draw(const World & world)
 {
 }
 
-void BlankVisualization::switchParams(params::InterfaceGlRef params, const std::string & group)
+void BlankVisualization::switchParams(OscVisController &controller)
 {
 }

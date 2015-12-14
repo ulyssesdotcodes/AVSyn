@@ -8,9 +8,6 @@ uniform float i_fade;
 uniform float i_scale;
 uniform float i_offsetY;
 uniform float i_manipFade;
-uniform float i_hueShift;
-uniform float i_saturationShift;
-uniform float i_lightnessShift;
 
 out vec4 fragColor;
 
@@ -33,18 +30,6 @@ vec3 rgb2hsv(vec3 c) {
 void main() {
 	vec2 pos = gl_FragCoord.xy / i_resolution.xy;
 	vec3 current = clamp(texture2D(tex_current, pos).xyz, vec3(0.0), vec3(0.999));
-
-	vec3 hsv = rgb2hsv(current);
-
-	hsv.x = hsv.x + i_hueShift;
-	current.x = fract(hsv.x + i_hueShift);
-	current.y = clamp(hsv.y - i_saturationShift, 0.001, 0.999);
-	current.z = hsv.z;
-	current = hsv2rgb(current);
-
-	current *= i_lightnessShift;
-
-	current = clamp(current, 0.0, 0.999);
 
 	vec2 prevPos = pos;
 	vec3 prev = vec3(0);

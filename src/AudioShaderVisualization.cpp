@@ -7,48 +7,22 @@ using namespace ci;
 
 AudioShaderVisualization::AudioShaderVisualization(const fs::path &fragmentShader) : ShaderVisualization(fragmentShader)
 {
-	mHue = 0;
-	mCycleHueSpeed = 0.0;
-	mVolume = 1.0;
 }
 
-void AudioShaderVisualization::switchParams(params::InterfaceGlRef params, const std::string &group)
+void AudioShaderVisualization::switchParams(OscVisController &controller)
 {
-	addParamName(group + "/Hue");
-	params->addParam(group + "/Hue", &mHue)
-		.min(0.0)
-		.max(1.0)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Volume");
-	params->addParam(group + "/Volume", &mVolume)
-		.min(0.0)
-		.max(3.0)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Cycle Hue Speed");
-	params->addParam(group + "/Cycle Hue Speed", &mCycleHueSpeed)
-		.min(0.0)
-		.max(0.01667)
-		.step(0.0001)
-		.group(group);
+	controller.subscribeSliderGlslListener("Volume", 0, 1, 1, mShader, "i_volume");
 }
 
 void AudioShaderVisualization::update(const World& world)
 {
 	world.audioSource->update();
 	mTexture = world.audioSource->getMagSpectrumTexture();
-
-	mHue = glm::fract(mHue + mCycleHueSpeed);
 }
 
 void AudioShaderVisualization::renderUniforms(const World& world)
 {
 	mShader->uniform("tex_audio", 0);
-	mShader->uniform("i_hue", mHue);
-	mShader->uniform("i_volume", mVolume);
 	ShaderVisualization::renderUniforms(world);
 }
 

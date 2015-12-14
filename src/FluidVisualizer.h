@@ -15,7 +15,7 @@ public:
 	FluidVisualizer();
 	virtual void update(const World& world) override;
 	virtual void draw(const World& world) override;
-	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
+	virtual void switchParams(OscVisController &controller) override;
 
 private:
 	Fluid mFluid;
@@ -34,9 +34,7 @@ private:
 		mSmokePos,
 		mAudioVelMult;
 
-	float mVolume;
 	float mSpeed;
-	float mSaturation;
 	bool mFlipVelocity;
 
 	void updateSmokePos(const World& world, float time, float dt);

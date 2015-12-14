@@ -6,9 +6,6 @@ using namespace ci;
 
 Feedback::Feedback(const std::string &fragment)
 {
-	mLastTime = 0;
-	mVolume = 1.0f;
-
 	vec2 resolution = app::getWindowIndex(0)->getSize();
 
 	gl::GlslProg::Format shaderFmt;
@@ -20,17 +17,12 @@ Feedback::Feedback(const std::string &fragment)
 
 void Feedback::update(const World& world)
 {
-	float time = app::getElapsedSeconds();
-	float dt = time - mLastTime;
-	mLastTime = time;
-
-	mUpdateShader->uniform("i_dt", dt);
-	mUpdateShader->uniform("i_time", time);
+	mUpdateShader->uniform("i_dt", world.deltaSource->delta());
+	mUpdateShader->uniform("i_time", (float) app::getElapsedSeconds());
 
 	world.audioSource->update();
 	mTexture = world.audioSource->getMagSpectrumTexture();
 
-	mUpdateShader->uniform("i_volume", mVolume);
 	mUpdateShader->uniform("i_accumulatedSound", world.audioSource->getAccumulatedSound());
 	mUpdateShader->uniform("i_highestVolume", world.audioSource->getHighestVolumePos());
 }
@@ -45,12 +37,7 @@ void Feedback::draw(const World& world)
 	gl::drawSolidRect(world.bounds);
 }
 
-void Feedback::switchParams(params::InterfaceGlRef params, const std::string &group)
+void Feedback::switchParams(OscVisController &controller)
 {
-	addParamName(group + "/Volume");
-	params->addParam(group + "/Volume", &mVolume)
-		.min(0.0)
-		.max(2.0)
-		.step(0.02)
-		.group(group);
+	controller.subscribeSliderGlslListener("Volume", 0, 2, 1, mUpdateShader, "i_volume");
 }

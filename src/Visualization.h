@@ -6,6 +6,7 @@
 #include "World.h"
 #include "AudioSource.h"
 #include "DeltaSource.h"
+#include "OscVisController.h"
 
 typedef std::shared_ptr<class Visualization> VisualizationRef;
 
@@ -20,12 +21,6 @@ public:
 	//! Draw the visualization to the screen. This assumes matrices and viewport have been set up already.
 	virtual void draw(const World& world) = 0;
 	//! Set up the parameters for this visualization when the user switches to it.
-	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) = 0;
-	//! A convenience method so that parameters added in switchParams can be easily removed.
-	virtual void addParamName(const std::string &param);
-	//! Implemented. Removes all parameters added by addParamName when the user switches away from this visualization.
-	virtual void resetParams(ci::params::InterfaceGlRef params);
-
-private:
-	std::vector<std::string> mParams;
+	virtual void switchParams(OscVisController &visController) = 0;
+	virtual void hide();
 };

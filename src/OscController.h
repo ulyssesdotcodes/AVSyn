@@ -5,12 +5,22 @@
 
 #include <map>
 
+class Subscription {
+public:
+	Subscription(ci::CallbackId cbid, ci::osc::Listener &listener);
+	void unsubscribe();
+
+private:
+	ci::osc::Listener &mListener;
+	ci::CallbackId mCbid;
+};
+
 class OscController {
 public:
 	OscController();
 
 	// Function that can be passed by value to
-	void subscribe(const std::string &address, std::function<void(const ci::osc::Message)>);
+	Subscription subscribe(const std::string &address, std::function<void(const ci::osc::Message)>);
 
 	// Pass by value
 	void sendMessage(ci::osc::Message message);

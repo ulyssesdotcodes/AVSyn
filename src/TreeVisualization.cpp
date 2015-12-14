@@ -42,35 +42,8 @@ TreeVisualization::TreeVisualization()
 	resetGen();
 }
 
-void TreeVisualization::switchParams(params::InterfaceGlRef params, const std::string &group) 
+void TreeVisualization::switchParams(OscVisController &controller)
 {
-	addParamName(group + "/Rotation Speed");
-	params->addParam(group + "/Rotation Speed", &mRotationSpeed)
-		.min(0.0)
-		.max(4.0)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Growth");
-	params->addParam(group + "/Growth", &mGrowth)
-		.min(0)
-		.max(8)
-		.step(1)
-		.group(group);
-
-	addParamName(group + "/Hue");
-	params->addParam(group + "/Hue", &mHue)
-		.min(0.0)
-		.max(1.0)
-		.step(0.01)
-		.group(group);
-
-	addParamName(group + "/Beat Constant");
-	params->addParam(group + "/Beat Constant", &mBeatConstant)
-		.min(1.1)
-		.max(2.0)
-		.step(0.001)
-		.group(group);
 }
 
 void TreeVisualization::runCommand(char rule, Gen* gen) 

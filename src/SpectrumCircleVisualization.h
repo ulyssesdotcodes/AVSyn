@@ -6,7 +6,7 @@ class SpectrumCircleVisualization : public AudioShaderVisualization {
 public:
 	SpectrumCircleVisualization();
 
-	virtual void switchParams(ci::params::InterfaceGlRef params, const std::string &group) override;
+	virtual void switchParams(OscVisController &controller) override;
 	virtual void renderUniforms(const World& world) override;
 
 private:
