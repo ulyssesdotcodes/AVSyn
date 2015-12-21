@@ -20,7 +20,6 @@ void Feedback::update(const World& world)
 	mUpdateShader->uniform("i_dt", world.deltaSource->delta());
 	mUpdateShader->uniform("i_time", (float) app::getElapsedSeconds());
 
-	world.audioSource->update();
 	mTexture = world.audioSource->getMagSpectrumTexture();
 
 	mUpdateShader->uniform("i_accumulatedSound", world.audioSource->getAccumulatedSound());

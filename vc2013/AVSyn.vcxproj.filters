@@ -168,6 +168,12 @@
     <ClCompile Include="..\src\Visualization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\OscMixController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\BaseOscWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -306,6 +312,12 @@
       <Filter>Header Files\OSC</Filter>
     </ClInclude>
     <ClInclude Include="..\src\OscVisController.h">
+      <Filter>Header Files\OSC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\OscMixController.h">
+      <Filter>Header Files\OSC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\BaseOscWrapper.h">
       <Filter>Header Files\OSC</Filter>
     </ClInclude>
   </ItemGroup>

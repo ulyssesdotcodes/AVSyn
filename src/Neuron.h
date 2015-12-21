@@ -18,7 +18,7 @@ class Neuron
 public:
 	ci::vec2 const mPos;
 
-	Neuron(ci::vec2 pos);
+	Neuron(ci::vec2 pos, ci::gl::BatchRef circle);
 
 	virtual void update();
 	virtual void draw();
@@ -30,6 +30,8 @@ protected:
 	virtual bool deleteImpulse(Impulse impulse);
 
 private:
+	ci::gl::BatchRef mCircleBatch;
+
 	std::vector<Impulse> mImpulses;
 
 	Impulse mBuildingImpulse;

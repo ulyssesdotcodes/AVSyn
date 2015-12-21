@@ -5,7 +5,7 @@
 
 using namespace ci;
 
-Neuron::Neuron(vec2 pos) : mPos(pos)
+Neuron::Neuron(vec2 pos, gl::BatchRef circle) : mPos(pos), mCircleBatch(circle)
 {
 	mBuildingImpulse = Impulse();
 	mBuildingImpulse.color = Colorf(0, 0, 0);
@@ -52,7 +52,11 @@ void Neuron::draw()
 
 	if (highest.intensity > 0) {
 		gl::ScopedColor color(highest.color.lerp(1.0 - highest.intensity, Colorf(0, 0, 0)));
-		gl::drawSolidCircle(mPos, 8);
+		gl::pushModelMatrix();
+		gl::translate(mPos);
+		gl::scale(vec2(8));
+		mCircleBatch->draw();
+		gl::popModelMatrix();
 	}
 }
 

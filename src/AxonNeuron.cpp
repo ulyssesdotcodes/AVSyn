@@ -2,8 +2,8 @@
 
 using namespace ci;
 
-AxonNeuron::AxonNeuron(const ci::vec2 &pos, std::shared_ptr<Neuron> neuron) : 
-	Neuron(pos), mNeuron(neuron)
+AxonNeuron::AxonNeuron(const ci::vec2 &pos, gl::BatchRef circle, std::shared_ptr<Neuron> neuron) : 
+	Neuron(pos, circle), mNeuron(neuron)
 {
 
 	std::vector<vec3> positions;

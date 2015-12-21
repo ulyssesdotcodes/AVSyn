@@ -30,11 +30,25 @@ void OscController::sendMessage(const osc::Message message) {
 	mSender.sendMessage(message);
 }
 
+void OscController::sendBundle(const osc::Bundle bundle) {
+	mSender.sendBundle(bundle);
+}
+
 Subscription::Subscription(ci::CallbackId cbid, ci::osc::Listener &listener) : mCbid(cbid), mListener(listener)
 {
+}
+
+Subscription & Subscription::operator=(const Subscription &other)
+{
+	return Subscription(other.mCbid, other.mListener);
 }
 
 void Subscription::unsubscribe()
 {
 	mListener.unregisterMessageReceived(mCbid);
+}
+
+bool Subscription::operator==(const Subscription & other)
+{
+	return other.mCbid == mCbid;
 }

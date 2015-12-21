@@ -8,7 +8,7 @@ ChoiceVisualization::ChoiceVisualization(const World& world, std::vector<std::st
 	std::map<std::string, std::shared_ptr<Visualization>> visualizations, OscVisController oscVisController) :
 	mOscVisController(oscVisController), mVisualizations(visualizations), mVisualizationNames(orderedVisualizationNames)
 {
-	mVisualizationIndex = mVisualizationNames.size() - 3;
+	mVisualizationIndex = 1;
 	mVisualization = visualizations[mVisualizationNames[mVisualizationIndex]];
 
 	mFadeTransition = nullptr;
@@ -24,59 +24,15 @@ ChoiceVisualization::ChoiceVisualization(const World& world, std::vector<std::st
 	texFmt.setDataType(GL_FLOAT);
 	texFmt.setTarget(GL_TEXTURE_2D);
 	texFmt.setWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+	texFmt.enableMipmapping(false);
 	gl::Fbo::Format fmt;
 	fmt.disableDepth()
 		.setColorTextureFormat(texFmt);
 
 	mCurrentVis = gl::Fbo::create(world.windowSize.x, world.windowSize.y, fmt);
-	mPingPongFBO = PingPongFBO(fmt, world.windowSize, 2);
+	mPingPongFBO = PingPongFBO(fmt, ivec2(world.windowSize.x, world.windowSize.y) , 2);
 
-	mFadeTransitionOn = true;
-	mFade = 0.0;
-	mScale = 1.0;
-	mOffsetY = 0.0;
-	mHueShift = 0.0;
-	mHueShiftCycle = 0.0;
-	mSaturationShift = 0.0;
-	mLightnessShift = 1.0;
-	mManipFade = 0.0;
-
-	mOscVisController.subscribeVisListener([=](int index) {
-		app::console() << "Received: " << index << std::endl;
-		setVisualization(index);
-	});
-
-	//addParamName(group + "/Fade Transition");
-	//params->addParam(group + "/Fade Transition", &mFadeTransitionOn)
-	//	.group(group);
-
-	//addParamName(group + "/Feedback/Fade");
-	//params->addParam(group + "/Feedback/Fade", &mFade)
-	//	.min(0.0f)
-	//	.max(1.0f)
-	//	.step(0.01)
-	//	.group(group);
-
-	//addParamName(group + "/Feedback/Scale");
-	//params->addParam(group + "/Feedback/Scale", &mScale)
-	//	.min(0.1f)
-	//	.max(2.0f)
-	//	.step(0.01)
-	//	.group(group);
-
-	//addParamName(group + "/Feedback/OffsetY");
-	//params->addParam(group + "/Feedback/OffsetY", &mOffsetY)
-	//	.min(-1.0f)
-	//	.max(1.0f)
-	//	.step(0.01)
-	//	.group(group);
-
-	//addParamName(group + "/Feedback/ManipFade");
-	//params->addParam(group + "/Feedback/ManipFade", &mManipFade)
-	//	.min(0.0f)
-	//	.max(1.0f)
-	//	.step(0.01)
-	//	.group(group);
+	onConnection();
 
 	//addParamName(group + "/Feedback/Reset");
 	//params->addButton(group + "/Feedback/Reset",
@@ -85,34 +41,6 @@ ChoiceVisualization::ChoiceVisualization(const World& world, std::vector<std::st
 	//		mScale = 1.0;
 	//		mManipFade = 0.0;
 	//	}, "group=" + group);
-
-	//addParamName(group + "/Feedback/HueShift");
-	//params->addParam(group + "/Feedback/HueShift", &mHueShift)
-	//	.min(0.0f)
-	//	.max(1.0f)
-	//	.step(0.01)
-	//	.group(group);
-
-	//addParamName(group + "/Feedback/SaturationShift");
-	//params->addParam(group + "/Feedback/SaturationShift", &mSaturationShift)
-	//	.min(0.0f)
-	//	.max(1.0f)
-	//	.step(0.01)
-	//	.group(group);
-
-	//addParamName(group + "/Feedback/LightnessShift");
-	//params->addParam(group + "/Feedback/LightnessShift", &mLightnessShift)
-	//	.min(0.0f)
-	//	.max(2.0f)
-	//	.step(0.01)
-	//	.group(group);
-
-	//addParamName(group + "/Feedback/HueShiftCycle");
-	//params->addParam(group + "/Feedback/HueShiftCycle", &mHueShiftCycle)
-	//	.min(0.0f)
-	//	.max(1.00f)
-	//	.step(0.01)
-	//	.group(group);
 
 	//addParamName(group + "/Feedback/ResetColor");
 	//params->addButton(group + "/Feedback/ResetColor",
@@ -155,35 +83,30 @@ void ChoiceVisualization::update(const World& world)
 
 void ChoiceVisualization::draw(const World& world)
 {
-
-	if (mFade == 0.0 && mScale == 1.0 && mHueShift == 0.0 && mSaturationShift == 0 && mLightnessShift == 0) {
+	if (!mApplyEffects) {
 		gl::clear(Color(0, 0, 0));
 		gl::setMatricesWindow(world.windowSize);
 		gl::draw(mCurrentVis->getColorTexture());
 	}
 	else {
 		{
+			mFeedbackShader->uniform("i_hueShift", mHueShift);
+
 			gl::ScopedTextureBind prev(mCurrentVis->getColorTexture(), 0);
 			mFeedbackShader->uniform("tex_current", 0);
 
 			gl::ScopedTextureBind current(mPingPongFBO.getTexture(), 1);
 			mFeedbackShader->uniform("tex_prev", 1);
 
-			mFeedbackShader->uniform("i_fade", mFade);
-			mFeedbackShader->uniform("i_scale", mScale);
-			mFeedbackShader->uniform("i_offsetY", mOffsetY);
-			mFeedbackShader->uniform("i_hueShift", mHueShift);
-			mFeedbackShader->uniform("i_manipFade", mManipFade);
-			mFeedbackShader->uniform("i_saturationShift", mSaturationShift);
-			mFeedbackShader->uniform("i_lightnessShift", mLightnessShift);
-
-			gl::setMatricesWindow(world.windowSize);
 			mPingPongFBO.render(mFeedbackShader);
 		}
 
 		{
 			gl::clear(Color(0, 0, 0));
-			gl::draw(mPingPongFBO.getTexture());
+			gl::pushMatrices();
+			gl::setMatricesWindow(world.windowSize);
+			gl::draw(mPingPongFBO.getTexture(), world.bounds);
+			gl::popMatrices();
 		}
 	}
 }
@@ -192,7 +115,7 @@ void ChoiceVisualization::setVisualization(int index)
 {
 	VisualizationRef oldVisualization = std::shared_ptr<Visualization>(mVisualization);
 
-	mOscVisController.clear();
+	mOscVisController.clearSliders();
 
 	mVisualizationIndex = index;
 	mVisualization = mVisualizations[mVisualizationNames[mVisualizationIndex]];
@@ -201,4 +124,34 @@ void ChoiceVisualization::setVisualization(int index)
 	if (mFadeTransitionOn) {
 		mFadeTransition = std::make_unique<FadeTransition>(oldVisualization, mVisualization, 5.0);
 	}
+}
+
+void ChoiceVisualization::onConnection()
+{
+	mOscVisController.clear();
+
+	mOscVisController.subscribeVisListener([=](int index) {
+		app::console() << "Received: " << index << std::endl;
+		setVisualization(index);
+	});
+
+	mApplyEffects = false;
+	mOscVisController.subscribeEffectListener("Apply Effects", false, [=](bool enabled) { mApplyEffects = enabled; });
+
+	mFadeTransitionOn = false;
+	mOscVisController.subscribeEffectListener("Fade Transition", false, [=](bool enabled) { mFadeTransitionOn = enabled; });
+
+	mHueShift = 0.0;
+	mHueShiftCycle = 0.0;
+
+	mOscVisController.subscribeEffectListener("Fade", 0, 1, 0, mFeedbackShader, "i_fade");
+	mOscVisController.subscribeEffectListener("Effect Fade", 0, 1, 0, mFeedbackShader, "i_manipFade");
+	mOscVisController.subscribeEffectListener("Scale", 0.85, 1.15, 1, mFeedbackShader, "i_scale");
+	mOscVisController.subscribeEffectListener("Offset Y", -0.15, 0.15, 0, mFeedbackShader, "i_offsetY");
+	mOscVisController.subscribeEffectListener("Hue Shift", 0, 1, 0, [=](float val) { mHueShift = val; });
+	mOscVisController.subscribeEffectListener("Hue Shift Cycle", 0, 1, 0, [=](float val) { mHueShiftCycle = val; });
+	mOscVisController.subscribeEffectListener("Saturation Shift", 0, 1, 0, mFeedbackShader, "i_saturationShift");
+	mOscVisController.subscribeEffectListener("Lightness Shift", 0, 1, 1, mFeedbackShader, "i_lightnessShift");
+
+	mVisualization->switchParams(mOscVisController);
 }

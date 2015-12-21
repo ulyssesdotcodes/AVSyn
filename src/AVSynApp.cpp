@@ -74,10 +74,14 @@ private:
 	gl::FboRef mFbo;
 
 	std::shared_ptr<OscController> mOscController;
+
+	Font mFont;
 };
 
 void AVSynApp::setup()
 {
+	mFont = Font("Quicksand Book Regular", 12.0f);
+
 	// Set up world
 	mWorld.camera = std::unique_ptr<CameraPersp>(new CameraPersp(getWindowWidth(), getWindowHeight(), 50));
 	mWorld.camera->setPerspective(60.0f, getWindowAspectRatio(), 1.0f, 3000.0f);
@@ -92,19 +96,18 @@ void AVSynApp::setup()
 	// Set up params
 	mOscController = std::make_shared<OscController>();
 
-	vec2 paramsSize = vec2(255, 512);
-	auto format = Window::Format();
-	format.setSize(paramsSize + vec2(40, 40));
-	format.setPos(ivec2(100, 100));
-	mParamWindow = createWindow(format);
-	mParamWindow->getSignalDraw().connect([=]() { drawParams(); });
-	mParams = params::InterfaceGl::create(getWindow(), "Options", paramsSize);
+	//vec2 paramsSize = vec2(255, 512);
+	//auto format = Window::Format();
+	//format.setSize(paramsSize + vec2(40, 40));
+	//format.setPos(ivec2(100, 100));
+	//mParamWindow = createWindow(format);
+	//mParamWindow->getSignalDraw().connect([=]() { drawParams(); });
+	//mParams = params::InterfaceGl::create(getWindow(), "Options", paramsSize);
 
-	mParams->addParam("Render Vertices", &mRenderVertices);
+	//mParams->addParam("Render Vertices", &mRenderVertices);
 
-	// Reset to the regular window instead of params
-	getWindowIndex(0)->getRenderer()->makeCurrentContext();
-	getWindowIndex(0)->getRenderer()->makeCurrentContext();
+	//// Reset to the regular window instead of params
+	//getWindowIndex(0)->getRenderer()->makeCurrentContext();
 
 	// Create visualizations list
 	std::map<std::string, std::shared_ptr<Visualization>> visualizations;
@@ -159,17 +162,6 @@ void AVSynApp::setup()
 
 	mMainVisualization = 
 		std::make_unique<Mix>(mWorld, visualizationNames, visualizations, mOscController);
-
-	mOscController->subscribe("/connection", [this, visualizationNames](osc::Message __) {
-		osc::Message message;
-		message.setAddress("/connection/choices");
-
-		for (std::vector<std::string>::const_iterator it = visualizationNames.begin(); it != visualizationNames.end(); ++it) {
-			message.addStringArg(*it);
-		}
-
-		mOscController->sendMessage(message);
-	});
 
 	// Setup rendering!
 	vec2 resolution = getWindowIndex(0)->getSize();
@@ -260,12 +252,6 @@ void AVSynApp::update()
 	mWorld.deltaSource->update();
 	mMainVisualization->update(mWorld);
 
-	gl::ScopedFramebuffer scpfbo(mFbo);
-
-	gl::clear( Color( 0, 0, 0 ) ); 
-
-	mMainVisualization->draw(mWorld);
-
 	float offset = getElapsedSeconds() * 4.0f;
 
 	for (int i = 0; i < mPlaneVertices.size(); i++) {
@@ -300,7 +286,16 @@ void AVSynApp::drawRender()
 {
 	//mVbo->bufferSubData(0, mVertices.size() * sizeof(vec3), mVertices.data());
 
-	getWindowIndex(0)->getRenderer()->makeCurrentContext();
+	//getWindowIndex(0)->getRenderer()->makeCurrentContext();
+
+	{
+		gl::ScopedFramebuffer scpfbo(mFbo);
+
+		gl::clear( Color( 0, 0, 0 ) ); 
+
+		mMainVisualization->draw(mWorld);
+	}
+
 	gl::clear( Color( 0, 0, 0 ) ); 
 
 	// Draw the rectangle
@@ -322,6 +317,8 @@ void AVSynApp::drawRender()
 
 		gl::popMatrices();
 	}
+
+	gl::drawString("Framerate: " + std::to_string(getAverageFps()), vec2(10));
 }
 
 void AVSynApp::drawParams()

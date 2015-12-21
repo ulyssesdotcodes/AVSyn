@@ -14,7 +14,4 @@ private:
 	ci::gl::TextureRef mTexture;
 
 	ci::gl::GlslProgRef mUpdateShader;
-
-	float mLastTime;
-	float mVolume;
 };

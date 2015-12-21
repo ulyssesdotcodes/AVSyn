@@ -16,6 +16,7 @@ public:
 	virtual void draw(const World& world);
 	//! A convenience method so that parameters added in switchParams can be easily removed.
 	virtual void setVisualization(int index);
+	virtual void onConnection();
 
 private:
 	std::map<std::string, std::shared_ptr<Visualization>> mVisualizations;
@@ -23,7 +24,8 @@ private:
 	std::shared_ptr<Visualization> mVisualization;
 	int mVisualizationIndex;
 
-	bool mFadeTransitionOn;
+	bool mFadeTransitionOn,
+		mApplyEffects;
 	std::unique_ptr<FadeTransition> mFadeTransition;
 
 	ci::gl::FboRef mCurrentVis;
@@ -31,14 +33,8 @@ private:
 
 	ci::gl::GlslProgRef mFeedbackShader;
 
-	float mFade,
-		mOffsetY,
-		mScale,
-		mHueShift,
-		mHueShiftCycle,
-		mSaturationShift,
-		mLightnessShift,
-		mManipFade;
+	float mHueShift,
+		mHueShiftCycle;
 
 	ci::params::InterfaceGlRef mParams;
 

@@ -121,6 +121,7 @@
     <ClCompile Include="..\src\AudioSource.cpp" />
     <ClCompile Include="..\src\AVSynApp.cpp" />
     <ClCompile Include="..\src\AxonNeuron.cpp" />
+    <ClCompile Include="..\src\BaseOscWrapper.cpp" />
     <ClCompile Include="..\src\BeatDetector.cpp" />
     <ClCompile Include="..\src\BlankVisualization.cpp" />
     <ClCompile Include="..\src\ChoiceVisualization.cpp" />
@@ -137,6 +138,7 @@
     <ClCompile Include="..\src\Neuron.cpp" />
     <ClCompile Include="..\src\NeuronVisualization.cpp" />
     <ClCompile Include="..\src\OscController.cpp" />
+    <ClCompile Include="..\src\OscMixController.cpp" />
     <ClCompile Include="..\src\OscVisController.cpp" />
     <ClCompile Include="..\src\PingPongFBO.cpp" />
     <ClCompile Include="..\src\ShaderVisualization.cpp" />
@@ -168,6 +170,7 @@
     <ClInclude Include="..\src\AudioShaderVisualization.h" />
     <ClInclude Include="..\src\AudioSource.h" />
     <ClInclude Include="..\src\AxonNeuron.h" />
+    <ClInclude Include="..\src\BaseOscWrapper.h" />
     <ClInclude Include="..\src\BeatDetector.h" />
     <ClInclude Include="..\src\BlankVisualization.h" />
     <ClInclude Include="..\src\ChoiceVisualization.h" />
@@ -184,6 +187,7 @@
     <ClInclude Include="..\src\Neuron.h" />
     <ClInclude Include="..\src\NeuronVisualization.h" />
     <ClInclude Include="..\src\OscController.h" />
+    <ClInclude Include="..\src\OscMixController.h" />
     <ClInclude Include="..\src\OscVisController.h" />
     <ClInclude Include="..\src\PingPongFBO.h" />
     <ClInclude Include="..\src\ShaderVisualization.h" />

@@ -8,6 +8,9 @@ uniform float i_fade;
 uniform float i_scale;
 uniform float i_offsetY;
 uniform float i_manipFade;
+uniform float i_hueShift;
+uniform float i_saturationShift;
+uniform float i_lightnessShift;
 
 out vec4 fragColor;
 
@@ -31,26 +34,17 @@ void main() {
 	vec2 pos = gl_FragCoord.xy / i_resolution.xy;
 	vec3 current = clamp(texture2D(tex_current, pos).xyz, vec3(0.0), vec3(0.999));
 
+	vec3 hsv = rgb2hsv(current);
+
+	current = vec3(fract(hsv.x + i_hueShift), clamp(hsv.y - i_saturationShift, 0.001, 0.999), hsv.z);
+	current = min(hsv2rgb(current) * i_lightnessShift, 0.999);
+
 	vec2 prevPos = pos;
 	vec3 prev = vec3(0);
 
-	if(abs(i_scale - 1.0) > 0.001) {
-		prevPos = (prevPos - 0.5 + 0.5 * i_scale) / i_scale;
-	}
-
-	if(abs(i_offsetY - 1.0) > 0.001) {
-		prevPos.y = prevPos.y + i_offsetY;
-	}
-
-	if(prevPos.x > 0 && prevPos.x < 1.0 && prevPos.y > 0 && prevPos.y < 1.0) {
-		prev = texture2D(tex_prev, prevPos).xyz * i_manipFade;
-	}
-
-	if(i_fade > 0.0) {
-		prev += texture2D(tex_prev, pos).xyz * i_fade;
-	}
-
-	prev = clamp(prev, 0, 1);
+	prevPos = (prevPos - 0.5 + 0.5 * i_scale) / i_scale;
+	prevPos.y = prevPos.y + i_offsetY;
+	prev = clamp(texture2D(tex_prev, prevPos).xyz * i_manipFade + texture2D(tex_prev, pos).xyz * i_fade, 0, 1);
 
 	fragColor = vec4(clamp(prev + current, 0, 1), 1);
 }

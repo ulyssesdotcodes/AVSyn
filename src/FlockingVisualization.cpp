@@ -138,6 +138,7 @@ void FlockingVisualization::draw(const World& world)
 {
 	world.camera->lookAt(vec3(0.0, 0.0, 100.0), vec3(0.0));
 
+	gl::pushMatrices();
 	gl::setMatrices(*world.camera);
 	gl::enableDepthRead();
 	gl::enableDepthWrite();
@@ -148,4 +149,6 @@ void FlockingVisualization::draw(const World& world)
 
 	gl::ScopedState pointSize(GL_PROGRAM_POINT_SIZE, true);
 	gl::drawArrays(GL_POINTS, 0, NUM_PARTICLES);
+
+	gl::popMatrices();
 }

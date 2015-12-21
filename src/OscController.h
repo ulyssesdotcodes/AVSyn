@@ -8,7 +8,9 @@
 class Subscription {
 public:
 	Subscription(ci::CallbackId cbid, ci::osc::Listener &listener);
+	Subscription& operator=(const Subscription&);
 	void unsubscribe();
+	bool operator==(const Subscription &other);
 
 private:
 	ci::osc::Listener &mListener;
@@ -24,6 +26,7 @@ public:
 
 	// Pass by value
 	void sendMessage(ci::osc::Message message);
+	void sendBundle(ci::osc::Bundle bundle);
 
 private:
 	ci::osc::Listener mListener;

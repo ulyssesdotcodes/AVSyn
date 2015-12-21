@@ -66,7 +66,7 @@ void EQPointCloud::update(const World& world)
 	mParticles[1] = mEqs[1].pos;
 	mParticles[2] = mEqs[2].pos;
 
-	mParticleBuffer[0]->copyData(mParticles.size() * sizeof(vec3), mParticles.data());
+	mParticleBuffer[0]->bufferSubData(0, mParticles.size() * sizeof(vec3), mParticles.data());
 
 	world.audioSource->update();
 	float volume = world.audioSource->getVolume();

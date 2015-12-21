@@ -11,7 +11,7 @@ const int LINE_SEGMENTS = 8;
 class AxonNeuron : public Neuron
 {
 public:
-	AxonNeuron(const ci::vec2 &pos, std::shared_ptr<Neuron> neuron);
+	AxonNeuron(const ci::vec2 &pos, ci::gl::BatchRef circle, std::shared_ptr<Neuron> neuron);
 
 	virtual void update();
 	virtual void draw();

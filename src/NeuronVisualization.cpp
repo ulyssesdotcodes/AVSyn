@@ -15,20 +15,22 @@ NeuronVisualization::NeuronVisualization(const World &world)
 
 	auto randPos = [](vec2 area) { return vec2(Rand::randFloat() * area.x, Rand::randFloat() * area.y); };
 
-	mInnerNeurons.push_back(std::make_shared<Neuron>(randPos(world.windowSize)));
-	mInnerNeurons.push_back(std::make_shared<Neuron>(randPos(world.windowSize)));
-	mInnerNeurons.push_back(std::make_shared<Neuron>(randPos(world.windowSize)));
-	mInnerNeurons.push_back(std::make_shared<Neuron>(randPos(world.windowSize)));
+	gl::BatchRef circle = gl::Batch::create(geom::Circle().subdivisions(20), gl::getStockShader(gl::ShaderDef().color()));
+
+	mInnerNeurons.push_back(std::make_shared<Neuron>(randPos(world.windowSize), circle));
+	mInnerNeurons.push_back(std::make_shared<Neuron>(randPos(world.windowSize), circle));
+	mInnerNeurons.push_back(std::make_shared<Neuron>(randPos(world.windowSize), circle));
+	mInnerNeurons.push_back(std::make_shared<Neuron>(randPos(world.windowSize), circle));
 
 	for (int i = 4; i < innerNeuronCount; ++i) {
-		mInnerNeurons.push_back(std::make_shared<AxonNeuron>(randPos(world.windowSize), mInnerNeurons[(i >> 1) - 2]));
+		mInnerNeurons.push_back(std::make_shared<AxonNeuron>(randPos(world.windowSize), circle, mInnerNeurons[(i >> 1) - 2]));
 	}
 
 	for (int i = 0; i < OUTER_NEURON_COUNT; ++i) {
 		int diagIndex = i % 2 == 0 ? (OUTER_NEURON_COUNT / 2) + (i / 2) : (OUTER_NEURON_COUNT / 2) - (i / 2);
 		float diagPos = (float)diagIndex / (float) OUTER_NEURON_COUNT;
 		vec2 loc = (vec2) world.windowSize * vec2(diagPos);
-		mOuterNeurons.push_back(std::make_shared<AxonNeuron>(loc, mInnerNeurons[((i + innerNeuronCount) >> 1) - 2]));
+		mOuterNeurons.push_back(std::make_shared<AxonNeuron>(loc, circle, mInnerNeurons[((i + innerNeuronCount) >> 1) - 2]));
 	}
 	
 }
