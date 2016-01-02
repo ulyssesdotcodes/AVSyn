@@ -105,7 +105,7 @@ void ChoiceVisualization::draw(const World& world)
 			gl::clear(Color(0, 0, 0));
 			gl::pushMatrices();
 			gl::setMatricesWindow(world.windowSize);
-			gl::draw(mPingPongFBO.getTexture(), world.bounds);
+			gl::draw(mPingPongFBO.getTexture());
 			gl::popMatrices();
 		}
 	}
@@ -152,6 +152,4 @@ void ChoiceVisualization::onConnection()
 	mOscVisController.subscribeEffectListener("Hue Shift Cycle", 0, 1, 0, [=](float val) { mHueShiftCycle = val; });
 	mOscVisController.subscribeEffectListener("Saturation Shift", 0, 1, 0, mFeedbackShader, "i_saturationShift");
 	mOscVisController.subscribeEffectListener("Lightness Shift", 0, 1, 1, mFeedbackShader, "i_lightnessShift");
-
-	mVisualization->switchParams(mOscVisController);
 }

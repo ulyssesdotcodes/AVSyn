@@ -6,6 +6,10 @@ OscMixController::OscMixController(std::shared_ptr<OscController> controller) : 
 
 void OscMixController::subscribeToConnection(std::function<void(const ci::osc::Message)> onConnection)
 {
+	ci::osc::Message message;
+	message.setAddress("/connection");
+	sendMessage(message);
+	
 	subscribe("/connection", onConnection, false);
 }
 

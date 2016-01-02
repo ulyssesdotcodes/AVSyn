@@ -32,6 +32,8 @@ Mix::Mix(const World& world, std::vector<std::string> orderedVisualizationNames,
 		choicesMessage.addStringArg(*it);
 	}
 
+	onConnection();
+
 	mOscController.subscribeToConnection([this, oscController, choicesMessage](osc::Message __) {
 		oscController->sendMessage(choicesMessage);
 		this->onConnection();

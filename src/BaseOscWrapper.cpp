@@ -52,7 +52,7 @@ Subscription BaseOscWrapper::subscribeBoolListener(const std::string address, co
 	// Send the name over
 	osc::Message message;
 	message.setAddress(address);
-	message.addIntArg(32); // Flag for a slider message
+	message.addIntArg(64); // Flag for a bool message
 	message.addStringArg(name);
 	message.addIntArg(1);
 	message.addIntArg(defVal ? 1 : 0);

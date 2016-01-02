@@ -35,7 +35,7 @@ void OscVisController::subscribeVisListener(std::function<void(int)> observer)
 {
 	subscribe(mAddress + "/choice", [observer](const osc::Message message) {
 		if(message.getNumArgs() == 1) {
-			observer((int) message.getArgAsFloat(0));
+			observer((int) message.getArgAsInt32(0));
 		}
 	});
 }

@@ -36,15 +36,20 @@ void main() {
 
 	vec3 hsv = rgb2hsv(current);
 
-	current = vec3(fract(hsv.x + i_hueShift), clamp(hsv.y - i_saturationShift, 0.001, 0.999), hsv.z);
-	current = min(hsv2rgb(current) * i_lightnessShift, 0.999);
+	hsv = vec3(fract(hsv.x + i_hueShift), clamp(hsv.y - i_saturationShift, 0.001, 0.999), clamp(hsv.z * i_lightnessShift, 0.001, 0.999));
+	current = hsv2rgb(hsv);
 
 	vec2 prevPos = pos;
 	vec3 prev = vec3(0);
 
 	prevPos = (prevPos - 0.5 + 0.5 * i_scale) / i_scale;
 	prevPos.y = prevPos.y + i_offsetY;
-	prev = clamp(texture2D(tex_prev, prevPos).xyz * i_manipFade + texture2D(tex_prev, pos).xyz * i_fade, 0, 1);
+	if(prevPos.x > 0 && prevPos.x < 1.0 && prevPos.y > 0 && prevPos.y < 1.0) {
+		prev = clamp(texture2D(tex_prev, prevPos).xyz * i_manipFade + texture2D(tex_prev, pos).xyz * i_fade, 0, 1);
+	}
+	else {
+	    prev = vec3(0);
+	}
 
 	fragColor = vec4(clamp(prev + current, 0, 1), 1);
 }
