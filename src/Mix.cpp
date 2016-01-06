@@ -3,14 +3,14 @@
 
 using namespace ci;
 
-Mix::Mix(const World& world, std::vector<std::string> orderedVisualizationNames, 
+Mix::Mix(const World& world, 
 	std::map<std::string, std::shared_ptr<Visualization>> visualizations, std::shared_ptr<OscController> oscController) : 
 	mOscController(oscController)
 {
-	mChoiceVises[0] = std::make_shared<ChoiceVisualization>(world, orderedVisualizationNames, visualizations,
-		OscVisController("/visA", oscController, orderedVisualizationNames));
-	mChoiceVises[1] = std::make_shared<ChoiceVisualization>(world, orderedVisualizationNames, visualizations,
-		OscVisController("/visB", oscController, orderedVisualizationNames));
+	mChoiceVises[0] = std::make_shared<ChoiceVisualization>(world, visualizations,
+		OscVisController("/visA", oscController));
+	mChoiceVises[1] = std::make_shared<ChoiceVisualization>(world, visualizations,
+		OscVisController("/visB", oscController));
 
 	mFade = 0.5;
 
@@ -28,8 +28,9 @@ Mix::Mix(const World& world, std::vector<std::string> orderedVisualizationNames,
 	osc::Message choicesMessage;
 	choicesMessage.setAddress("/choices");
 
-	for (std::vector<std::string>::const_iterator it = orderedVisualizationNames.begin(); it != orderedVisualizationNames.end(); ++it) {
-		choicesMessage.addStringArg(*it);
+	for (std::map<std::string, std::shared_ptr<Visualization>>::const_iterator it = visualizations.begin(); 
+		it != visualizations.end(); ++it) {
+		choicesMessage.addStringArg(it->first);
 	}
 
 	onConnection();

@@ -4,12 +4,12 @@
 
 using namespace ci;
 
-ChoiceVisualization::ChoiceVisualization(const World& world, std::vector<std::string> orderedVisualizationNames, 
+ChoiceVisualization::ChoiceVisualization(const World& world, 
 	std::map<std::string, std::shared_ptr<Visualization>> visualizations, OscVisController oscVisController) :
-	mOscVisController(oscVisController), mVisualizations(visualizations), mVisualizationNames(orderedVisualizationNames)
+	mOscVisController(oscVisController), mVisualizations(visualizations)
 {
-	mVisualizationIndex = 1;
-	mVisualization = visualizations[mVisualizationNames[mVisualizationIndex]];
+	mVisualizationName = "Blank";
+	mVisualization = visualizations[mVisualizationName];
 
 	mFadeTransition = nullptr;
 
@@ -111,14 +111,14 @@ void ChoiceVisualization::draw(const World& world)
 	}
 }
 
-void ChoiceVisualization::setVisualization(int index) 
+void ChoiceVisualization::setVisualization(std::string name) 
 {
 	VisualizationRef oldVisualization = std::shared_ptr<Visualization>(mVisualization);
 
 	mOscVisController.clearSliders();
 
-	mVisualizationIndex = index;
-	mVisualization = mVisualizations[mVisualizationNames[mVisualizationIndex]];
+	mVisualizationName = name;
+	mVisualization = mVisualizations[mVisualizationName];
 	mVisualization->switchParams(mOscVisController);
 
 	if (mFadeTransitionOn) {
@@ -130,9 +130,9 @@ void ChoiceVisualization::onConnection()
 {
 	mOscVisController.clear();
 
-	mOscVisController.subscribeVisListener([=](int index) {
-		app::console() << "Received: " << index << std::endl;
-		setVisualization(index);
+	mOscVisController.subscribeVisListener([=](std::string name) {
+		app::console() << "Received: " << name << std::endl;
+		setVisualization(name);
 	});
 
 	mApplyEffects = false;

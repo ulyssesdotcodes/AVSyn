@@ -5,8 +5,8 @@
 
 using namespace ci;
 
-OscVisController::OscVisController(const std::string address, std::shared_ptr<OscController> controller, 
-	std::vector<std::string> visualizationNames) : BaseOscWrapper(controller), mAddress(address)
+OscVisController::OscVisController(const std::string address, std::shared_ptr<OscController> controller) 
+	: BaseOscWrapper(controller), mAddress(address)
 {
 }
 
@@ -31,11 +31,11 @@ void OscVisController::clearSliders()
 	mSliderSubscriptions.clear();
 }
 
-void OscVisController::subscribeVisListener(std::function<void(int)> observer)
+void OscVisController::subscribeVisListener(std::function<void(std::string)> observer)
 {
 	subscribe(mAddress + "/choice", [observer](const osc::Message message) {
 		if(message.getNumArgs() == 1) {
-			observer((int) message.getArgAsInt32(0));
+			observer(message.getArgAsString(0));
 		}
 	});
 }
@@ -68,7 +68,7 @@ void OscVisController::subscribeEffectListener(const std::string name, bool defV
 void OscVisController::subscribeSliderListener(std::string name, float min, float max, std::function<void(float)> observer)
 {
 	std::ostringstream address;
-	address << mAddress << "/sliders/" << mSliderSubscriptions.size();
+	address << mAddress << "/sliders/" << name;
 
 	// Subscribe to the messages
 	Subscription sub = subscribeFloatListener(address.str(), name, min, max, 0.5, observer);
@@ -79,7 +79,7 @@ void OscVisController::subscribeSliderListener(std::string name, float min, floa
 void OscVisController::subscribeSliderGlslListener(const std::string name, float min, float max, float defVal, gl::GlslProgRef shader, const std::string uniformName)
 {
 	std::ostringstream address;
-	address << mAddress << "/sliders/" << mSliderSubscriptions.size();
+	address << mAddress << "/sliders/" << name;
 
 	// Subscribe to the messages
 	Subscription sub = subscribeGlslListener(address.str(), name, min, max, defVal, shader, uniformName);

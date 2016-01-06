@@ -8,10 +8,10 @@
 
 class OscVisController : BaseOscWrapper {
 public:
-	OscVisController(const std::string address, std::shared_ptr<OscController> controller, std::vector<std::string> visualizationNames);
+	OscVisController(const std::string address, std::shared_ptr<OscController> controller);
 	void clear() override;
 	void clearSliders();
-	void subscribeVisListener(std::function<void(int)>);
+	void subscribeVisListener(std::function<void(std::string)>);
 	void subscribeEffectListener(const std::string name, float min, float max, float defVal, ci::gl::GlslProgRef shader, const std::string uniformName);
 	void subscribeEffectListener(const std::string name, float min, float max, float defVal, std::function<void(float)> observer);
 	void subscribeEffectListener(const std::string name, bool defVal, std::function<void(bool)> observer);

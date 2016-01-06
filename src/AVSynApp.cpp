@@ -155,13 +155,8 @@ void AVSynApp::setup()
 	auto neuronsVis = std::make_shared<NeuronVisualization>(mWorld);
 	visualizations.insert(make_pair("Neurons", neuronsVis));
 
-	std::vector<std::string> visualizationNames;
-	for (std::map<std::string, std::shared_ptr<Visualization>>::iterator it = visualizations.begin(); it != visualizations.end(); ++it) {
-		visualizationNames.push_back(it->first);
-	}
-
 	mMainVisualization = 
-		std::make_unique<Mix>(mWorld, visualizationNames, visualizations, mOscController);
+		std::make_unique<Mix>(mWorld, visualizations, mOscController);
 
 	// Setup rendering!
 	vec2 resolution = getWindowIndex(0)->getSize();

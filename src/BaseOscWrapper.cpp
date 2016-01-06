@@ -40,7 +40,7 @@ Subscription BaseOscWrapper::subscribeFloatListener(const std::string address, c
 	mController->sendMessage(message);
 
 	// Subscribe to the messages
-	return subscribe(address, [min, max, observer](const osc::Message message) {
+	return subscribe(address + "/value", [min, max, observer](const osc::Message message) {
 		if(message.getNumArgs() == 1) {
 			observer(message.getArgAsFloat(0));
 		}
@@ -58,7 +58,7 @@ Subscription BaseOscWrapper::subscribeBoolListener(const std::string address, co
 	message.addIntArg(defVal ? 1 : 0);
 	mController->sendMessage(message);
 	
-	return subscribe(address, [observer](const osc::Message message) {
+	return subscribe(address + "/value", [observer](const osc::Message message) {
 		observer(message.getArgAsFloat(0) == 1);
 	});
 }

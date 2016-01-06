@@ -7,7 +7,7 @@
 
 class Mix {
 public:
-	Mix(const World& world, std::vector<std::string> orderedVisualizationNames, 
+	Mix(const World& world,
 		std::map<std::string, std::shared_ptr<Visualization>> visualizations, std::shared_ptr<OscController> oscController);
 	virtual void update(const World& world);
 	virtual void draw(const World& world);
