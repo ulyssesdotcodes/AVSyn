@@ -26,6 +26,6 @@ void OscMixController::subscribeSliderListener(const std::string name, float min
 std::string OscMixController::getAddress(const std::string path, const std::string name)
 {
 	std::ostringstream address;
-	address << "/mix/" << path << "/" << name;
+	address << "/cinder/mix/" << path << "/" << name;
 	return address.str();
 }

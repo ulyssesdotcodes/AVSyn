@@ -105,11 +105,11 @@ void FlockingVisualization::update(const World& world)
 	float loudness = audio::linearToDecibel(world.audioSource->getVolume()) * 0.01f * mLoudness;;
 	mAccumulatedLoudness += loudness;
 
-	mUpdateShader->uniform("delta", world.deltaSource->delta());
-	mUpdateShader->uniform("loudness", loudness);
-	mUpdateShader->uniform("accumulatedLoudness", mAccumulatedLoudness);
-	mUpdateShader->uniform("beat", world.beatDetector->getBeat());
-	mUpdateShader->uniform("eqs", &(world.audioSource->getEqs(3, mLoudness))[0], 3);
+	mUpdateShader->uniform("i_delta", world.deltaSource->delta());
+	mUpdateShader->uniform("i_loudness", loudness);
+	mUpdateShader->uniform("i_accumulatedLoudness", mAccumulatedLoudness);
+	mUpdateShader->uniform("i_beat", world.beatDetector->getBeat());
+	mUpdateShader->uniform("i_eqs", &(world.audioSource->getEqs(3, mLoudness))[0], 3);
 
 
 	gl::ScopedVao scopedVao(mVaos[mIteratonIndex & 1]);

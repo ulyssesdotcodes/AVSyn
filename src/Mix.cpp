@@ -8,9 +8,9 @@ Mix::Mix(const World& world,
 	mOscController(oscController)
 {
 	mChoiceVises[0] = std::make_shared<ChoiceVisualization>(world, visualizations,
-		OscVisController("/visA", oscController));
+		OscVisController("/cinder/visA", oscController));
 	mChoiceVises[1] = std::make_shared<ChoiceVisualization>(world, visualizations,
-		OscVisController("/visB", oscController));
+		OscVisController("/cinder/visB", oscController));
 
 	mFade = 0.5;
 
@@ -26,7 +26,7 @@ Mix::Mix(const World& world,
 
 
 	osc::Message choicesMessage;
-	choicesMessage.setAddress("/choices");
+	choicesMessage.setAddress("/cinder/choices");
 
 	for (std::map<std::string, std::shared_ptr<Visualization>>::const_iterator it = visualizations.begin(); 
 		it != visualizations.end(); ++it) {

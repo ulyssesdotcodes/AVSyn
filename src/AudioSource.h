@@ -23,4 +23,5 @@ private:
 
 	int mLastUpdateFrame;
 	float mAccumulatedSound;
+	float mMult;
 };

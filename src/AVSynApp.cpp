@@ -136,7 +136,7 @@ void AVSynApp::setup()
 	//mVisualizationOptions.push_back("Trees");
 
 	auto fluid = std::make_shared<FluidVisualizer>();
-	visualizations.insert(make_pair("Fluid", fluid));
+	visualizations.insert(make_pair("Smoke", fluid));
 
 	//auto *kickChangeImage = new KinectParticles();
 	//kickChangeImage->setup(mAudioSource, mBeatDetector, mVisualizations, mVisualizationOptions);
@@ -313,7 +313,7 @@ void AVSynApp::drawRender()
 		gl::popMatrices();
 	}
 
-	gl::drawString("Framerate: " + std::to_string(getAverageFps()), vec2(10));
+	//gl::drawString("Framerate: " + std::to_string(getAverageFps()), vec2(10));
 }
 
 void AVSynApp::drawParams()

@@ -29,6 +29,8 @@ void AudioSource::setup() {
 	ctx->enable();
 
 	app::getWindow()->setTitle(mInputNode->getDevice()->getName());
+
+	mMult = 2.0;
 }
 
 void AudioSource::update() {
@@ -59,8 +61,8 @@ gl::TextureRef AudioSource::getMagSpectrumTexture() {
 	audio::Buffer buffer = mMonitor->getBuffer();
 
 	for (std::vector<float>::size_type i = 0; i < spectrumVec.size(); i++) {
-		spectrum[i * 4] = spectrumVec[i];
-		spectrum[i * 4 + 1] = buffer.getData()[i];
+		spectrum[i * 4] = spectrumVec[i] * mMult;
+		spectrum[i * 4 + 1] = buffer.getData()[i] * mMult;
 		spectrum[i * 4 + 2] = 0.0f;
 		spectrum[i * 4 + 3] = 256.0f;
 	}
@@ -86,7 +88,7 @@ float AudioSource::getHighestVolumePos() {
 
 float AudioSource::getVolume() 
 {
-	return mMonitor->getVolume();
+	return mMonitor->getVolume() * mMult;
 }
 
 float AudioSource::getAccumulatedSound()
