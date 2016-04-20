@@ -5,50 +5,48 @@
 
 using namespace ci;
 
-OscController::OscController()
+OscController::OscController():mListener(3334), mSender(3333, System::getIpAddress(), 3333)
 {
-	mListener.setup(3334);
-	mSender.setup(System::getIpAddress(), 3333, true);
+	mListener.bind();
+	mListener.listen();
 }
 
-Subscription OscController::subscribe(const std::string &address, std::function<void(const osc::Message)> observer)
+Subscription OscController::subscribe(const std::string &address, std::function<void(const osc::Message &message)> observer)
 {
-	CallbackId cbid = 
-		mListener.registerMessageReceived([address, observer](const osc::Message* message) {
-			if (address.compare(message->getAddress()) == 0) {
-				const osc::Message copy = osc::Message(*message);
-				app::AppBase::get()->dispatchAsync([observer, copy]() {
-					observer(copy);
-				});
-			}
+	mListener.setListener(address, [observer](const ci::osc::Message & msg) {
+		app::console() << "Message Address" << msg.getAddress() << std::endl;
+		const osc::Message copy = osc::Message(msg);
+		app::AppBase::get()->dispatchAsync([observer, copy]() {
+			observer(copy);
 		});
+	});;
 
-	return Subscription(cbid, mListener);
+	return Subscription(mListener, address);
 }
 
 void OscController::sendMessage(const osc::Message message) {
-	mSender.sendMessage(message);
+	mSender.send(message);
 }
 
 void OscController::sendBundle(const osc::Bundle bundle) {
-	mSender.sendBundle(bundle);
+	mSender.send(bundle);
 }
 
-Subscription::Subscription(ci::CallbackId cbid, ci::osc::Listener &listener) : mCbid(cbid), mListener(listener)
+Subscription::Subscription(ci::osc::ReceiverUdp &listener, std::string address) : mListener(listener), mAddress(address)
 {
 }
 
 Subscription & Subscription::operator=(const Subscription &other)
 {
-	return Subscription(other.mCbid, other.mListener);
+	return Subscription(other.mListener, other.mAddress);
 }
 
 void Subscription::unsubscribe()
 {
-	mListener.unregisterMessageReceived(mCbid);
+	mListener.removeListener(mAddress);
 }
 
 bool Subscription::operator==(const Subscription & other)
 {
-	return other.mCbid == mCbid;
+	return other.mAddress == mAddress;
 }

@@ -38,7 +38,7 @@ Fluid::Fluid(vec2 fluidResolution)
 
 	gl::Texture2d::Format texFmt;
 	texFmt.setInternalFormat(GL_RGBA16F);
-	texFmt.setDataType(GL_FLOAT);
+	texFmt.setDataType(GL_HALF_FLOAT);
 	texFmt.setTarget(GL_TEXTURE_2D);
 	texFmt.setWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 	gl::Fbo::Format fmt;
@@ -75,42 +75,44 @@ void Fluid::advect(float dt, PingPongFBO* value)
 		gl::ScopedTextureBind scopeTarget(value->getTexture(), ADVECT_POINTER);
 		mAdvectShader->uniform("tex_target", ADVECT_POINTER);
 
+		mAdvectShader->uniform("i_resolution", mVelocityFBO.getBounds().getSize());
+
 		mAdvectShader->uniform("i_target_resolution", value->getBounds().getSize());
 
 		value->render(mAdvectShader);
 	}
 
 	//// Run time backwards for the second one
-	{
-		mAdvectShader->uniform("i_dt", -dt);
-		gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
-		mAdvectShader->uniform("tex_velocity", VELOCITY_POINTER);
-		gl::ScopedTextureBind scopeTarget(value->getTexture(), ADVECT_POINTER);
-		mAdvectShader->uniform("tex_target", ADVECT_POINTER);
+	//{
+	//	mAdvectShader->uniform("i_dt", -dt);
+	//	gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
+	//	mAdvectShader->uniform("tex_velocity", VELOCITY_POINTER);
+	//	gl::ScopedTextureBind scopeTarget(value->getTexture(), ADVECT_POINTER);
+	//	mAdvectShader->uniform("tex_target", ADVECT_POINTER);
 
-		mAdvectShader->uniform("i_target_resolution", value->getBounds().getSize());
+	//	mAdvectShader->uniform("i_target_resolution", value->getBounds().getSize());
 
-		value->render(mAdvectShader);
-	}
+	//	value->render(mAdvectShader);
+	//}
 
-	{
-		mAdvectMaccormackShader->uniform("i_dt", dt);
-		gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
-		mAdvectMaccormackShader->uniform("tex_velocity", VELOCITY_POINTER);
+	//{
+	//	mAdvectMaccormackShader->uniform("i_dt", dt);
+	//	gl::ScopedTextureBind scopeVel(mVelocityFBO.getTexture(), VELOCITY_POINTER);
+	//	mAdvectMaccormackShader->uniform("tex_velocity", VELOCITY_POINTER);
 
-		vector<gl::TextureRef> textures = value->getTextures();
-		gl::ScopedTextureBind scopedPhiN(textures.at(1), 3);
-		mAdvectMaccormackShader->uniform("phi_n", 3);
-		mAdvectMaccormackShader->uniform("tex_target", 3);
-		gl::ScopedTextureBind scopedPhiN1Hat(textures.at(2), 4);
-		mAdvectMaccormackShader->uniform("phi_n_1_hat", 4);
-		gl::ScopedTextureBind scopedPhiNHat(textures.at(3), 5);
-		mAdvectMaccormackShader->uniform("phi_n_hat", 5);
+	//	vector<gl::TextureRef> textures = value->getTextures();
+	//	gl::ScopedTextureBind scopedPhiN(textures.at(1), 3);
+	//	mAdvectMaccormackShader->uniform("phi_n", 3);
+	//	mAdvectMaccormackShader->uniform("tex_target", 3);
+	//	gl::ScopedTextureBind scopedPhiN1Hat(textures.at(2), 4);
+	//	mAdvectMaccormackShader->uniform("phi_n_1_hat", 4);
+	//	gl::ScopedTextureBind scopedPhiNHat(textures.at(3), 5);
+	//	mAdvectMaccormackShader->uniform("phi_n_hat", 5);
 
-		mAdvectMaccormackShader->uniform("i_target_resolution", value->getBounds().getSize());
+	//	mAdvectMaccormackShader->uniform("i_target_resolution", value->getBounds().getSize());
 
-		value->render(mAdvectMaccormackShader);
-	}
+	//	value->render(mAdvectMaccormackShader);
+	//}
 
 }
 

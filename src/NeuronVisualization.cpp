@@ -54,6 +54,10 @@ void NeuronVisualization::update(const World & world)
 
 void NeuronVisualization::draw(const World & world)
 {
+	gl::clear(Color(0, 0, 0));
+	gl::ScopedMatrices scp();
+	gl::setMatricesWindow(world.windowSize);
+
 	for (std::vector<std::shared_ptr<Neuron>>::iterator it = mInnerNeurons.begin(); it != mInnerNeurons.end(); ++it) {
 		(*it)->draw();
 	}
@@ -65,5 +69,5 @@ void NeuronVisualization::draw(const World & world)
 
 void NeuronVisualization::switchParams(OscVisController &controller)
 {
-	controller.subscribeSliderListener("Volume", 0, 2, [&](auto val) { mVolume = val;  });
+	controller.subscribeSliderListener("Volume", 0, 2, [&](float val) { mVolume = val;  });
 }

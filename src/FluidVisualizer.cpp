@@ -34,7 +34,7 @@ FluidVisualizer::FluidVisualizer()
 
 	updateFormat.fragment(app::loadAsset("Fluid/smoke_drop.frag"));
 	mSmokeDropShader = gl::GlslProg::create(updateFormat);
-	mSmokeDropShader->uniform("resolution", mWindowResolution);
+	mSmokeDropShader->uniform("i_resolution", mWindowResolution);
 	mSmokeDropShader->uniform("smokeDropPos", vec2(0.5, 0.8));
 
 	updateFormat.fragment(app::loadAsset("Fluid/smoke_draw.frag"));
@@ -67,6 +67,8 @@ void FluidVisualizer::update(const World& world)
 
 	updateSmokePos(world, time, dt);
 
+	mForcesShader->uniform("i_dt", dt);
+
 	// Update the fluid with the smoker's forces shader
 	mFluid.update(dt, mForcesShader, mSmokeField.getTexture());
 
@@ -88,19 +90,17 @@ void FluidVisualizer::draw(const World& world)
 	mRenderShader->uniform("tex", 2);
 
 	gl::ScopedViewport vp(ivec2(0), smokeSize);
-	gl::pushMatrices();
+	gl::ScopedMatrices scpM();
 	gl::setMatricesWindow(smokeSize);
 	gl::ScopedGlslProg glsl(mRenderShader);
 
 	gl::drawSolidRect(Rectf(0, 0, smokeSize.x, smokeSize.y));
-
-	gl::popMatrices();
 }
 
 void FluidVisualizer::switchParams(OscVisController &controller)
 {
 	controller.subscribeSliderGlslListener("Volume", 0.5, 4.0, 2.0, mSmokeDropShader, "i_volume");
-	controller.subscribeSliderListener("Speed", 0.5, 4.0, [&](auto val) { mSpeed = val; });
+	controller.subscribeSliderListener("Speed", 0.5, 4.0, [&](float val) { mSpeed = val; });
 }
 
 void FluidVisualizer::updateSmokePos(const World& world, float time, float dt) {
@@ -130,10 +130,10 @@ void FluidVisualizer::updateSmokePos(const World& world, float time, float dt) {
 		mAudioVelMult.y = -mAudioVelMult.y;
 	}
 
-	mSmokeDropShader->uniform("dt", dt);
-	mSmokeDropShader->uniform("volume", world.audioSource->getVolume());
-	mSmokeDropShader->uniform("beat", world.beatDetector->getBeat());
-	mSmokeDropShader->uniform("smokeDropPos", smokeDropPos);
+	mSmokeDropShader->uniform("i_dt", dt);
+	mSmokeDropShader->uniform("i_volume", world.audioSource->getVolume());
+	mSmokeDropShader->uniform("i_beat", world.beatDetector->getBeat());
+	mSmokeDropShader->uniform("i_smokeDropPos", smokeDropPos);
 	mForcesShader->uniform("i_dt", dt);
 	mForcesShader->uniform("i_time", (float) app::getElapsedSeconds());
 

@@ -1,9 +1,9 @@
 #version 330 core
 
-uniform vec2 resolution;
+uniform vec2 i_resolution;
 uniform sampler2D tex_prev;
 
-uniform vec2 smokeDropPos;
+uniform vec2 i_smokeDropPos;
 uniform float i_volume;
 uniform float i_beat;
 uniform float i_dt;
@@ -21,14 +21,14 @@ float rand(vec2 co){
 }
 
 void main() {
-	vec2 pos = gl_FragCoord.xy / resolution.xy;
+	vec2 pos = gl_FragCoord.xy / i_resolution.xy;
 	vec3 current = texture2D(tex_prev, pos).xyz * 0.99;
 
-	vec2 mSDP = vec2(smokeDropPos.x, 1.0 - smokeDropPos.y);
+	vec2 mSDP = vec2(i_smokeDropPos.x, 1.0 - i_smokeDropPos.y);
 
 	vec2 dropDistance = pos - mSDP;
 
-	float density = max(0, 0.008 - dot(dropDistance, dropDistance)) * i_dt * max(i_beat, 0.125) * pow(i_volume, 0.5);
+	float density = max(0, 0.004 - dot(dropDistance, dropDistance)) * i_dt * max(i_beat, 0.125) * 2.0;
 
 	density *= mix(0.6, 1.0, rand(vec2(pos.x * pos.y, cos(i_dt + i_volume))));
 

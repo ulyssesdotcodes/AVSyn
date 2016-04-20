@@ -1,20 +1,18 @@
 #pragma once
 
-#include "OscListener.h"
-#include "OscSender.h"
-
+#include "Osc.h"
 #include <map>
 
 class Subscription {
 public:
-	Subscription(ci::CallbackId cbid, ci::osc::Listener &listener);
+	Subscription(ci::osc::ReceiverUdp &listener, std::string address);
 	Subscription& operator=(const Subscription&);
 	void unsubscribe();
 	bool operator==(const Subscription &other);
 
 private:
-	ci::osc::Listener &mListener;
-	ci::CallbackId mCbid;
+	std::string mAddress;
+	ci::osc::ReceiverUdp &mListener;
 };
 
 class OscController {
@@ -22,15 +20,15 @@ public:
 	OscController();
 
 	// Function that can be passed by value to
-	Subscription subscribe(const std::string &address, std::function<void(const ci::osc::Message)>);
+	Subscription subscribe(const std::string &address, std::function<void(const ci::osc::Message &message)>);
 
 	// Pass by value
 	void sendMessage(ci::osc::Message message);
 	void sendBundle(ci::osc::Bundle bundle);
 
 private:
-	ci::osc::Listener mListener;
-	ci::osc::Sender mSender;
+	ci::osc::ReceiverUdp mListener;
+	ci::osc::SenderUdp mSender;
 
 	std::map<std::string, std::function<void(const ci::osc::Message)>> mObservers;
 };

@@ -8,7 +8,7 @@ BaseOscWrapper::BaseOscWrapper(std::shared_ptr<OscController> controller) : mCon
 
 void BaseOscWrapper::clear()
 {
-	std::for_each(mSubscriptions.begin(), mSubscriptions.end(), [](auto sub) { sub.unsubscribe(); });
+	std::for_each(mSubscriptions.begin(), mSubscriptions.end(), [](Subscription sub) { sub.unsubscribe(); });
 	mSubscriptions.clear();
 }
 
@@ -31,18 +31,18 @@ Subscription BaseOscWrapper::subscribeFloatListener(const std::string address, c
 	// Send the name over
 	osc::Message message;
 	message.setAddress(address);
-	message.addIntArg(32); // Flag for a slider message
-	message.addStringArg(name);
-	message.addIntArg(0);
-	message.addFloatArg(min);
-	message.addFloatArg(max);
-	message.addFloatArg(defVal);
+	message.append(32); // Flag for a slider message
+	message.append(name);
+	message.append(0);
+	message.append(min);
+	message.append(max);
+	message.append(defVal);
 	mController->sendMessage(message);
 
 	// Subscribe to the messages
-	return subscribe(address + "/value", [min, max, observer](const osc::Message message) {
+	return subscribe(address + "/value", [min, max, observer](const osc::Message &message) {
 		if(message.getNumArgs() == 1) {
-			observer(message.getArgAsFloat(0));
+			observer(message[0].flt());
 		}
 	});
 }
@@ -52,21 +52,21 @@ Subscription BaseOscWrapper::subscribeBoolListener(const std::string address, co
 	// Send the name over
 	osc::Message message;
 	message.setAddress(address);
-	message.addIntArg(64); // Flag for a bool message
-	message.addStringArg(name);
-	message.addIntArg(1);
-	message.addIntArg(defVal ? 1 : 0);
+	message.append(64); // Flag for a bool message
+	message.append(name);
+	message.append(1);
+	message.append(defVal ? 1 : 0);
 	mController->sendMessage(message);
 	
-	return subscribe(address + "/value", [observer](const osc::Message message) {
-		observer(message.getArgAsFloat(0) == 1);
+	return subscribe(address + "/value", [observer](const osc::Message &message) {
+		observer(message[0].flt() == 1);
 	});
 }
 
 Subscription BaseOscWrapper::subscribeGlslListener(const std::string address, std::string name, float min, float max, float defVal, ci::gl::GlslProgRef shader, const std::string uniformName)
 {
 	shader->uniform(uniformName, defVal);
-	return subscribeFloatListener(address, name, min, max, defVal, [shader, uniformName](auto val) {
+	return subscribeFloatListener(address, name, min, max, defVal, [shader, uniformName](float val) {
 		shader->uniform(uniformName, val);
 	});
 }

@@ -33,5 +33,5 @@ void DotsVisualization::renderUniforms(const World& world)
 }
 
 void DotsVisualization::switchParams(OscVisController &controller) {
-	controller.subscribeSliderListener("Loudness", 0, 2, [&](auto val) { mLoudness = val; });
+	controller.subscribeSliderListener("Loudness", 0, 2, [&](float val) { mLoudness = val; });
 }

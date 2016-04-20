@@ -24,7 +24,7 @@ void OscVisController::clearSliders()
 	message.setAddress(address.str());
 	sendMessage(message);
 
-	std::for_each(mSliderSubscriptions.begin(), mSliderSubscriptions.end(), [&](auto sub) { 
+	std::for_each(mSliderSubscriptions.begin(), mSliderSubscriptions.end(), [&](Subscription sub) { 
 		sub.unsubscribe(); 
 		removeSubscription(sub);
 	});
@@ -35,7 +35,7 @@ void OscVisController::subscribeVisListener(std::function<void(std::string)> obs
 {
 	subscribe(mAddress + "/choice", [observer](const osc::Message message) {
 		if(message.getNumArgs() == 1) {
-			observer(message.getArgAsString(0));
+			observer(message.getArgString(0));
 		}
 	});
 }
@@ -46,7 +46,7 @@ void OscVisController::subscribeEffectListener(const std::string name, float min
 	std::ostringstream address;
 	address << mAddress << "/effects/" << name;
 	shader->uniform(uniformName, defVal);
-	subscribeFloatListener(address.str(), name, min, max, defVal, [shader, uniformName](auto val) {
+	subscribeFloatListener(address.str(), name, min, max, defVal, [shader, uniformName](float val) {
 		shader->uniform(uniformName, val);
 	});
 }

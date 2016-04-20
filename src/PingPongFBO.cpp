@@ -66,6 +66,8 @@ void PingPongFBO::render(gl::BatchRef batch, vec2 translate, Colorf color)
 
 	batch->draw();
 
+	gl::popMatrices();
+
 	// Increment mIteration here so that `getTexture()` always points to the latest
 	++mIteration;
 }

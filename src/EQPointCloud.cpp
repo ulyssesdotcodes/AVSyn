@@ -8,7 +8,7 @@
 using namespace ci;
 
 const int NUM_PARTICLES = 300000;
-const int SIZE = 64;
+const int PC_SIZE = 64;
 const float DAMPING = 0.1;
 const float ROTATION_DAMP = 0.1;
 
@@ -19,9 +19,9 @@ EQPointCloud::EQPointCloud()
 	mHue = 0.0;
 
 	for (int i = 0; i < NUM_PARTICLES; i++) {
-		float x = (Rand::randFloat() - 0.5f) * SIZE;
-		float y = (Rand::randFloat() - 0.5f) * SIZE;
-		float z = (Rand::randFloat() - 0.5f) * SIZE;
+		float x = (Rand::randFloat() - 0.5f) * PC_SIZE;
+		float y = (Rand::randFloat() - 0.5f) * PC_SIZE;
+		float z = (Rand::randFloat() - 0.5f) * PC_SIZE;
 
 		mParticles.push_back(vec3(x, y, z));
 	}
@@ -41,23 +41,23 @@ EQPointCloud::EQPointCloud()
 }
 
 void EQPointCloud::switchParams(OscVisController &controller) {
-	controller.subscribeSliderListener("Loudness", 0, 2, [&](auto val) { mLoudness = val; });
-	controller.subscribeSliderListener("Rotation Speed", 0, 2, [&](auto val) { mRotationSpeed = val; });
+	controller.subscribeSliderListener("Loudness", 0, 2, [&](float val) { mLoudness = val; });
+	controller.subscribeSliderListener("Rotation Speed", 0, 2, [&](float val) { mRotationSpeed = val; });
 }
 
 void EQPointCloud::update(const World& world)
 {
 	for (std::vector<EQ>::iterator it = mEqs.begin(); it != mEqs.end(); ++it) {
 		it->pos += it->velocity;
-		if (math<float>::abs(it->pos.x) > SIZE * 0.5) {
+		if (math<float>::abs(it->pos.x) > PC_SIZE * 0.5) {
 			it->velocity.x = -it->velocity.x;
 		}
 
-		if (abs(it->pos.y) > SIZE * 0.5) {
+		if (abs(it->pos.y) > PC_SIZE * 0.5) {
 			it->velocity.y = -it->velocity.y;
 		}
 
-		if (abs(it->pos.z) > SIZE * 0.5) {
+		if (abs(it->pos.z) > PC_SIZE * 0.5) {
 			it->velocity.z = -it->velocity.z;
 		}
 	}

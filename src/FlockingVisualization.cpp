@@ -6,7 +6,7 @@
 
 using namespace ci;
 
-const int SIZE = 50;
+const int FLOCK_WIDTH = 50;
 const int BUFFER_WIDTH = 128;
 const int NUM_PARTICLES = BUFFER_WIDTH * BUFFER_WIDTH;
 
@@ -46,9 +46,9 @@ FlockingVisualization::FlockingVisualization()
 
 
 	for (int i = 0; i < NUM_PARTICLES; ++i) {
-		positions[i] = vec3(SIZE * (Rand::randFloat() - 0.5f),
-			SIZE * (Rand::randFloat() - 0.5f),
-			SIZE * (Rand::randFloat() - 0.5f));
+		positions[i] = vec3(FLOCK_WIDTH * (Rand::randFloat() - 0.5f),
+			FLOCK_WIDTH * (Rand::randFloat() - 0.5f),
+			FLOCK_WIDTH * (Rand::randFloat() - 0.5f));
 
 		velocities[i] = Rand::randVec3();
 		colors[i] = vec3(0, 0, 0);
@@ -88,8 +88,8 @@ FlockingVisualization::FlockingVisualization()
 }
 
 void FlockingVisualization::switchParams(OscVisController &controller) {
-	controller.subscribeSliderListener("Loudness", 0, 2, [&](auto val) { mLoudness = val; });
-	controller.subscribeSliderListener("Beat Constant", 1.1, 2, [&](auto val) { mBeatConstant = val; });
+	controller.subscribeSliderListener("Loudness", 0, 2, [&](float val) { mLoudness = val; });
+	controller.subscribeSliderListener("Beat Constant", 1.1, 2, [&](float val) { mBeatConstant = val; });
 	controller.subscribeSliderGlslListener("Speed", 0.5, 4, 2, mUpdateShader, "i_speed");
 	controller.subscribeSliderGlslListener("Roaming Distance", 20, 120, 40, mUpdateShader, "i_roamingDistance");
 	controller.subscribeSliderGlslListener("Separation Distance", 0, 30, 12, mUpdateShader, "i_separationDistance");

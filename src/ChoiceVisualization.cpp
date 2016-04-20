@@ -128,7 +128,7 @@ void ChoiceVisualization::setVisualization(std::string name)
 
 void ChoiceVisualization::onConnection()
 {
-	mOscVisController.clear();
+	//mOscVisController.clear();
 
 	mOscVisController.subscribeVisListener([=](std::string name) {
 		app::console() << "Received: " << name << std::endl;
@@ -136,10 +136,10 @@ void ChoiceVisualization::onConnection()
 	});
 
 	mApplyEffects = false;
-	mOscVisController.subscribeEffectListener("Apply Effects", false, [=](bool enabled) { mApplyEffects = enabled; });
+	mOscVisController.subscribeEffectListener("Apply Effects", false, [&](bool enabled) { mApplyEffects = enabled; });
 
 	mFadeTransitionOn = false;
-	mOscVisController.subscribeEffectListener("Fade Transition", false, [=](bool enabled) { mFadeTransitionOn = enabled; });
+	mOscVisController.subscribeEffectListener("Fade Transition", false, [&](bool enabled) { mFadeTransitionOn = enabled; });
 
 	mHueShift = 0.0;
 	mHueShiftCycle = 0.0;

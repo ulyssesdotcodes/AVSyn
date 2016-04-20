@@ -155,6 +155,9 @@ void AVSynApp::setup()
 	auto neuronsVis = std::make_shared<NeuronVisualization>(mWorld);
 	visualizations.insert(make_pair("Neurons", neuronsVis));
 
+	auto videoVis = std::make_shared<Video>("C:\\Users\\Ulysses\\Development\\AVSyn\\assets\\Purity Ring - Fireshrine.mp4");
+	visualizations.insert(make_pair("Video", videoVis));
+
 	mMainVisualization = 
 		std::make_unique<Mix>(mWorld, visualizations, mOscController);
 
@@ -326,6 +329,7 @@ void AVSynApp::drawParams()
 CINDER_APP(AVSynApp, RendererGl(), [&](App::Settings *settings) {
 	FullScreenOptions options;
 	std::vector<DisplayRef> displays = Display::getDisplays();
+	settings->setConsoleWindowEnabled();
 	settings->setFullScreen(true, options);	
 	if (displays.size() > 1) {
 		settings->setDisplay(displays[1]);

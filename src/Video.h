@@ -5,8 +5,9 @@
 #include "cinder/Filesystem.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
-#include "cinder/qtime/QuickTimeGl.h"
 #include "cinder/Surface.h"
+
+#include "ciWMFVideoPlayer.h"
 
 #include "Visualization.h"
 
@@ -25,6 +26,7 @@ public:
 	virtual void hide();
 
 private:
-	ci::gl::TextureRef mFrameTexture;
-	ci::qtime::MovieGlRef mMovie;
+	ciWMFVideoPlayer mVideo;
+
+	ci::gl::GlslProgRef			mGlslVideoTexture;
 };

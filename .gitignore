@@ -71,6 +71,7 @@ ipch/
 *.aps
 *.ncb
 *.opensdf
+*.opendb
 *.sdf
 *.cachefile
 
@@ -203,3 +204,5 @@ FakesAssemblies/
 
 #Assets
 *.mov
+*.wmv
+*.mp4

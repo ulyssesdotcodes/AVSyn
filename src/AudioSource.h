@@ -18,7 +18,6 @@ public:
 private:
 	ci::audio::InputDeviceNodeRef mInputNode;
 	ci::audio::MonitorSpectralNodeRef mMonitor;
-
 	std::vector<float>  mSpectrum;
 
 	int mLastUpdateFrame;

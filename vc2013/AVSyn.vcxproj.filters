@@ -43,6 +43,18 @@
     <Filter Include="Blocks\OSC\src\ip\win32">
       <UniqueIdentifier>{0c5f7a38-e191-4b43-bb94-31c568bf27ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Blocks\WMFVideo">
+      <UniqueIdentifier>{52844889-F90B-4B6D-9972-40DB67FCD9D8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\WMFVideo\src">
+      <UniqueIdentifier>{BF09B2FF-CDB1-4EA0-8764-7B782D81D834}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\WMFVideo\src\presenter">
+      <UniqueIdentifier>{93693012-B059-406C-8F48-47AE66CDAA99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\WMFVideo\src\presenter\common">
+      <UniqueIdentifier>{9874F3FD-76DB-4E02-90AA-0CD1FDF9AD3E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\OSC">
       <UniqueIdentifier>{8dc9d447-9e50-4254-b4df-ff0b866b3035}</UniqueIdentifier>
     </Filter>
@@ -126,39 +138,96 @@
     <ClCompile Include="..\src\SpectrumCircleVisualization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Cinder\blocks\OSC\src\OscBundle.cpp">
+    <ClCompile Include="..\..\Cinder\blocks\OSC\src\Osc.cpp">
       <Filter>Blocks\OSC\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Cinder\blocks\OSC\src\OscListener.cpp">
-      <Filter>Blocks\OSC\src</Filter>
+    <ClCompile Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\ciWMFVideoPlayer.cpp">
+      <Filter>Blocks\WMFVideo\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Cinder\blocks\OSC\src\OscMessage.cpp">
-      <Filter>Blocks\OSC\src</Filter>
+    <ClCompile Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\ciWMFVideoPlayerUtils.cpp">
+      <Filter>Blocks\WMFVideo\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Cinder\blocks\OSC\src\OscSender.cpp">
-      <Filter>Blocks\OSC\src</Filter>
+    <ClCompile Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\PresentEngine.cpp">
+      <Filter>Blocks\WMFVideo\src\presenter</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Cinder\blocks\OSC\src\osc\OscOutboundPacketStream.cpp">
-      <Filter>Blocks\OSC\src\osc</Filter>
+    <ClCompile Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\Presenter.cpp">
+      <Filter>Blocks\WMFVideo\src\presenter</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Cinder\blocks\OSC\src\osc\OscPrintReceivedElements.cpp">
-      <Filter>Blocks\OSC\src\osc</Filter>
+    <ClCompile Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\PresenterHelpers.cpp">
+      <Filter>Blocks\WMFVideo\src\presenter</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Cinder\blocks\OSC\src\osc\OscReceivedElements.cpp">
-      <Filter>Blocks\OSC\src\osc</Filter>
+    <ClCompile Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\scheduler.cpp">
+      <Filter>Blocks\WMFVideo\src\presenter</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Cinder\blocks\OSC\src\osc\OscTypes.cpp">
-      <Filter>Blocks\OSC\src\osc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Cinder\blocks\OSC\src\ip\IpEndpointName.cpp">
-      <Filter>Blocks\OSC\src\ip</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Cinder\blocks\OSC\src\ip\win32\NetworkingUtils.cpp">
-      <Filter>Blocks\OSC\src\ip\win32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Cinder\blocks\OSC\src\ip\win32\UdpSocket.cpp">
-      <Filter>Blocks\OSC\src\ip\win32</Filter>
-    </ClCompile>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\ciWMFVideoPlayer.h">
+      <Filter>Blocks\WMFVideo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\ciWMFVideoPlayerUtils.h">
+      <Filter>Blocks\WMFVideo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\EVRPresenter.h">
+      <Filter>Blocks\WMFVideo\src\presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\EVRPresenterUuid.h">
+      <Filter>Blocks\WMFVideo\src\presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\PresentEngine.h">
+      <Filter>Blocks\WMFVideo\src\presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\Presenter.h">
+      <Filter>Blocks\WMFVideo\src\presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\PresenterHelpers.h">
+      <Filter>Blocks\WMFVideo\src\presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\scheduler.h">
+      <Filter>Blocks\WMFVideo\src\presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\AsyncCB.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\BufferLock.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\ClassFactory.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\common.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\critsec.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\GrowArray.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\linklist.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\logging.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\logmediatype.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\mediatype.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\mfutils.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\PropVar.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\registry.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\TinyMap.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Cinder\blocks\Cinder-WMFVideo\src\presenter\common\trace.h">
+      <Filter>Blocks\WMFVideo\src\presenter\common</Filter>
+    </ClInclude>
     <ClCompile Include="..\src\OscController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -254,59 +323,8 @@
     <ClInclude Include="..\src\SpectrumCircleVisualization.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\OscArg.h">
+    <ClInclude Include="..\..\Cinder\blocks\OSC\src\Osc.h">
       <Filter>Blocks\OSC\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\OscBundle.h">
-      <Filter>Blocks\OSC\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\OscListener.h">
-      <Filter>Blocks\OSC\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\OscMessage.h">
-      <Filter>Blocks\OSC\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\OscSender.h">
-      <Filter>Blocks\OSC\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\osc\MessageMappingOscPacketListener.h">
-      <Filter>Blocks\OSC\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\osc\OscException.h">
-      <Filter>Blocks\OSC\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\osc\OscHostEndianness.h">
-      <Filter>Blocks\OSC\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\osc\OscOutboundPacketStream.h">
-      <Filter>Blocks\OSC\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\osc\OscPacketListener.h">
-      <Filter>Blocks\OSC\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\osc\OscPrintReceivedElements.h">
-      <Filter>Blocks\OSC\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\osc\OscReceivedElements.h">
-      <Filter>Blocks\OSC\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\osc\OscTypes.h">
-      <Filter>Blocks\OSC\src\osc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\ip\IpEndpointName.h">
-      <Filter>Blocks\OSC\src\ip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\ip\NetworkingUtils.h">
-      <Filter>Blocks\OSC\src\ip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\ip\PacketListener.h">
-      <Filter>Blocks\OSC\src\ip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\ip\TimerListener.h">
-      <Filter>Blocks\OSC\src\ip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Cinder\blocks\OSC\src\ip\UdpSocket.h">
-      <Filter>Blocks\OSC\src\ip</Filter>
     </ClInclude>
     <ClInclude Include="..\src\OscController.h">
       <Filter>Header Files\OSC</Filter>
@@ -412,9 +430,18 @@
     <None Include="..\assets\circle.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\assets\video_texture.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\video_texture.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\assets\Wheat Field.mov">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="..\assets\Purity Ring - Fireshrine.mp4">
       <Filter>Assets</Filter>
     </Media>
   </ItemGroup>

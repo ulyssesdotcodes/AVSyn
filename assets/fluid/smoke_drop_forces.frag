@@ -34,7 +34,7 @@ vec4 inner(vec2 pos) {
 	vec4 v = texture2D(tex_velocity, pos);
 	vec2 smoke = texture2D(tex_smoke, pos).xy; // x is density, y is temperature
 
-	float Fb = (4 * smoke.y - 0.2 * smoke.x); // buoyancy = (-k*density + (T - T0))
+	float Fb = (4 * smoke.y - (smoke.x - 0.2)) * i_dt * 100; // buoyancy = (-k*density + (T - T0))
 	v.y += Fb;
 
 	// Add this line in to move the smoke back and forth a bit

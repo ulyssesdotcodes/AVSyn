@@ -1,6 +1,8 @@
 #include "Mix.h"
 #include "cinder\app\App.h"
 
+#include "Osc.h"
+
 using namespace ci;
 
 Mix::Mix(const World& world, 
@@ -25,12 +27,11 @@ Mix::Mix(const World& world,
 	mMixShader->uniform("i_fade", mFade);
 
 
-	osc::Message choicesMessage;
-	choicesMessage.setAddress("/cinder/choices");
+	osc::Message choicesMessage("/cinder/choices");
 
 	for (std::map<std::string, std::shared_ptr<Visualization>>::const_iterator it = visualizations.begin(); 
 		it != visualizations.end(); ++it) {
-		choicesMessage.addStringArg(it->first);
+		choicesMessage.append(it->first);
 	}
 
 	onConnection();
@@ -39,6 +40,8 @@ Mix::Mix(const World& world,
 		oscController->sendMessage(choicesMessage);
 		this->onConnection();
 	});
+
+	mChoiceVises[0]->setVisualization("Flocking");
 }
 
 void Mix::update(const World& world)
@@ -99,7 +102,7 @@ void Mix::onConnection()
 		mChoiceVises[i]->onConnection();
 	}
 
-	mOscController.subscribeSliderListener("Fade", 0, 1, 0.5, [&](auto val) { 
+	mOscController.subscribeSliderListener("Fade", 0, 1, 0.5, [&](float val) { 
 		mFade = val; 
 		mMixShader->uniform("i_fade", mFade);
 	});
