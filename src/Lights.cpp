@@ -19,6 +19,10 @@ void Lights::update(const World& world)
 
 void Lights::draw(const World& world)
 {
+	gl::clear(Color(0, 0, 0));
+	gl::ScopedMatrices scp();
+	gl::setMatricesWindow(world.windowSize);
+	gl::ScopedViewport vp(ivec2(0), world.windowSize);
 	float volume = world.audioSource->getVolume();
 	float rand = Rand::randFloat();
 
