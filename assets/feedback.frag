@@ -11,6 +11,9 @@ uniform float i_manipFade;
 uniform float i_hueShift;
 uniform float i_saturationShift;
 uniform float i_lightnessShift;
+uniform float i_beat;
+uniform float i_beatExpand;
+uniform float i_beatRotate;
 
 out vec4 fragColor;
 
@@ -30,8 +33,31 @@ vec3 rgb2hsv(vec3 c) {
   return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
 }
 
+vec2 toPolar(vec2 p, vec2 origin) {
+  vec2 cuv = p - origin;
+
+  float ca = atan(cuv.x, cuv.y) + radians(90.0);
+  float cr = length(cuv);
+
+  return vec2(ca, cr);
+}
+
+vec2 toCartesian(vec2 p) {
+  return vec2(p.y * cos(p.x), p.y * sin(p.x));
+}
+
+vec2 rotate(vec2 pos) {
+	pos = toPolar(pos, vec2(0.5));
+
+	// Rotate
+	pos.x -= 3.1415 * i_beat * i_beatRotate;
+	return toCartesian(pos) + vec2(0.5);
+}
+
 void main() {
 	vec2 pos = gl_FragCoord.xy / i_resolution.xy;
+	pos -= (pos - vec2(0.5)) * i_beat * i_beatExpand;
+	//pos = rotate(pos);
 	vec3 current = clamp(texture2D(tex_current, pos).xyz, vec3(0.0), vec3(0.999));
 
 	vec3 hsv = rgb2hsv(current);

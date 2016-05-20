@@ -4,7 +4,7 @@
 #include "World.h"
 
 const int HISTORY = 43;
-const int BUCKETS = 20;
+const int BUCKETS = 16;
 
 struct World;
 

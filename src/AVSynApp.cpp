@@ -248,6 +248,7 @@ void AVSynApp::update()
 {
 	getWindowIndex(0)->getRenderer()->makeCurrentContext();
 	mWorld.deltaSource->update();
+	mWorld.beatDetector->update(mWorld, 1.2);
 	mMainVisualization->update(mWorld);
 
 	float offset = getElapsedSeconds() * 4.0f;

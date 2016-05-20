@@ -106,7 +106,6 @@ void FluidVisualizer::switchParams(OscVisController &controller)
 void FluidVisualizer::updateSmokePos(const World& world, float time, float dt) {
 	std::vector<float> audiovel = world.audioSource->getEqs(4);
 	vec2 newVel = vec2(pow(audiovel[0], 1.5) - pow(audiovel[2], 1), pow(audiovel[1], 1.2) - pow(audiovel[3], 0.8));
-	newVel = newVel * vec2(0.5) + vec2(0.5) * newVel * world.beatDetector->getBeat();
 
 	if (mFlipVelocity) {
 		newVel = vec2(newVel.y, newVel.x);

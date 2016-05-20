@@ -25,7 +25,7 @@ void FadeTransition::draw(const World & world)
 
 	fade = glm::clamp<float>(fade, 0, 1);
 	mMixShader->uniform("i_add", 1.0f);
-	mMixShader->uniform("i_fade", fade);
+	mMixShader->uniform("i_fade", 1.0f - fade);
 	mMixShader->uniform("i_resolution", (vec2) world.windowSize);
 
 	gl::ScopedTextureBind A(mNewVisFbo->getColorTexture(), 1);

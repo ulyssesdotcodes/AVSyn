@@ -82,6 +82,8 @@ void Mix::draw(const World& world)
 			gl::ScopedTextureBind B(mVisFBO[1]->getColorTexture(), 1);
 			mMixShader->uniform("tex_B", 1);
 
+			mMixShader->uniform("i_beat", world.beatDetector->getBeat());
+
 			gl::ScopedGlslProg shaderProg(mMixShader);
 			gl::context()->setDefaultShaderVars();
 
@@ -109,4 +111,7 @@ void Mix::onConnection()
 
 	mOscController.subscribeSliderListener("Add", 0, 2, 1, mMixShader, "i_add");
 	mOscController.subscribeSliderListener("Multiply", 0, 6, 0, mMixShader, "i_multiply");
+	mOscController.subscribeSliderListener("Beat Expand", -0.5, 0.5, 0, mMixShader, "i_beatExpand");
+	mOscController.subscribeSliderListener("Beat Rotate", -0.2, 0.2, 0, mMixShader, "i_beatRotate");
+	mOscController.subscribeSliderListener("Beat Light", 0, 1, 0, mMixShader, "i_beatLight");
 }

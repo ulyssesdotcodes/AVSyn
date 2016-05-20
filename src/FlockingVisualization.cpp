@@ -101,7 +101,6 @@ void FlockingVisualization::switchParams(OscVisController &controller) {
 void FlockingVisualization::update(const World& world)
 {
 	world.audioSource->update();
-	world.beatDetector->update(world, mBeatConstant);
 	float loudness = audio::linearToDecibel(world.audioSource->getVolume()) * 0.01f * mLoudness;;
 	mAccumulatedLoudness += loudness;
 

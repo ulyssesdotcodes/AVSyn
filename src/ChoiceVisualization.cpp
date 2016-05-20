@@ -91,6 +91,7 @@ void ChoiceVisualization::draw(const World& world)
 	else {
 		{
 			mFeedbackShader->uniform("i_hueShift", mHueShift);
+			mFeedbackShader->uniform("i_beat", world.beatDetector->getBeat());
 
 			gl::ScopedTextureBind prev(mCurrentVis->getColorTexture(), 0);
 			mFeedbackShader->uniform("tex_current", 0);
@@ -152,4 +153,6 @@ void ChoiceVisualization::onConnection()
 	mOscVisController.subscribeEffectListener("Hue Shift Cycle", 0, 1, 0, [=](float val) { mHueShiftCycle = val; });
 	mOscVisController.subscribeEffectListener("Saturation Shift", 0, 1, 0, mFeedbackShader, "i_saturationShift");
 	mOscVisController.subscribeEffectListener("Lightness Shift", 0, 1, 1, mFeedbackShader, "i_lightnessShift");
+	mOscVisController.subscribeEffectListener("Beat Expand", 0, -0.5, 0.5, mFeedbackShader, "i_beatExpand");
+	mOscVisController.subscribeEffectListener("Beat Rotate", 0, -0.2, 0.2, mFeedbackShader, "i_beatRotate");
 }

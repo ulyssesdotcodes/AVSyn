@@ -40,7 +40,7 @@ void BeatDetector::update(const World& world, float c) {
 	world.audioSource->update();
 	std::vector<float> spectrum = world.audioSource->getMagSpectrum();
 	while (j < BUCKETS) {
-		sum[j] += spectrum[i] / bucketSize;
+		sum[j] += spectrum[i + 20] / bucketSize;
 		i++;
 
 		if (i >= startBucketIndex + bucketSize) {

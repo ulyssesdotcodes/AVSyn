@@ -13,7 +13,6 @@ void DotsVisualization::renderUniforms(const World& world)
 	ShaderVisualization::renderUniforms(world);
 
 	world.audioSource->update();
-	world.beatDetector->update(world, 1.4);
 
 	mAccumulatedLoudness += world.beatDetector->getBeat() + world.audioSource->getVolume() * mLoudness;
 
