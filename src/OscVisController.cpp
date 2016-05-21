@@ -20,9 +20,6 @@ void OscVisController::clearSliders()
 {
 	std::ostringstream address;
 	address << mAddress << "/sliders/clear";
-	osc::Message message;
-	message.setAddress(address.str());
-	sendMessage(message);
 
 	std::for_each(mSliderSubscriptions.begin(), mSliderSubscriptions.end(), [&](Subscription sub) { 
 		sub.unsubscribe(); 

@@ -5,10 +5,11 @@
 
 using namespace ci;
 
-OscController::OscController():mListener(3334), mSender(3333, System::getIpAddress(), 3333)
+OscController::OscController():mListener(3334), mSender(3335, System::getIpAddress(), 3333)
 {
 	mListener.bind();
 	mListener.listen();
+	mSender.bind();
 }
 
 Subscription OscController::subscribe(const std::string &address, std::function<void(const osc::Message &message)> observer)

@@ -18,6 +18,7 @@ ChoiceVisualization::ChoiceVisualization(const World& world,
 		.fragment(app::loadAsset("feedback.frag"));
 	mFeedbackShader = gl::GlslProg::create(shaderFmt);
 	mFeedbackShader->uniform("i_resolution", (vec2) world.windowSize);
+	mFeedbackShader->uniform("i_mirror", 1.0f);
 
 	gl::Texture2d::Format texFmt;
 	texFmt.setInternalFormat(GL_RGBA16F);
@@ -136,7 +137,7 @@ void ChoiceVisualization::onConnection()
 		setVisualization(name);
 	});
 
-	mApplyEffects = false;
+	mApplyEffects = true;
 	mOscVisController.subscribeEffectListener("Apply Effects", false, [&](bool enabled) { mApplyEffects = enabled; });
 
 	mFadeTransitionOn = false;
@@ -153,6 +154,8 @@ void ChoiceVisualization::onConnection()
 	mOscVisController.subscribeEffectListener("Hue Shift Cycle", 0, 1, 0, [=](float val) { mHueShiftCycle = val; });
 	mOscVisController.subscribeEffectListener("Saturation Shift", 0, 1, 0, mFeedbackShader, "i_saturationShift");
 	mOscVisController.subscribeEffectListener("Lightness Shift", 0, 1, 1, mFeedbackShader, "i_lightnessShift");
-	mOscVisController.subscribeEffectListener("Beat Expand", 0, -0.5, 0.5, mFeedbackShader, "i_beatExpand");
-	mOscVisController.subscribeEffectListener("Beat Rotate", 0, -0.2, 0.2, mFeedbackShader, "i_beatRotate");
+	mOscVisController.subscribeEffectListener("Beat Expand", -0.5, 0.5, 0, mFeedbackShader, "i_beatExpand");
+	mOscVisController.subscribeEffectListener("Beat Rotate", -0.2, 0.2, 0, mFeedbackShader, "i_beatRotate");
+	mOscVisController.subscribeEffectListener("Rotate", -0.3, 0.3, 0, mFeedbackShader, "i_rotate");
+	mOscVisController.subscribeEffectListener("Mirror", false, [&](bool enabled) { mFeedbackShader->uniform("i_mirror", enabled ? 1.0f : 0.0f); });
 }

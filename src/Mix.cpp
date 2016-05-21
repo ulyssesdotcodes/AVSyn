@@ -36,11 +36,6 @@ Mix::Mix(const World& world,
 
 	onConnection();
 
-	mOscController.subscribeToConnection([this, oscController, choicesMessage](osc::Message __) {
-		oscController->sendMessage(choicesMessage);
-		this->onConnection();
-	});
-
 	mChoiceVises[0]->setVisualization("Flocking");
 }
 
