@@ -104,9 +104,13 @@ void Mix::onConnection()
 		mMixShader->uniform("i_fade", mFade);
 	});
 
-	mOscController.subscribeSliderListener("Add", 0, 2, 1, mMixShader, "i_add");
-	mOscController.subscribeSliderListener("Multiply", 0, 6, 0, mMixShader, "i_multiply");
+	mOscController.subscribeSliderListener("Add", 0, 2, 0.2, mMixShader, "i_add");
+	mOscController.subscribeSliderListener("Multiply", 0, 6, 6, mMixShader, "i_multiply");
 	mOscController.subscribeSliderListener("Beat Expand", -0.5, 0.5, 0, mMixShader, "i_beatExpand");
 	mOscController.subscribeSliderListener("Beat Rotate", -0.2, 0.2, 0, mMixShader, "i_beatRotate");
 	mOscController.subscribeSliderListener("Beat Light", 0, 1, 0, mMixShader, "i_beatLight");
+
+	mOscController.subscribeToConnection([&](osc::Message msg) { 
+		app::console() << "Connection received" << std::endl;
+	});
 }

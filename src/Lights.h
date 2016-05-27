@@ -14,4 +14,5 @@ public:
 private:
 	ci::gl::BatchRef mNewLight;
 	ci::vec2 mResolution;
+	float mFrequency;
 };

@@ -220,6 +220,8 @@
     <ClCompile Include="..\src\OscController.cpp" />
     <ClCompile Include="..\src\OscMixController.cpp" />
     <ClCompile Include="..\src\OscVisController.cpp" />
+    <ClCompile Include="..\src\ParticleSystem.cpp" />
+    <ClCompile Include="..\src\ParticleVisualization.cpp" />
     <ClCompile Include="..\src\PingPongFBO.cpp" />
     <ClCompile Include="..\src\ShaderVisualization.cpp" />
     <ClCompile Include="..\src\SpectrumCircleVisualization.cpp" />
@@ -275,6 +277,8 @@
     <ClInclude Include="..\src\OscController.h" />
     <ClInclude Include="..\src\OscMixController.h" />
     <ClInclude Include="..\src\OscVisController.h" />
+    <ClInclude Include="..\src\ParticleSystem.h" />
+    <ClInclude Include="..\src\ParticleVisualization.h" />
     <ClInclude Include="..\src\PingPongFBO.h" />
     <ClInclude Include="..\src\ShaderVisualization.h" />
     <ClInclude Include="..\src\SpectrumCircleVisualization.h" />
@@ -307,10 +311,13 @@
     <None Include="..\assets\kick_image.vert" />
     <None Include="..\assets\flocking_update.vert" />
     <None Include="..\assets\mix.frag" />
+    <None Include="..\assets\particles.comp" />
     <None Include="..\assets\passthru.vert" />
     <None Include="..\assets\point_circle.frag" />
     <None Include="..\assets\render.frag" />
     <None Include="..\assets\render.vert" />
+    <None Include="..\assets\render_particles.frag" />
+    <None Include="..\assets\render_particles.vert" />
     <None Include="..\assets\simple.frag" />
     <None Include="..\assets\texture.frag" />
     <None Include="..\assets\velocity.frag" />

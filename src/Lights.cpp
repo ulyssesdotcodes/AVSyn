@@ -5,7 +5,7 @@
 
 using namespace ci;
 
-Lights::Lights() : ShaderVisualization("texture.frag")
+Lights::Lights() : ShaderVisualization("texture.frag"), mFrequency(1.0)
 {
 	mResolution = app::getWindowIndex(0)->getSize();
 
@@ -27,7 +27,7 @@ void Lights::draw(const World& world)
 	float rand = Rand::randFloat();
 
 	// Base the chance for a new light on the volume
-	if (rand > volume * 0.5) {
+	if (rand > volume * 0.5 * mFrequency) {
 		return;
 	}
 
@@ -41,4 +41,5 @@ void Lights::draw(const World& world)
 
 void Lights::switchParams(OscVisController &controller)
 {
+	controller.subscribeSliderListener("Frequency", 0, 4, [&](float val) { mFrequency = val; });
 }

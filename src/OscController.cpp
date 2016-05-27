@@ -5,7 +5,7 @@
 
 using namespace ci;
 
-OscController::OscController():mListener(3334), mSender(3335, System::getIpAddress(), 3333)
+OscController::OscController():mListener(3334), mSender(3335, "127.0.0.1", 3333)
 {
 	mListener.bind();
 	mListener.listen();
@@ -26,10 +26,12 @@ Subscription OscController::subscribe(const std::string &address, std::function<
 }
 
 void OscController::sendMessage(const osc::Message message) {
+	app::console() << "Sending Address" << message.getAddress() << std::endl;
 	mSender.send(message);
 }
 
 void OscController::sendBundle(const osc::Bundle bundle) {
+	app::console() << "Sending Address" << System::getIpAddress() << std::endl;
 	mSender.send(bundle);
 }
 

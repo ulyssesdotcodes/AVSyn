@@ -243,6 +243,12 @@
     <ClCompile Include="..\src\BaseOscWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\ParticleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ParticleVisualization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\Resources.h">
@@ -337,6 +343,12 @@
     </ClInclude>
     <ClInclude Include="..\src\BaseOscWrapper.h">
       <Filter>Header Files\OSC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ParticleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ParticleVisualization.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -434,6 +446,15 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\assets\video_texture.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\render_particles.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\render_particles.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\assets\particles.comp">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
