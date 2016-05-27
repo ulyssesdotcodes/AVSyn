@@ -41,5 +41,6 @@ void ParticleVisualization::draw(const World & world)
 void ParticleVisualization::switchParams(OscVisController & controller)
 {
 	controller.subscribeSliderListener("Lifetime", 1, 128, [&](float val) { mParticleSystem.setLifetime(val); });
+	mParticleSystem.resetParticleSystem();
 	mAccumulatedSound = 0;
 }
